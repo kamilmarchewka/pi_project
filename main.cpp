@@ -10,8 +10,8 @@
 using namespace sf;
 
 int main(){
-  // Ball pilka_golfowa(10, 10, 20); // Create ball object
-  // std::cout << "Polozenie pilki: " << pilka_golfowa.getX() << ", " << pilka_golfowa.getY() << std::endl; // Print ball position
+  Ball pilka_golfowa(10, 10, 20); // Create ball object
+  std::cout << "Polozenie pilki: " << pilka_golfowa.getX() << ", " << pilka_golfowa.getY() << std::endl; // Print ball position
   
   RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "MiniGolf"); // Define window
   window.setFramerateLimit(60); // Set limit to 60 FPS
@@ -27,8 +27,10 @@ int main(){
 
   Texture texture;
   texture.loadFromFile("assets/main_bg.png");
+  texture.setSmooth(true);
   Sprite sprite;
   sprite.setTexture(texture);
+  sprite.setPosition(0, WINDOW_HEIGHT - texture.getSize().y);
 
   while(window.isOpen()) // Game loop
   {
@@ -57,7 +59,7 @@ int main(){
       yVelocity *= -1;
     }
 
-    window.clear(Color::Black); // Clear window with black color
+    window.clear(Color(168,202,89,100)); // Clear window with black color
     window.draw(sprite);
     window.draw(rect); // Draw rectangle
     window.display(); // Display window
