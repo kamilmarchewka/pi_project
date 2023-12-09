@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp> // Include SFML graphics library
 
 #include "Button.h"
+#include "Board.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 500
@@ -16,7 +17,7 @@ enum GameState
 
 int main()
 {
-  int GAME_STATE = HOME;
+  int GAME_STATE = PLAYING;
   int SOUND_ON = 1;
 
   // Load Fonts
@@ -47,6 +48,10 @@ int main()
   sf::Texture exit_icon_t;
   exit_icon_t.loadFromFile("assets/exit_icon.png");
   exit_icon_t.setSmooth(true);
+  // Grass texture
+  sf::Texture grass_t;
+  grass_t.loadFromFile("assets/grass.png");
+  grass_t.setSmooth(true);
 
   // Define window
   sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "MiniGolf");
@@ -68,6 +73,9 @@ int main()
       SOUND_ON ? sound_on_icon_t : sound_off_icon_t);
   // Exit icon
   Button exit_btn(sf::Vector2f(WINDOW_WIDTH - 30, WINDOW_HEIGHT - 30), exit_icon_t);
+
+  // Game borad
+  Board board(sf::Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), grass_t);
 
   while (window.isOpen()) // Game loop
   {
@@ -127,6 +135,8 @@ int main()
       break;
     case PLAYING:
       window.clear(sf::Color(168, 202, 89, 100)); // Clear window with green
+
+      board.draw_to(window);
 
       exit_btn.draw_to(window);
       window.display(); // Display window
