@@ -5,6 +5,7 @@
 
 #include "Button.h"
 #include "Board.h"
+#include "Ball.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 500
@@ -77,10 +78,12 @@ int main()
   // Game borad
   Board board(sf::Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), grass_t);
 
+  // Ball
+  Ball ball;
+
   while (window.isOpen()) // Game loop
   {
     sf::Event event; // Define variable which holds events data
-
     // Event loop
     while (window.pollEvent(event)) // Check if there is any event
     {
@@ -122,28 +125,45 @@ int main()
     }
 
     // Render
+    window.clear(sf::Color(168, 202, 89, 100)); // Clear window with green
     switch (GAME_STATE)
     {
     case HOME:
-      window.clear(sf::Color(168, 202, 89, 100)); // Clear window with green
       window.draw(main_bg_s);
       play_btn.draw_to(window);
       sound_btn.draw_to(window);
       settings_btn.draw_to(window);
-
-      window.display(); // Display window
       break;
     case PLAYING:
-      window.clear(sf::Color(168, 202, 89, 100)); // Clear window with green
+      //--------------------------------------------------
+      // For testing
+      ball.set_position(
+          sf::Vector2f(
+              ball.get_position().x + ball.get_velocity().x,
+              ball.get_position().y + ball.get_velocity().y));
+
+      // Check collision with board
+      if (ball.get_position().x + ball.get_radius() > WINDOW_WIDTH / 2 + board.get_size().x / 2 || ball.get_position().x - ball.get_radius() < WINDOW_WIDTH / 2 - board.get_size().x / 2)
+      {
+        ball.set_velocity(sf::Vector2f(-ball.get_velocity().x, ball.get_velocity().y));
+      }
+      // check y collision
+      if (ball.get_position().y + ball.get_radius() > WINDOW_HEIGHT / 2 + board.get_size().y / 2 || ball.get_position().y - ball.get_radius() < WINDOW_HEIGHT / 2 - board.get_size().y / 2)
+      {
+        ball.set_velocity(sf::Vector2f(ball.get_velocity().x, -ball.get_velocity().y));
+      }
+      //--------------------------------------------------
 
       board.draw_to(window);
-
+      ball.draw_to(window);
       exit_btn.draw_to(window);
-      window.display(); // Display window
+
       break;
     default:
       break;
     }
+
+    window.display(); // Display window
   }
 
   return 0;
