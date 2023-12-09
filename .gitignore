@@ -32,4 +32,8 @@
 *.app
 
 # Specific files
-Makefile
+makefile
+lib/*
+include/SFML/*
+.vscode/*
+
