@@ -53,6 +53,10 @@ int main()
   sf::Texture grass_t;
   grass_t.loadFromFile("assets/grass.png");
   grass_t.setSmooth(true);
+  // Wall
+  sf::Texture wall_t;
+  wall_t.loadFromFile("assets/wall.png");
+  wall_t.setSmooth(true);
 
   // Define window
   sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "MiniGolf");
@@ -77,6 +81,12 @@ int main()
 
   // Game borad
   Board board(sf::Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), grass_t);
+
+  // Wall
+  sf::Sprite wall_s;
+  wall_s.setTexture(wall_t);
+  wall_s.setOrigin(wall_t.getSize().x / 2, wall_t.getSize().y / 2);
+  wall_s.setPosition(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 
   // Ball
   Ball ball;
@@ -140,7 +150,8 @@ int main()
       ball.set_position(
           sf::Vector2f(
               ball.get_position().x + ball.get_velocity().x,
-              ball.get_position().y + ball.get_velocity().y));
+              // ball.get_position().y + ball.get_velocity().y),
+              ball.get_position().y));
 
       // Check collision with board
       if (ball.get_position().x + ball.get_radius() > WINDOW_WIDTH / 2 + board.get_size().x / 2 || ball.get_position().x - ball.get_radius() < WINDOW_WIDTH / 2 - board.get_size().x / 2)
@@ -152,10 +163,17 @@ int main()
       {
         ball.set_velocity(sf::Vector2f(ball.get_velocity().x, -ball.get_velocity().y));
       }
+
+      if (ball.is_colliding_with(wall_s))
+      {
+        ball.set_velocity(sf::Vector2f(-ball.get_velocity().x, ball.get_velocity().y));
+      }
       //--------------------------------------------------
 
       board.draw_to(window);
+      window.draw(wall_s);
       ball.draw_to(window);
+
       exit_btn.draw_to(window);
 
       break;

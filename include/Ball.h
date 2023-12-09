@@ -8,9 +8,9 @@ public:
     ball.setRadius(10);
     ball.setFillColor(sf::Color::White);
     ball.setOrigin(ball.getRadius(), ball.getRadius());
-    ball.setPosition(400, 250);
-    velocity.x = 10;
-    velocity.y = 10;
+    ball.setPosition(200, 250);
+    velocity.x = 4;
+    velocity.y = 4;
   }
 
   void set_position(sf::Vector2f pos)
@@ -33,6 +33,10 @@ public:
   float get_radius()
   {
     return ball.getRadius();
+  }
+  bool is_colliding_with(sf::Sprite &sprite)
+  {
+    return ball.getGlobalBounds().intersects(sprite.getGlobalBounds());
   }
 
   void draw_to(sf::RenderWindow &window)
