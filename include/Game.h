@@ -1,8 +1,14 @@
+#ifndef GAME_H
+#define GAME_H
+
 // Standard includes
 #include <iostream>
 
 // SFML includes
 #include <SFML/Graphics.hpp>
+
+// Game includes
+#include "Ball.h"
 
 /**
  * Game class
@@ -18,6 +24,8 @@ private:
     std::string title;        // Title of the window
     // Variable for holding sfml events
     sf::Event event;
+
+    Ball ball;
 
     // Functions
     void initVariables();
@@ -38,3 +46,5 @@ public:
     void update();
     void render();
 };
+
+#endif

@@ -71,7 +71,7 @@ void Game::render()
     this->window->clear();
 
     // Render stuff
-    // this->window->draw(sf::CircleShape(50.f));
+    this->ball.render(this->window);
 
     // Display everything that has been drawn
     this->window->display();
