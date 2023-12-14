@@ -25,9 +25,11 @@ public:
     // Accessors
 
     // Modifiers
+    void move(float x, float y);
 
     // Functions
-    void update();
+    void shoot(sf::RenderWindow *window);
+    void update(sf::RenderWindow *window);
     void render(sf::RenderTarget *target);
 };
 
