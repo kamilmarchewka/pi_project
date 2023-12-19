@@ -24,7 +24,7 @@ void Ball::move(float x, float y)
     // Set the position of the circle to the position vector
     this->circle.setPosition(this->position);
 
-    if (!(fabs(this->velocity.x) < 0.1f))
+    if (!(fabs(this->velocity.x) < 0.01f))
     {
        /* if (this->velocity.x > 0)
             this->velocity.x -= 0.1;
@@ -38,7 +38,7 @@ void Ball::move(float x, float y)
     {
         this->velocity.x = 0;
     }
-    if (!(fabs(this->velocity.y) < 0.1f))
+    if (!(fabs(this->velocity.y) < 0.01f))
     {
        this->velocity.y *= 0.991;
         /*if (this->velocity.y > 0)
@@ -57,8 +57,8 @@ void Ball::move(float x, float y)
  */
 void Ball::shoot(sf::RenderWindow *window)
 {
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-    {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->velocity.x == 0 && this->velocity.y == 0)
+    {                                                       //Kiedy piłka się porusza nie można zmienić ruchu
         // Get the mouse position inside the game window
         sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
         sf::Vector2f mousePositionFloat = static_cast<sf::Vector2f>(mousePosition);
