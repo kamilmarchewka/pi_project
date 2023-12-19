@@ -63,6 +63,7 @@ void Game::poolEvents()
 void Game::update()
 {
     this->poolEvents();
+    this->ball.update(this->window);
 }
 
 void Game::render()
@@ -71,7 +72,7 @@ void Game::render()
     this->window->clear();
 
     // Render stuff
-    // this->window->draw(sf::CircleShape(50.f));
+    this->ball.render(this->window);
 
     // Display everything that has been drawn
     this->window->display();

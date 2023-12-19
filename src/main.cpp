@@ -6,6 +6,7 @@
 
 // Game includes
 #include "Game.h"
+#include "Ball.h"
 
 /**
  * Main entry point of the application
