@@ -26,22 +26,25 @@ void Ball::move(float x, float y)
 
     if (!(fabs(this->velocity.x) < 0.1f))
     {
-        if (this->velocity.x > 0)
+       /* if (this->velocity.x > 0)
             this->velocity.x -= 0.1;
         else if (this->velocity.x < 0)
+         
             this->velocity.x += 0.1;
-    }
+        */
+       this->velocity.x *= 0.991; //szybkosc zmienia sie o 0.09% ale i tak jest problem "Normalizacji" czyli w jednym kierunku szybciej dobija do 0.1 i się zeruje
+    }                              //przez co lekko zakręca, lecz i tak jest to dużo mniejsze niż w przypadku gdy zmieniamy o 0.1
     else
     {
         this->velocity.x = 0;
     }
     if (!(fabs(this->velocity.y) < 0.1f))
     {
-
-        if (this->velocity.y > 0)
+       this->velocity.y *= 0.991;
+        /*if (this->velocity.y > 0)
             this->velocity.y -= 0.1;
         else if (this->velocity.y < 0)
-            this->velocity.y += 0.1;
+            this->velocity.y += 0.1;*/
     }
     else
     {
@@ -61,14 +64,14 @@ void Ball::shoot(sf::RenderWindow *window)
         sf::Vector2f mousePositionFloat = static_cast<sf::Vector2f>(mousePosition);
         // Calculate the velocity of the ball
         if (mousePositionFloat.x > this->position.x)
-            this->velocity.x = -5.f;
+            this->velocity.x = -(mousePositionFloat.x - this-> position.x)/50.f;
         else if (mousePositionFloat.x < this->position.x)
-            this->velocity.x = 5.f;
+            this->velocity.x = (this->position.x - mousePositionFloat.x)/50.f;
 
         if (mousePositionFloat.y > this->position.y)
-            this->velocity.y = -5.f;
+            this->velocity.y = -(mousePositionFloat.y - this->position.y)/50.f;
         else if (mousePositionFloat.y < this->position.y)
-            this->velocity.y = 5.f;
+            this->velocity.y = (this-> position.y-mousePositionFloat.y)/50.f;
     }
 }
 
