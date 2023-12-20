@@ -28,8 +28,8 @@ const bool Game::isRunning() const
 void Game::initVariables()
 {
     this->window = nullptr;
-    this->videoMode.height = 600;
-    this->videoMode.width = 800;
+    this->videoMode.height = 800;
+    this->videoMode.width = 1200;
     this->title = "MiniGolf";
 }
 
@@ -72,6 +72,7 @@ void Game::render()
     this->window->clear();
 
     // Render stuff
+    this->board.render(this->window);
     this->ball.render(this->window);
 
     // Display everything that has been drawn
