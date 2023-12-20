@@ -9,6 +9,7 @@
 
 // Game includes
 #include "Ball.h"
+#include "Board.h"
 
 /**
  * Game class
@@ -26,6 +27,7 @@ private:
     sf::Event event;
 
     Ball ball;
+    Board board;
 
     // Functions
     void initVariables();
