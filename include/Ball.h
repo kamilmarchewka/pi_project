@@ -3,10 +3,13 @@
 class Ball
 {
 private:
-    float radius;
+    float size;
     float posX;
     float posY;
-    sf::CircleShape ball;
+    float velocityX;
+    float velocityY;
+
+    sf::RectangleShape ball;
 
     void initVariables();
     void initShape();
@@ -18,10 +21,10 @@ public:
     sf::Vector2f getPosition();
     sf::Vector2f getSize();
 
-    void setVelocity(float newVelocityX, float newVelocityY);
-    void changePosition(float newX, float newY);
+    void setVelocity(sf::WindowBase *window);
+    void changePosition(float velX, float velY);
 
-    void update();
+    void update(sf::WindowBase *window);
 
     void draw(sf::RenderTarget *target);
 };

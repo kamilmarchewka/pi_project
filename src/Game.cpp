@@ -67,11 +67,12 @@ void Game::poolEvents()
 void Game::update()
 {
     this->poolEvents();
+
+    this->ball.update(this->window);
 }
 
 void Game::render()
 {
-    std::cout << "Window size:" << this->window->getSize().x << " " << this->window->getSize().y << "\n";
     // Clear the window with black color
     this->window->clear();
 
