@@ -8,7 +8,7 @@
 #include <SFML/Graphics.hpp>
 
 // Game includes
-#include "Ball.h"
+#include "Board.h"
 
 /**
  * Game class
@@ -25,7 +25,9 @@ private:
     // Variable for holding sfml events
     sf::Event event;
 
-    Ball ball;
+    // Other objects
+    Board board;
+    sf::RectangleShape ball;
 
     // Functions
     void initVariables();

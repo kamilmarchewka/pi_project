@@ -6,7 +6,10 @@
 
 // Game includes
 #include "Game.h"
-#include "Ball.h"
+
+// Consts
+float W_WIDTH = 1200;
+float W_HEIGHT = 700;
 
 /**
  * Main entry point of the application

@@ -4,6 +4,10 @@
 // SFML includes
 #include <SFML/Graphics.hpp>
 
+#include "Board.h"
+extern float W_WIDTH;
+extern float W_HEIGHT;
+
 // Constructor and destructor
 Game::Game()
 {
@@ -28,8 +32,8 @@ const bool Game::isRunning() const
 void Game::initVariables()
 {
     this->window = nullptr;
-    this->videoMode.height = 600;
-    this->videoMode.width = 800;
+    this->videoMode.width = W_WIDTH;
+    this->videoMode.height = W_HEIGHT;
     this->title = "MiniGolf";
 }
 
@@ -39,6 +43,11 @@ void Game::initWindow()
     // and initialise its size and title text
     this->window = new sf::RenderWindow(this->videoMode, this->title, sf::Style::Titlebar | sf::Style::Close);
     this->window->setFramerateLimit(60); // Set limit of 60fps
+
+    sf::Vector2f ballPos;
+
+    this->ball.setSize(sf::Vector2f(50, 50));
+    this->ball.setFillColor(sf::Color::Green);
 }
 
 void Game::poolEvents()
@@ -63,16 +72,17 @@ void Game::poolEvents()
 void Game::update()
 {
     this->poolEvents();
-    this->ball.update(this->window);
 }
 
 void Game::render()
 {
+    std::cout << "Window size:" << this->window->getSize().x << " " << this->window->getSize().y << "\n";
     // Clear the window with black color
     this->window->clear();
 
     // Render stuff
-    this->ball.render(this->window);
+    this->board.draw(this->window);
+    this->window->draw(this->ball);
 
     // Display everything that has been drawn
     this->window->display();
