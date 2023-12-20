@@ -9,6 +9,7 @@
 
 // Game includes
 #include "Board.h"
+#include "Ball.h"
 
 /**
  * Game class
@@ -27,24 +28,18 @@ private:
 
     // Other objects
     Board board;
-    sf::RectangleShape ball;
+    Ball ball;
 
-    // Functions
     void initVariables();
     void initWindow();
 
 public:
-    // Constructor and destructor
     Game();
     ~Game();
 
-    // Accessors
     const bool isRunning() const;
-
-    // Modifiers
-
-    // Functions
     void poolEvents();
+
     void update();
     void render();
 };

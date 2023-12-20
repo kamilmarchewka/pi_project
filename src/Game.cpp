@@ -43,11 +43,6 @@ void Game::initWindow()
     // and initialise its size and title text
     this->window = new sf::RenderWindow(this->videoMode, this->title, sf::Style::Titlebar | sf::Style::Close);
     this->window->setFramerateLimit(60); // Set limit of 60fps
-
-    sf::Vector2f ballPos;
-
-    this->ball.setSize(sf::Vector2f(50, 50));
-    this->ball.setFillColor(sf::Color::Green);
 }
 
 void Game::poolEvents()
@@ -82,7 +77,7 @@ void Game::render()
 
     // Render stuff
     this->board.draw(this->window);
-    this->window->draw(this->ball);
+    this->ball.draw(this->window);
 
     // Display everything that has been drawn
     this->window->display();
