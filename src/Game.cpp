@@ -63,7 +63,7 @@ void Game::poolEvents()
 void Game::update()
 {
     this->poolEvents();
-    this->ball.update(this->window);
+    this->ball.update(this->window, &this->board);
 }
 
 void Game::render()

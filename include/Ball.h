@@ -5,12 +5,15 @@
 // SFML includes
 #include <SFML/Graphics.hpp>
 
+#include "Board.h"
+
 class Ball
 {
 private:
     // Variables
     sf::CircleShape circle;
     sf::Vector2f position;
+    float radius;
     sf::Vector2f velocity;
 
     // Functions
@@ -23,13 +26,18 @@ public:
     ~Ball();
 
     // Accessors
+    float getRadius()
+    {
+        return this->radius;
+    }
 
     // Modifiers
     void move(float x, float y);
 
     // Functions
     void shoot(sf::RenderWindow *window);
-    void update(sf::RenderWindow *window);
+    void boardCollision(Board *board);
+    void update(sf::RenderWindow *window, Board *board);
     void render(sf::RenderTarget *target);
 };
 

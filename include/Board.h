@@ -18,6 +18,15 @@ public:
     Board(/* args */);
     ~Board();
 
+    sf::Vector2f getPosition()
+    {
+        return this->position;
+    };
+    sf::Vector2f getSize()
+    {
+        return this->size;
+    }
+
     void render(sf::RenderTarget *target);
 };
 #endif

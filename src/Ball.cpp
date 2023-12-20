@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include "Ball.h"
+#include "Board.h"
 
 // Constructor and destructor
 
@@ -74,28 +75,58 @@ void Ball::shoot(sf::RenderWindow *window)
             this->velocity.y = (this->position.y - mousePositionFloat.y) / 50.f;
     }
 }
+void Ball::boardCollision(Board *board)
+{
+    float ballLeftBorder = this->position.x;
+    float ballRightBorder = this->position.x + this->radius;
+
+    std::cout << "Right border: " << ballRightBorder << "\n";
+    std::cout << "radius: " << this->radius << "\n";
+    std::cout << "x pos : " << this->position.x << "\n";
+
+    float boardLeftBorder = board->getPosition().x - (board->getSize().x / 2);
+    float boardRightBorder = board->getPosition().x + (board->getSize().x / 2);
+
+    std::cout << "borderrightborder: " << boardRightBorder << "\n";
+    // Left wall
+    if (ballLeftBorder <= boardLeftBorder)
+    {
+        this->position.x = boardLeftBorder + 0.5f;
+        this->velocity.x *= -1;
+    }
+    else if (ballRightBorder + this->radius >= boardRightBorder)
+    {
+        this->position.x = boardRightBorder - (this->radius) - this->radius - 0.5f;
+        this->velocity.x *= -1;
+    }
+}
 
 // Functions
 void Ball::initVariables()
 {
+    this->radius = 13;
     this->position = sf::Vector2f(200.f, 200.f);
     this->velocity = sf::Vector2f(0.f, 0.f);
 }
 
 void Ball::initShape()
 {
-    this->circle.setRadius(13.f);
+    this->circle.setRadius(radius);
     this->circle.setPosition(this->position);
     this->circle.setFillColor(sf::Color(240, 234, 210, 255));
 }
 
-void Ball::update(sf::RenderWindow *window)
+void Ball::update(sf::RenderWindow *window, Board *board)
 {
     // Check if the left mouse button is pressed
     // If it is, call the shoot function
     this->shoot(window);
     // Update the position vector
     this->move(this->velocity.x, this->velocity.y);
+
+    // Check collisions
+    // Collision with board
+    this->boardCollision(board);
 }
 
 void Ball::render(sf::RenderTarget *target)
