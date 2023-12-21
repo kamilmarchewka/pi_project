@@ -21,7 +21,6 @@ class Game
 {
 private:
     // Variables
-    int STATE;
     sf::RenderWindow *window; // Pointer to a window object
     sf::VideoMode videoMode;  // Video mode object, holds width and height of the window
     std::string title;        // Title of the window
@@ -29,18 +28,18 @@ private:
     sf::Event event;
 
     // Textures
-    sf::Texture bgImageTexture;
+    sf::Texture *bgImageTexture, *playBtnTexture, *optionsBtnTexture, *levelsBtnTexture;
+
     // Sprites
     sf::Sprite backgroundSprite;
-    // Other objects
-    Board board;
-    Ball ball;
 
-    // Home screen
-    Button playBtn;
+    // Other Game objects
+    // Board board;
+    // Ball ball;
 
     void initVariables();
     void initWindow();
+    void initTextures();
 
 public:
     Game();

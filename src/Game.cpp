@@ -10,31 +10,32 @@ extern float W_WIDTH;
 extern float W_HEIGHT;
 extern int GAME_STATE;
 
-// Constructor and destructor
 Game::Game()
 {
-    initVariables();
-    initWindow();
+    this->initVariables();
+    this->initWindow();
+    this->initTextures();
 
-    this->bgImageTexture.loadFromFile("assets/v2/background.png");
-
-    this->backgroundSprite.setTexture(this->bgImageTexture);
+    this->backgroundSprite.setTexture(*this->bgImageTexture);
     this->backgroundSprite.setPosition(sf::Vector2f(0, W_HEIGHT - this->backgroundSprite.getGlobalBounds().height));
 }
 
 Game::~Game()
 {
+    // Delete textures
+    delete this->bgImageTexture;
+    delete this->playBtnTexture;
+    delete this->optionsBtnTexture;
+    delete this->levelsBtnTexture;
+
+    // Delete window
     delete this->window;
 }
 
-// Accessors
 const bool Game::isRunning() const
 {
     return this->window->isOpen();
 }
-
-// Modifiers
-// Functions
 
 void Game::initVariables()
 {
@@ -42,6 +43,12 @@ void Game::initVariables()
     this->videoMode.width = W_WIDTH;
     this->videoMode.height = W_HEIGHT;
     this->title = "MiniGolf";
+
+    // Textures
+    this->bgImageTexture = NULL;
+    this->playBtnTexture = NULL;
+    this->optionsBtnTexture = NULL;
+    this->levelsBtnTexture = NULL;
 }
 
 void Game::initWindow()
@@ -50,6 +57,21 @@ void Game::initWindow()
     // and initialise its size and title text
     this->window = new sf::RenderWindow(this->videoMode, this->title, sf::Style::Titlebar | sf::Style::Close);
     this->window->setFramerateLimit(60); // Set limit of 60fps
+}
+
+void Game::initTextures()
+{
+    this->bgImageTexture = new sf::Texture();
+    this->bgImageTexture->loadFromFile("assets/v2/background.png");
+
+    this->playBtnTexture = new sf::Texture();
+    this->playBtnTexture->loadFromFile("assets/v2/play_btn.png");
+
+    this->optionsBtnTexture = new sf::Texture();
+    this->optionsBtnTexture->loadFromFile("assets/v2/ustawienia_btn.png");
+
+    this->levelsBtnTexture = new sf::Texture();
+    this->levelsBtnTexture->loadFromFile("assets/v2/poziomy_btn.png");
 }
 
 void Game::poolEvents()
@@ -74,8 +96,6 @@ void Game::poolEvents()
 void Game::update()
 {
     this->poolEvents();
-
-    this->ball.update(this->window, &this->board);
 }
 
 void Game::render()
@@ -87,13 +107,12 @@ void Game::render()
     {
     case 0: // Show home screen
         this->window->draw(this->backgroundSprite);
-        this->playBtn.draw(this->window);
         break;
 
     case 1: // Show game screen with obard
         // Render stuff
-        this->board.draw(this->window);
-        this->ball.draw(this->window);
+        // this->board.draw(this->window);
+        // this->ball.draw(this->window);
         break;
     }
 
