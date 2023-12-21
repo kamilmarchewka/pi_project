@@ -15,5 +15,9 @@ private:
     sf::Sprite sprite;
 
 public:
+    Button(sf::Texture *texture, float posX, float posY, int value);
+    virtual ~Button();
+
+    void draw(sf::RenderTarget *target);
 };
 #endif

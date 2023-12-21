@@ -104,6 +104,9 @@ void Game::initScreen(int screen)
         this->backgroundSprite = new sf::Sprite();
         this->backgroundSprite->setTexture(*this->bgImageTexture);
         this->backgroundSprite->setPosition(sf::Vector2f(0, W_HEIGHT - this->backgroundSprite->getGlobalBounds().height));
+
+        // Menu buttons
+        this->playBtn = new Button(this->playBtnTexture, W_WIDTH / 2.f, W_HEIGHT / 2.f, 1);
         break;
     case 1: // Game screen
         this->ball = new Ball();
@@ -116,6 +119,7 @@ void Game::destroyScreen(int screen)
     {
     case 0: // Home screen
         delete this->backgroundSprite;
+        delete this->playBtn;
         break;
     case 1: // Game screen
         delete this->ball;
@@ -146,6 +150,7 @@ void Game::render()
     {
     case 0: // Show home screen
         this->window->draw(*this->backgroundSprite);
+        this->playBtn->draw(this->window);
         break;
 
     case 1: // Show game screen with obard

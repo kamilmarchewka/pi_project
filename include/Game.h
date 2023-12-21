@@ -30,11 +30,12 @@ private:
     // Textures
     sf::Texture *bgImageTexture, *playBtnTexture, *optionsBtnTexture, *levelsBtnTexture;
 
-    // Sprites
+    // Screens
+    // 0 - Home
     sf::Sprite *backgroundSprite;
+    Button *playBtn, *optionsBtn, *levelsBtn;
 
-    // Other Game objects
-    // Board board;
+    // 1 - Play
     Ball *ball;
 
     void initVariables();
