@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 
+#include "Board.h"
+
 class Ball
 {
 private:
@@ -23,8 +25,9 @@ public:
 
     void setVelocity(sf::WindowBase *window);
     void changePosition(float velX, float velY);
+    void checkBoardCollision(Board *board);
 
-    void update(sf::WindowBase *window);
+    void update(sf::WindowBase *window, Board *board);
 
     void draw(sf::RenderTarget *target);
 };

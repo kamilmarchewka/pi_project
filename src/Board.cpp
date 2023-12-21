@@ -14,11 +14,11 @@ Board::~Board(){};
 
 void Board::initVariables()
 {
-    this->outlineThickness = 15;
-    this->width = 900 + outlineThickness;
-    this->height = 500 + outlineThickness;
-    this->posX = (W_WIDTH - this->width - this->outlineThickness * 2) / 2;
-    this->posY = (W_HEIGHT - this->height - this->outlineThickness * 2) / 2 + 50;
+    this->outlineThickness = 10;
+    this->width = 900;
+    this->height = 500;
+    this->posX = (W_WIDTH - this->width) / 2;
+    this->posY = (W_HEIGHT - this->height) / 2 + 50;
 }
 void Board::initShape()
 {
@@ -41,6 +41,10 @@ sf::Vector2f Board::getPosition()
 sf::Vector2f Board::getSize()
 {
     return this->board.getGlobalBounds().getSize();
+}
+float Board::getBorderThickness()
+{
+    return this->outlineThickness;
 }
 
 void Board::draw(sf::RenderTarget *target)

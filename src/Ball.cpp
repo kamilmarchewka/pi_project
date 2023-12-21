@@ -2,6 +2,7 @@
 #include <math.h>
 #include <SFML/Graphics.hpp>
 #include "Ball.h"
+#include "Board.h"
 
 extern float W_WIDTH;
 extern float W_HEIGHT;
@@ -16,6 +17,8 @@ Ball::~Ball() {}
 void Ball::initVariables()
 {
     this->size = 20;
+    // this->posX = 0;
+    // this->posY = 0;
     this->posX = W_WIDTH / 2;
     this->posY = W_HEIGHT / 2;
     this->velocityX = 0;
@@ -29,85 +32,100 @@ void Ball::initShape()
     this->ball.setFillColor(sf::Color::Yellow);
 }
 
+sf::Vector2f Ball::getPosition()
+{
+    return this->ball.getGlobalBounds().getPosition();
+};
+sf::Vector2f Ball::getSize()
+{
+    return this->ball.getGlobalBounds().getSize();
+}
+
 void Ball::setVelocity(sf::WindowBase *window)
 {
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->velocityX == 0 && this->velocityY == 0)
-    {
-        sf::Vector2f mousePosition = static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window));
-        // std::cout << "Mouse pos: " << mousePosition.x << " " << mousePosition.y << "\n";
+    { // Kiedy piłka się porusza nie można zmienić ruchu
+        // Get the mouse position inside the game window
+        sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
+        sf::Vector2f mousePositionFloat = static_cast<sf::Vector2f>(mousePosition);
+        // Calculate the velocity of the ball
+        if (mousePositionFloat.x > this->posX)
+            this->velocityX = -(mousePositionFloat.x - this->posX) / 50.f;
+        else if (mousePositionFloat.x < this->posX)
+            this->velocityX = (this->posX - mousePositionFloat.x) / 50.f;
 
-        if (mousePosition.x < this->posX)
-            this->velocityX = (this->posX - mousePosition.x) / 100.f;
-        else if (mousePosition.x > this->posX)
-            this->velocityX = (mousePosition.x - this->posX) / 100.f;
-
-        if (mousePosition.y < this->posY)
-            this->velocityY = (this->posY - mousePosition.y) / 100.f;
-        else if (mousePosition.y > this->posY)
-            this->velocityY = (mousePosition.y - this->posY) / 100.f;
-
-        std::cout << "Ball position: " << this->posX << " " << this->posY << "\n";
-        std::cout << "Mouse position: " << mousePosition.x << " " << mousePosition.y << "\n";
-        std::cout << "Velocity: " << velocityX << " " << velocityY << "\n";
+        if (mousePositionFloat.y > this->posY)
+            this->velocityY = -(mousePositionFloat.y - this->posY) / 50.f;
+        else if (mousePositionFloat.y < this->posY)
+            this->velocityY = (this->posY - mousePositionFloat.y) / 50.f;
     }
 }
 void Ball::changePosition(float velX, float velY)
 {
-    // this->posX += velX;
-    // this->posY += velY;
+    // Change the value of the position vector
+    this->posX += velX;
+    this->posY += velY;
 
-    // this->ball.setPosition(sf::Vector2f(this->posX, this->posY));
+    // Set the position of the circle to the position vector
+    this->ball.setPosition(sf::Vector2f(this->posX, this->posY));
 
-    // if (!(fabs(this->velocityX) < 0.1f))
-    // {
-    //     this->velocityX -= this->velocityX * velocityProportion * 0.01;
-    // }
-    // else
-    // {
-    //     this->velocityX = 0;
-    // }
+    if (!(fabs(this->velocityX) < 0.05f))
+    {
+        this->velocityX *= 0.991; // szybkosc zmienia sie o 0.09% ale i tak jest problem "Normalizacji" czyli w jednym kierunku szybciej dobija do 0.1 i się zeruje
+    }                             // przez co lekko zakręca, lecz i tak jest to dużo mniejsze niż w przypadku gdy zmieniamy o 0.1
+    else
+    {
+        this->velocityX = 0;
+    }
+    if (!(fabs(this->velocityY) < 0.05f))
+    {
+        this->velocityY *= 0.991;
+    }
+    else
+    {
+        this->velocityY = 0;
+    }
+}
+void Ball::checkBoardCollision(Board *board)
+{
+    float boardLeft = board->getPosition().x + board->getBorderThickness();
+    float boardRight = board->getPosition().x + board->getSize().x - board->getBorderThickness();
+    float boardTop = board->getPosition().y + board->getBorderThickness();
+    float boardBottom = board->getPosition().y + board->getSize().y - board->getBorderThickness();
 
-    // if (!(fabs(this->velocityY) < 0.1f))
-    // {
-    //     this->velocityY -= this->velocityY * velocityProportion * 0.01;
-    // }
-    // else
-    // {
-    //     this->velocityY = 0;
-    // }
+    float ballLeft = this->getPosition().x;
+    float ballRight = this->getPosition().x + this->getSize().x;
+    float ballTop = this->getPosition().y;
+    float ballBottom = this->getPosition().y + this->getSize().y;
 
-    // float velocityValue = sqrt(this->velocityX * this->velocityX + this->velocityY * this->velocityY);
-    // std::cout << "Velocity value: " << velocityValue << "\n";
+    if (ballLeft <= boardLeft)
+    {
+        this->velocityX *= -1;
+        this->posX = boardLeft + this->getSize().x / 2.f;
+    }
+    else if (ballRight >= boardRight)
+    {
+        this->velocityX *= -1;
+        this->posX = boardRight - this->getSize().x / 2.f;
+    }
 
-    // // if (!(fabs(this->velocityX) < 0.01f))
-    // if (!(fabs(this->velocityX) < 0.1f))
-    // {
-    //     // Calculate proportion
-    //     this->velocityX -= (this->velocityX * velocityValue) / 10;
-    //     // this->velocityX *= 0.991; // szybkosc zmienia sie o 0.09% ale i tak jest problem "Normalizacji" czyli w jednym kierunku szybciej dobija do 0.1 i się zeruje
-    // } // przez co lekko zakręca, lecz i tak jest to dużo mniejsze niż w przypadku gdy zmieniamy o 0.1
-    // else
-    // {
-    //     this->velocityX = 0;
-    // }
-    // // if (!(fabs(this->velocityY) < 0.01f))
-    // if (!(fabs(this->velocityY) < 0.1f))
-    // {
-    //     // Calculate proportion
-    //     float velocityValue = sqrt(this->velocityX * this->velocityX + this->velocityY * this->velocityY);
-    //     // this->velocityY *= 0.991;
-    //     this->velocityY -= (this->velocityY * velocityValue) / 10;
-    // }
-    // else
-    // {
-    //     this->velocityY = 0;
-    // }
+    if (ballTop <= boardTop)
+    {
+        this->velocityY *= -1;
+        this->posY = boardTop + this->getSize().y / 2.f;
+    }
+    else if (ballBottom >= boardBottom)
+    {
+        this->velocityY *= -1;
+        this->posY = boardBottom - this->getSize().y / 2.f;
+    }
 }
 
-void Ball::update(sf::WindowBase *window)
+void Ball::update(sf::WindowBase *window, Board *board)
 {
     this->setVelocity(window);
     this->changePosition(this->velocityX, this->velocityY);
+    this->checkBoardCollision(board);
 }
 void Ball::draw(sf::RenderTarget *target)
 {

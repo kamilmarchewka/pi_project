@@ -23,6 +23,7 @@ public:
 
     sf::Vector2f getPosition();
     sf::Vector2f getSize();
+    float getBorderThickness();
 
     void draw(sf::RenderTarget *target);
 };
