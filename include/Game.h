@@ -10,6 +10,7 @@
 // Game includes
 #include "Board.h"
 #include "Ball.h"
+#include "Button.h"
 
 /**
  * Game class
@@ -34,6 +35,9 @@ private:
     // Other objects
     Board board;
     Ball ball;
+
+    // Home screen
+    Button playBtn;
 
     void initVariables();
     void initWindow();

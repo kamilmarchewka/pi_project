@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "Board.h"
+
 extern float W_WIDTH;
 extern float W_HEIGHT;
 extern int GAME_STATE;
@@ -86,6 +87,7 @@ void Game::render()
     {
     case 0: // Show home screen
         this->window->draw(this->backgroundSprite);
+        this->playBtn.draw(this->window);
         break;
 
     case 1: // Show game screen with obard

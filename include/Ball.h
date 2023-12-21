@@ -1,3 +1,5 @@
+#ifndef BALL_H
+#define BALL_H
 #include <SFML/Graphics.hpp>
 
 #include "Board.h"
@@ -31,3 +33,4 @@ public:
 
     void draw(sf::RenderTarget *target);
 };
+#endif
