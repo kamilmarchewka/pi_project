@@ -7,13 +7,13 @@
 class Ball
 {
 private:
-    float size;
     float posX;
     float posY;
     float velocityX;
     float velocityY;
 
-    sf::RectangleShape ball;
+    sf::Texture texture;
+    sf::Sprite sprite;
 
     void initVariables();
     void initShape();

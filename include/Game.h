@@ -31,11 +31,11 @@ private:
     sf::Texture *bgImageTexture, *playBtnTexture, *optionsBtnTexture, *levelsBtnTexture;
 
     // Sprites
-    sf::Sprite backgroundSprite;
+    sf::Sprite *backgroundSprite;
 
     // Other Game objects
     // Board board;
-    // Ball ball;
+    Ball *ball;
 
     void initVariables();
     void initWindow();
@@ -44,6 +44,9 @@ private:
 public:
     Game();
     ~Game();
+
+    void initScreen(int screen);
+    void destroyScreen(int screen);
 
     const bool isRunning() const;
     void poolEvents();

@@ -16,9 +16,6 @@ Ball::~Ball() {}
 
 void Ball::initVariables()
 {
-    this->size = 20;
-    // this->posX = 0;
-    // this->posY = 0;
     this->posX = W_WIDTH / 2;
     this->posY = W_HEIGHT / 2;
     this->velocityX = 0;
@@ -26,19 +23,22 @@ void Ball::initVariables()
 }
 void Ball::initShape()
 {
-    this->ball.setSize(sf::Vector2f(this->size, this->size));
-    this->ball.setOrigin(sf::Vector2f(this->size / 2.f, this->size / 2.f));
-    this->ball.setPosition(sf::Vector2f(this->posX, this->posY));
-    this->ball.setFillColor(sf::Color::Yellow);
+    this->texture.loadFromFile("assets/v2/ball_white.png");
+    this->texture.setSmooth(true);
+    this->sprite.setTexture(this->texture);
+
+    this->sprite.setOrigin(sf::Vector2f(this->sprite.getGlobalBounds().width / 2.f, this->sprite.getGlobalBounds().height / 2.f));
+    this->sprite.setPosition(sf::Vector2f(this->posX, this->posY));
+    // this->sprite.setScale(sf::Vector2f(.95f, .95f));
 }
 
 sf::Vector2f Ball::getPosition()
 {
-    return this->ball.getGlobalBounds().getPosition();
+    return this->sprite.getGlobalBounds().getPosition();
 };
 sf::Vector2f Ball::getSize()
 {
-    return this->ball.getGlobalBounds().getSize();
+    return this->sprite.getGlobalBounds().getSize();
 }
 
 void Ball::setVelocity(sf::WindowBase *window)
@@ -67,7 +67,7 @@ void Ball::changePosition(float velX, float velY)
     this->posY += velY;
 
     // Set the position of the circle to the position vector
-    this->ball.setPosition(sf::Vector2f(this->posX, this->posY));
+    this->sprite.setPosition(sf::Vector2f(this->posX, this->posY));
 
     if (!(fabs(this->velocityX) < 0.05f))
     {
@@ -125,9 +125,9 @@ void Ball::update(sf::WindowBase *window, Board *board)
 {
     this->setVelocity(window);
     this->changePosition(this->velocityX, this->velocityY);
-    this->checkBoardCollision(board);
+    // this->checkBoardCollision(board);
 }
 void Ball::draw(sf::RenderTarget *target)
 {
-    target->draw(this->ball);
+    target->draw(this->sprite);
 }

@@ -16,8 +16,7 @@ Game::Game()
     this->initWindow();
     this->initTextures();
 
-    this->backgroundSprite.setTexture(*this->bgImageTexture);
-    this->backgroundSprite.setPosition(sf::Vector2f(0, W_HEIGHT - this->backgroundSprite.getGlobalBounds().height));
+    this->initScreen(0);
 }
 
 Game::~Game()
@@ -27,6 +26,10 @@ Game::~Game()
     delete this->playBtnTexture;
     delete this->optionsBtnTexture;
     delete this->levelsBtnTexture;
+
+    // Delete screens
+    this->destroyScreen(0);
+    this->destroyScreen(1);
 
     // Delete window
     delete this->window;
@@ -93,9 +96,45 @@ void Game::poolEvents()
     }
 }
 
+void Game::initScreen(int screen)
+{
+    switch (screen)
+    {
+    case 0: // Home screen
+        this->backgroundSprite = new sf::Sprite();
+        this->backgroundSprite->setTexture(*this->bgImageTexture);
+        this->backgroundSprite->setPosition(sf::Vector2f(0, W_HEIGHT - this->backgroundSprite->getGlobalBounds().height));
+        break;
+    case 1: // Game screen
+        this->ball = new Ball();
+        break;
+    }
+}
+void Game::destroyScreen(int screen)
+{
+    switch (screen)
+    {
+    case 0: // Home screen
+        delete this->backgroundSprite;
+        break;
+    case 1: // Game screen
+        delete this->ball;
+        break;
+    }
+}
+
 void Game::update()
 {
     this->poolEvents();
+
+    switch (GAME_STATE)
+    {
+    case 0: // Home screen
+        break;
+    case 1: // Game screen
+        this->ball->update(this->window, NULL);
+        break;
+    }
 }
 
 void Game::render()
@@ -106,13 +145,13 @@ void Game::render()
     switch (GAME_STATE)
     {
     case 0: // Show home screen
-        this->window->draw(this->backgroundSprite);
+        this->window->draw(*this->backgroundSprite);
         break;
 
     case 1: // Show game screen with obard
         // Render stuff
         // this->board.draw(this->window);
-        // this->ball.draw(this->window);
+        this->ball->draw(this->window);
         break;
     }
 
