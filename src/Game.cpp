@@ -7,12 +7,18 @@
 #include "Board.h"
 extern float W_WIDTH;
 extern float W_HEIGHT;
+extern int GAME_STATE;
 
 // Constructor and destructor
 Game::Game()
 {
     initVariables();
     initWindow();
+
+    this->bgImageTexture.loadFromFile("assets/v2/background.png");
+
+    this->backgroundSprite.setTexture(this->bgImageTexture);
+    this->backgroundSprite.setPosition(sf::Vector2f(0, W_HEIGHT - this->backgroundSprite.getGlobalBounds().height));
 }
 
 Game::~Game()
@@ -73,12 +79,21 @@ void Game::update()
 
 void Game::render()
 {
-    // Clear the window with black color
-    this->window->clear();
+    // Clear the window with green color
+    this->window->clear(sf::Color(168, 202, 89, 255));
 
-    // Render stuff
-    this->board.draw(this->window);
-    this->ball.draw(this->window);
+    switch (GAME_STATE)
+    {
+    case 0: // Show home screen
+        this->window->draw(this->backgroundSprite);
+        break;
+
+    case 1: // Show game screen with obard
+        // Render stuff
+        this->board.draw(this->window);
+        this->ball.draw(this->window);
+        break;
+    }
 
     // Display everything that has been drawn
     this->window->display();

@@ -20,12 +20,17 @@ class Game
 {
 private:
     // Variables
+    int STATE;
     sf::RenderWindow *window; // Pointer to a window object
     sf::VideoMode videoMode;  // Video mode object, holds width and height of the window
     std::string title;        // Title of the window
     // Variable for holding sfml events
     sf::Event event;
 
+    // Textures
+    sf::Texture bgImageTexture;
+    // Sprites
+    sf::Sprite backgroundSprite;
     // Other objects
     Board board;
     Ball ball;

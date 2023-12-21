@@ -10,6 +10,11 @@
 // Consts
 float W_WIDTH = 1200;
 float W_HEIGHT = 700;
+/**
+ * 0 - home screan
+ * 1 - playing
+ */
+int GAME_STATE = 0;
 
 /**
  * Main entry point of the application
