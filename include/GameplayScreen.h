@@ -27,6 +27,8 @@ private:
 
     Ball *ball; // Pointer do pilki
 
+    void initAssets();
+
 public:
     GameplayScreen(int lvl);
     ~GameplayScreen();
