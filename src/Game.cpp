@@ -2,13 +2,20 @@
 #include "Game.h"
 #include "GameplayScreen.h"
 
-Game::Game()
+extern int lvl1;
+extern int lvl1Strokes;
+extern int lvl1Map[8][16];
+//----------------- 2 ---------------
+extern int lvl2;
+extern int lvl2Strokes;
+extern int lvl2Map[8][16];
+//----------------- 3 ---------------
+extern int lvl3;
+extern int lvl3Strokes;
+extern int lvl3Map[8][16];
+
+void Game::initAssets()
 {
-    this->gameScreen = 0; // Zaczecie gry na ekranie z menu glownym
-
-    this->window.create(sf::VideoMode(1200, 700), "MiniGolf", sf::Style::Default); // Inicjalizacja okna
-    this->window.setFramerateLimit(30);                                            // Ustawienie limitu klatek do 30 fps
-
     // Ladowanie textur
     // Tlo
     if (!(this->mainBgTexture.loadFromFile("assets/background.png")))
@@ -35,6 +42,17 @@ Game::Game()
     if (!(this->exitBtnTexture.loadFromFile("assets/exit_icon.png")))
         std::cout << "ERROR::TEXTURES - exit_icon.png\n";
     this->exitBtnTexture.setSmooth(true); // Wyrownanie krawedzi
+}
+
+Game::Game()
+{
+    this->gameScreen = 0; // Zaczecie gry na ekranie z menu glownym
+
+    this->window.create(sf::VideoMode(1200, 700), "MiniGolf", sf::Style::Default); // Inicjalizacja okna
+    this->window.setFramerateLimit(30);                                            // Ustawienie limitu klatek do 30 fps
+
+    // Zaladowanie tekstur
+    this->initAssets();
 
     // Screen 0 ----------------
     this->mainBg.setTexture(this->mainBgTexture);                                           // Ustawienie tekstury
@@ -47,7 +65,6 @@ Game::Game()
     this->optionsBtn = new Button(this->optionsBtnTexture, sf::Vector2f(600, 530 + menuTopOffset), 3);
 
     // Screen 1 ----------------
-    // this->GameplayScreenLvl1 = new GameplayScreen(1); // Inicjujemy gdy klikniemy przycisk play
 
     // All screens -------------
     this->exitBtn = new Button(this->exitBtnTexture, sf::Vector2f(1200 - 35, 30), 0);
@@ -111,7 +128,7 @@ void Game::update()
         if (this->playBtn->isClicked(this->window))
         {
             this->gameScreen = this->playBtn->getValue();
-            this->GameplayScreenLvl1 = new GameplayScreen(1);
+            this->GameplayScreenLvl1 = new GameplayScreen(lvl1, lvl1Strokes, lvl1Map);
         }
         else if (this->lvlsBtn->isClicked(this->window))
         {

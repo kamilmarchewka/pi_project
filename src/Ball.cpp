@@ -24,13 +24,25 @@ sf::Vector2f Ball::getVelocity()
 {
     return this->velocity;
 }
-void Ball::setVelocity(sf::Vector2f newVelocity)
+void Ball::setVelocityX(float newVel)
 {
-    this->velocity = newVelocity;
+    this->velocity.x = newVel;
 }
-void Ball::setPosition(sf::Vector2f newPos)
+void Ball::setVelocityY(float newVel)
 {
-    this->ball.setPosition(newPos);
+    this->velocity.y = newVel;
+}
+void Ball::setPositionX(float newPos)
+{
+    this->ball.setPosition(sf::Vector2f(
+        newPos,
+        this->ball.getPosition().y));
+}
+void Ball::setPositionY(float newPos)
+{
+    this->ball.setPosition(sf::Vector2f(
+        this->ball.getPosition().x,
+        newPos));
 }
 
 void Ball::update(sf::WindowBase &window)
@@ -43,9 +55,9 @@ void Ball::update(sf::WindowBase &window)
         sf::Vector2f ballPos = this->ball.getPosition();
 
         // Mysz w stosunku do pilki - z lewej strony lub z prawej strony
-        this->velocity.x = (ballPos.x - mousePos.x) / 10.f;
+        this->velocity.x = (ballPos.x - mousePos.x) / 5.f;
         // Mysz w stosunku do pilki - nad lub pod pilka
-        this->velocity.y = (ballPos.y - mousePos.y) / 10.f;
+        this->velocity.y = (ballPos.y - mousePos.y) / 5.f;
 
         // TODO zmniejszenie liczby strokeow
     }
@@ -53,13 +65,14 @@ void Ball::update(sf::WindowBase &window)
     // Move
     this->ball.move(this->velocity);
 
-    // Zmniejszenie velocity
-    if (fabs(this->velocity.x) < 0.1f)
-        this->velocity.x = 0.f;
-    if (fabs(this->velocity.y) < 0.1f)
-        this->velocity.y = 0.f;
+    // Zachamowanie pilki przy zbyt malym velocity
+    float velocityTollerance = 0.35f; // jezeli ktorakolwiek z wartosci velocity jest mniejsza, pilka stanie
+    if (fabs(this->velocity.x) >= fabs(this->velocity.y) && fabs(this->velocity.x) < velocityTollerance)
+        this->velocity = sf::Vector2f(0, 0);
+    else if (fabs(this->velocity.x) < fabs(this->velocity.y) && fabs(this->velocity.y) < velocityTollerance)
+        this->velocity = sf::Vector2f(0, 0);
 
-    this->velocity *= 0.9f;
+    this->velocity *= 0.96f;
 }
 void Ball::render(sf::RenderTarget &target)
 {

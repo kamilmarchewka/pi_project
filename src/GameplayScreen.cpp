@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "GameplayScreen.h"
 
-GameplayScreen::GameplayScreen(int lvl)
+void GameplayScreen::initAssets()
 {
     // Ladowanie fontow
     if (!(this->font.loadFromFile("assets/fonts/Inter-SemiBold.ttf")))
@@ -21,12 +21,9 @@ GameplayScreen::GameplayScreen(int lvl)
     if (!(this->whiteBallTexture.loadFromFile("assets/ball_white.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - ball_white.png\n";
     this->whiteBallTexture.setSmooth(true);
-
-    // Inicjalizacja zmiennych
-    this->currentLvl = 1;
-    this->strokesLimit = 10;
-    this->borderThickness = 15; // Grubosc drewnianego ogrodzenia
-
+}
+void GameplayScreen::initCourse()
+{
     // Inicjalizaja pola
     this->course.setFillColor(sf::Color(146, 186, 59, 255)); // Kolor
     this->course.setSize(sf::Vector2f(1000, 500));           // Rozmiar
@@ -35,7 +32,9 @@ GameplayScreen::GameplayScreen(int lvl)
 
     this->course.setOutlineColor(sf::Color(108, 88, 76, 255));
     this->course.setOutlineThickness(this->borderThickness);
-
+}
+void GameplayScreen::initLvlTitle()
+{
     // Inicjalizacja tytulu
     sf::String titleString = "Lvl: " + std::to_string(this->currentLvl);
 
@@ -48,7 +47,9 @@ GameplayScreen::GameplayScreen(int lvl)
     this->titleText.setPosition(sf::Vector2f( // Pozycja - nad polem
         1200 / 2,
         this->course.getGlobalBounds().top - 20));
-
+}
+void GameplayScreen::initMaxStrokesTitle()
+{
     // Inicjalizacja maks. liczby uderzen
     sf::String maxStrokesString = "Strzaly: " + std::to_string(this->strokesLimit);
 
@@ -62,9 +63,79 @@ GameplayScreen::GameplayScreen(int lvl)
     this->strokesLimitText.setPosition(sf::Vector2f( // Pozycja - nad polem z lewej strony
         this->course.getGlobalBounds().left,
         this->course.getGlobalBounds().top - 20));
+}
+void GameplayScreen::initObstacklesSprites()
+{
+
+    // 0 - light grass
+    // 1 - dark grass
+    // 2 - rock
+
+    // Dodawania spriteow do odpowiednich vektorow
+    for (int i = 0; i < this->gridRows; i++)
+    {
+        for (int j = 0; j < this->gridCols; j++)
+        {
+            sf::Sprite s;
+
+            // Ustawienie pozycji
+            s.setPosition(sf::Vector2f(
+                this->course.getGlobalBounds().left + this->borderThickness + (j * 62.5),
+                this->course.getGlobalBounds().top + this->borderThickness + (i * 62.5)));
+
+            // Ustawienie tekstury
+            switch (this->logicalMap[i][j])
+            {
+            case 0:
+                s.setTexture(this->grassLightTexture);
+                this->grassVector.push_back(s);
+                break;
+
+            case 1:
+                s.setTexture(this->grassDarkTexture);
+                this->grassVector.push_back(s);
+                break;
+
+            case 2:
+                s.setTexture(this->rockTexture);
+                this->wallsVector.push_back(s);
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+}
+
+GameplayScreen::GameplayScreen(int lvl, int strokesLimit, int logicalMap[8][16])
+{
+    // Ladowanie fontow i tekstur
+    this->initAssets();
+
+    // Inicjalizacja zmiennych
+    this->gridRows = 8;  // Ilosc rzedow
+    this->gridCols = 16; // Ilosc kolumn
+    this->currentLvl = lvl;
+    this->strokesLimit = strokesLimit;
+    for (int i = 0; i < gridRows; i++) // Skopiowanie tablicy, do lokalnej tablicy z logiczna reprezentacja mapy
+        for (int j = 0; j < gridCols; j++)
+        {
+            this->logicalMap[i][j] = logicalMap[i][j];
+        }
+    this->borderThickness = 15; // Grubosc drewnianego ogrodzenia
+
+    // Inicjalizacja pola
+    this->initCourse();
+
+    // Inicjalizacja tytulu z lvlem
+    this->initLvlTitle();
+
+    // Inicjalizacja maks. liczby uderzen
+    this->initMaxStrokesTitle();
 
     // Rysowanie planszy (przeszkod)
-    this->initCourseObstackles();
+    this->initObstacklesSprites();
 
     // Inicjalizacja pilki
     this->ball = new Ball(this->whiteBallTexture);
@@ -75,150 +146,122 @@ GameplayScreen::~GameplayScreen()
     std::cout << "GameplayScreen has been destroyed\n";
 }
 
-void GameplayScreen::initCourseObstackles()
+void GameplayScreen::courseBordersCollision()
 {
-    this->gridRows = 8;  // Ilosc rzedow
-    this->gridCols = 16; // Ilosc kolumn
+    sf::FloatRect courseBounds = this->course.getGlobalBounds();
+    float courseT = courseBounds.top + this->borderThickness;
+    float courseB = courseBounds.top + courseBounds.height - this->borderThickness;
+    float courseL = courseBounds.left + this->borderThickness;
+    float courseR = courseBounds.left + courseBounds.width - this->borderThickness;
 
-    // 0 - light grass
-    // 1 - dark grass
-    // 2 - rock
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds();
 
-    // Logiczna reprezentacja pol
-    int courseGridMap[8][16] = {{0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
-                                {1, 0, 1, 2, 2, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
-                                {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1},
-                                {1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 2, 0, 1, 0},
-                                {0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 2, 1, 0, 1},
-                                {1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0},
-                                {0, 1, 0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 2, 1, 0, 1},
-                                {1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 2, 0, 1, 0}};
-
-    // Tworzenie dynamicznej tablicy spriteow
-    for (int i = 0; i < this->gridRows; i++)
+    // Gora
+    if (ballBounds.top <= courseT)
     {
-        for (int j = 0; j < this->gridCols; j++)
+        this->ball->setPositionY(courseT + ballBounds.height / 2);
+        this->ball->setVelocityY(this->ball->getVelocity().y * -1);
+    }
+    // Dol
+    else if (ballBounds.top + ballBounds.height >= courseB)
+    {
+        this->ball->setPositionY(courseB - ballBounds.height / 2);
+        this->ball->setVelocityY(this->ball->getVelocity().y * -1);
+    }
+    // Lewo
+    if (ballBounds.left <= courseL)
+    {
+        this->ball->setPositionX(courseL + ballBounds.width / 2);
+        this->ball->setVelocityX(this->ball->getVelocity().x * -1);
+    }
+    // Prawo
+    else if (ballBounds.left + ballBounds.width >= courseR)
+    {
+        this->ball->setPositionX(courseR - ballBounds.width / 2);
+        this->ball->setVelocityX(this->ball->getVelocity().x * -1);
+    }
+}
+void GameplayScreen::wallsCollision()
+{
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+    sf::FloatRect nextPosBounds = ballBounds;                 // Pozycja pilki w NASTEPNEJ klatce
+    nextPosBounds.left += this->ball->getVelocity().x;
+    nextPosBounds.top += this->ball->getVelocity().y;
+
+    for (int i = 0; i < this->wallsVector.size(); i++)
+    {
+        sf::FloatRect wallBounds = wallsVector[i].getGlobalBounds();
+
+        // Sprawdzenie czy w nastepnej klatce nastapi kolizja
+        if (nextPosBounds.intersects(wallBounds))
         {
-            sf::Sprite s;
-
-            switch (courseGridMap[i][j])
+            // Lewa
+            if (
+                ballBounds.left < wallBounds.left &&
+                ballBounds.left + ballBounds.width < wallBounds.left + wallBounds.width &&
+                ballBounds.top < wallBounds.top + wallBounds.height &&
+                ballBounds.top + ballBounds.height > wallBounds.top)
             {
-            case 0:
-                s.setTexture(this->grassLightTexture);
-                break;
-
-            case 1:
-                s.setTexture(this->grassDarkTexture);
-                break;
-
-            case 2:
-                s.setTexture(this->rockTexture);
-                break;
-
-            default:
-                break;
+                nextPosBounds = ballBounds;
+                this->ball->setVelocityX(this->ball->getVelocity().x * -1);
+            }
+            // Prawa
+            else if (
+                ballBounds.left > wallBounds.left &&
+                ballBounds.left + ballBounds.width > wallBounds.left + wallBounds.width &&
+                ballBounds.top < wallBounds.top + wallBounds.height &&
+                ballBounds.top + ballBounds.height > wallBounds.top)
+            {
+                nextPosBounds = ballBounds;
+                this->ball->setVelocityX(this->ball->getVelocity().x * -1);
             }
 
-            s.setPosition(sf::Vector2f(
-                this->course.getGlobalBounds().left + this->borderThickness + (j * 62.5),
-                this->course.getGlobalBounds().top + this->borderThickness + (i * 62.5)));
-
-            courseGrid[i][j] = s;
+            // Gora
+            if (
+                ballBounds.top < wallBounds.top &&
+                ballBounds.top + ballBounds.height < wallBounds.top + wallBounds.height &&
+                ballBounds.left < wallBounds.left + wallBounds.width &&
+                ballBounds.left + ballBounds.width > wallBounds.left)
+            {
+                nextPosBounds = ballBounds;
+                this->ball->setVelocityY(this->ball->getVelocity().y * -1);
+            }
+            // Dol
+            else if (
+                ballBounds.top > wallBounds.top &&
+                ballBounds.top + ballBounds.height > wallBounds.top + wallBounds.height &&
+                ballBounds.left < wallBounds.left + wallBounds.width &&
+                ballBounds.left + ballBounds.width > wallBounds.left)
+            {
+                nextPosBounds = ballBounds;
+                this->ball->setVelocityY(this->ball->getVelocity().y * -1);
+            }
         }
     }
 }
-
 void GameplayScreen::update(sf::WindowBase &window)
 {
     // TODO: To sie musi brac z jednego miejsca
-    int courseGridMap[8][16] = {{0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
-                                {1, 0, 1, 2, 2, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
-                                {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1},
-                                {1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 2, 0, 1, 0},
-                                {0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 2, 1, 0, 1},
-                                {1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0},
-                                {0, 1, 0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 2, 1, 0, 1},
-                                {1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 2, 0, 1, 0}};
+
+    this->wallsCollision();
 
     this->ball->update(window);
 
-    // Sprawdzenie kolizji
-    float courseWidth = this->course.getGlobalBounds().width - this->borderThickness * 2;
-    float courseHeight = this->course.getGlobalBounds().height - this->borderThickness * 2;
-    float courseL = this->course.getGlobalBounds().left + this->borderThickness;
-    float courseR = courseL + courseWidth;
-    float courseT = this->course.getGlobalBounds().top + this->borderThickness;
-    float courseB = courseT + courseHeight;
-
-    float ballRadius = this->ball->getGlobalBounds().width / 2;
-    float ballL = this->ball->getGlobalBounds().left;
-    float ballR = ballL + ballRadius * 2;
-    float ballT = this->ball->getGlobalBounds().top;
-    float ballB = ballT + ballRadius * 2;
-    // Z plansza
-    if (ballL <= courseL)
-    {
-        this->ball->setPosition(sf::Vector2f(
-            courseL + ballRadius,
-            ballT + ballRadius));
-        this->ball->setVelocity(sf::Vector2f(
-            this->ball->getVelocity().x * -1,
-            this->ball->getVelocity().y));
-    }
-    else if (ballR >= courseR)
-    {
-        this->ball->setPosition(sf::Vector2f(
-            courseR - ballRadius,
-            ballT + ballRadius));
-        this->ball->setVelocity(sf::Vector2f(
-            this->ball->getVelocity().x * -1,
-            this->ball->getVelocity().y));
-    }
-
-    if (ballT <= courseT)
-    {
-        this->ball->setPosition(sf::Vector2f(
-            ballL + ballRadius,
-            courseT + ballRadius));
-        this->ball->setVelocity(sf::Vector2f(
-            this->ball->getVelocity().x,
-            this->ball->getVelocity().y * -1));
-    }
-    else if (ballB >= courseB)
-    {
-        this->ball->setPosition(sf::Vector2f(
-            ballL + ballRadius,
-            courseB - ballRadius));
-        this->ball->setVelocity(sf::Vector2f(
-            this->ball->getVelocity().x,
-            this->ball->getVelocity().y * -1));
-    }
-
-    // Ze spriteami
-    // TODO odbijanie se od rogow
-    for (int i = 0; i < this->gridRows; i++)
-    {
-        for (int j = 0; j < this->gridCols; j++)
-        {
-            // Z kamieniami (odbijanie sie)
-            if (courseGridMap[i][j] == 2) // Sprawdzenie czy to jest kamien
-            {
-                sf::FloatRect ballBounds = this->ball->getGlobalBounds();
-                sf::FloatRect rockBounds = this->courseGrid[i][j].getGlobalBounds();
-            }
-        }
-    }
+    // Kolizja z polem
+    this->courseBordersCollision();
 }
+
 void GameplayScreen::render(sf::RenderTarget &target)
 {
     target.draw(this->course);
     target.draw(this->titleText);
     target.draw(this->strokesLimitText);
 
-    // Draw course with obstacles
-    for (int i = 0; i < this->gridRows; i++)
-        for (int j = 0; j < this->gridCols; j++)
-            target.draw(this->courseGrid[i][j]);
+    // Rysowanie wszystkich spriteow
+    for (int i = 0; i < this->grassVector.size(); i++) // Trawa
+        target.draw(grassVector[i]);
+    for (int i = 0; i < this->wallsVector.size(); i++) // Sciany
+        target.draw(wallsVector[i]);
 
     this->ball->render(target);
 }
