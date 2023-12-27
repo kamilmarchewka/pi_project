@@ -34,12 +34,14 @@ private:
     void initCourse();
     void initLvlTitle();
     void initMaxStrokesTitle();
+    void initObstacklesSprites();
+
+    void courseBordersCollision();
+    void wallsCollision();
 
 public:
     GameplayScreen(int lvl, int strokesLimit, int logicalMap[8][16]);
     ~GameplayScreen();
-
-    void initObstacklesSprites();
 
     void update(sf::WindowBase &window);
     void render(sf::RenderTarget &target);

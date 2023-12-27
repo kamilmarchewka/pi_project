@@ -146,47 +146,109 @@ GameplayScreen::~GameplayScreen()
     std::cout << "GameplayScreen has been destroyed\n";
 }
 
+void GameplayScreen::courseBordersCollision()
+{
+    sf::FloatRect courseBounds = this->course.getGlobalBounds();
+    float courseT = courseBounds.top + this->borderThickness;
+    float courseB = courseBounds.top + courseBounds.height - this->borderThickness;
+    float courseL = courseBounds.left + this->borderThickness;
+    float courseR = courseBounds.left + courseBounds.width - this->borderThickness;
+
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds();
+
+    // Gora
+    if (ballBounds.top <= courseT)
+    {
+        this->ball->setPositionY(courseT + ballBounds.height / 2);
+        this->ball->setVelocityY(this->ball->getVelocity().y * -1);
+    }
+    // Dol
+    else if (ballBounds.top + ballBounds.height >= courseB)
+    {
+        this->ball->setPositionY(courseB - ballBounds.height / 2);
+        this->ball->setVelocityY(this->ball->getVelocity().y * -1);
+    }
+    // Lewo
+    if (ballBounds.left <= courseL)
+    {
+        this->ball->setPositionX(courseL + ballBounds.width / 2);
+        this->ball->setVelocityX(this->ball->getVelocity().x * -1);
+    }
+    // Prawo
+    else if (ballBounds.left + ballBounds.width >= courseR)
+    {
+        this->ball->setPositionX(courseR - ballBounds.width / 2);
+        this->ball->setVelocityX(this->ball->getVelocity().x * -1);
+    }
+}
+void GameplayScreen::wallsCollision()
+{
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+    sf::FloatRect nextPosBounds = ballBounds;                 // Pozycja pilki w NASTEPNEJ klatce
+    nextPosBounds.left += this->ball->getVelocity().x;
+    nextPosBounds.top += this->ball->getVelocity().y;
+
+    for (int i = 0; i < this->wallsVector.size(); i++)
+    {
+        sf::FloatRect wallBounds = wallsVector[i].getGlobalBounds();
+
+        // Sprawdzenie czy w nastepnej klatce nastapi kolizja
+        if (nextPosBounds.intersects(wallBounds))
+        {
+            // Lewa
+            if (
+                ballBounds.left < wallBounds.left &&
+                ballBounds.left + ballBounds.width < wallBounds.left + wallBounds.width &&
+                ballBounds.top < wallBounds.top + wallBounds.height &&
+                ballBounds.top + ballBounds.height > wallBounds.top)
+            {
+                nextPosBounds = ballBounds;
+                this->ball->setVelocityX(this->ball->getVelocity().x * -1);
+            }
+            // Prawa
+            else if (
+                ballBounds.left > wallBounds.left &&
+                ballBounds.left + ballBounds.width > wallBounds.left + wallBounds.width &&
+                ballBounds.top < wallBounds.top + wallBounds.height &&
+                ballBounds.top + ballBounds.height > wallBounds.top)
+            {
+                nextPosBounds = ballBounds;
+                this->ball->setVelocityX(this->ball->getVelocity().x * -1);
+            }
+
+            // Gora
+            if (
+                ballBounds.top < wallBounds.top &&
+                ballBounds.top + ballBounds.height < wallBounds.top + wallBounds.height &&
+                ballBounds.left < wallBounds.left + wallBounds.width &&
+                ballBounds.left + ballBounds.width > wallBounds.left)
+            {
+                nextPosBounds = ballBounds;
+                this->ball->setVelocityY(this->ball->getVelocity().y * -1);
+            }
+            // Dol
+            else if (
+                ballBounds.top > wallBounds.top &&
+                ballBounds.top + ballBounds.height > wallBounds.top + wallBounds.height &&
+                ballBounds.left < wallBounds.left + wallBounds.width &&
+                ballBounds.left + ballBounds.width > wallBounds.left)
+            {
+                nextPosBounds = ballBounds;
+                this->ball->setVelocityY(this->ball->getVelocity().y * -1);
+            }
+        }
+    }
+}
 void GameplayScreen::update(sf::WindowBase &window)
 {
     // TODO: To sie musi brac z jednego miejsca
 
+    this->wallsCollision();
+
     this->ball->update(window);
 
-    // Sprawdzenie kolizji
-    float courseWidth = this->course.getGlobalBounds().width - this->borderThickness * 2;
-    float courseHeight = this->course.getGlobalBounds().height - this->borderThickness * 2;
-    float courseL = this->course.getGlobalBounds().left + this->borderThickness;
-    float courseR = courseL + courseWidth;
-    float courseT = this->course.getGlobalBounds().top + this->borderThickness;
-    float courseB = courseT + courseHeight;
-
-    float ballRadius = this->ball->getGlobalBounds().width / 2;
-    float ballL = this->ball->getGlobalBounds().left;
-    float ballR = ballL + ballRadius * 2;
-    float ballT = this->ball->getGlobalBounds().top;
-    float ballB = ballT + ballRadius * 2;
-    // Z plansza
-    if (ballL <= courseL)
-    {
-        this->ball->setPositionX(courseL + ballRadius);
-        this->ball->setVelocityX(this->ball->getVelocity().x * -1);
-    }
-    else if (ballR >= courseR)
-    {
-        this->ball->setPositionX(courseR - ballRadius);
-        this->ball->setVelocityX(this->ball->getVelocity().x * -1);
-    }
-
-    if (ballT <= courseT)
-    {
-        this->ball->setPositionY(courseT + ballRadius);
-        this->ball->setVelocityY(this->ball->getVelocity().y * -1);
-    }
-    else if (ballB >= courseB)
-    {
-        this->ball->setPositionY(courseB - ballRadius);
-        this->ball->setVelocityY(this->ball->getVelocity().y * -1);
-    }
+    // Kolizja z polem
+    this->courseBordersCollision();
 }
 
 void GameplayScreen::render(sf::RenderTarget &target)
