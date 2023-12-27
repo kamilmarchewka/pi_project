@@ -2,6 +2,18 @@
 #include "Game.h"
 #include "GameplayScreen.h"
 
+extern int lvl1;
+extern int lvl1Strokes;
+extern int lvl1Map[8][16];
+//----------------- 2 ---------------
+extern int lvl2;
+extern int lvl2Strokes;
+extern int lvl2Map[8][16];
+//----------------- 3 ---------------
+extern int lvl3;
+extern int lvl3Strokes;
+extern int lvl3Map[8][16];
+
 Game::Game()
 {
     this->gameScreen = 0; // Zaczecie gry na ekranie z menu glownym
