@@ -9,7 +9,6 @@ Ball::Ball(sf::Texture &texture)
         this->ball.getGlobalBounds().height / 2));
 
     this->ball.setPosition(sf::Vector2f(400, 350));
-    this->ball.scale(sf::Vector2f(0.5, 0.5));
 
     this->velocity = sf::Vector2f(0, 0);
 }
@@ -25,13 +24,25 @@ sf::Vector2f Ball::getVelocity()
 {
     return this->velocity;
 }
-void Ball::setVelocity(sf::Vector2f newVelocity)
+void Ball::setVelocityX(float newVel)
 {
-    this->velocity = newVelocity;
+    this->velocity.x = newVel;
 }
-void Ball::setPosition(sf::Vector2f newPos)
+void Ball::setVelocityY(float newVel)
 {
-    this->ball.setPosition(newPos);
+    this->velocity.y = newVel;
+}
+void Ball::setPositionX(float newPos)
+{
+    this->ball.setPosition(sf::Vector2f(
+        newPos,
+        this->ball.getPosition().y));
+}
+void Ball::setPositionY(float newPos)
+{
+    this->ball.setPosition(sf::Vector2f(
+        this->ball.getPosition().x,
+        newPos));
 }
 
 void Ball::update(sf::WindowBase &window)
@@ -60,7 +71,7 @@ void Ball::update(sf::WindowBase &window)
     if (fabs(this->velocity.y) < 0.1f)
         this->velocity.y = 0.f;
 
-    this->velocity *= 0.9f;
+    this->velocity *= 0.95f;
 }
 void Ball::render(sf::RenderTarget &target)
 {

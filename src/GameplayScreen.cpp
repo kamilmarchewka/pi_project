@@ -140,74 +140,6 @@ void GameplayScreen::update(sf::WindowBase &window)
                                 {0, 1, 0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 2, 1, 0, 1},
                                 {1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 2, 0, 1, 0}};
 
-    // Ze spriteami
-    // TODO odbijanie se od rogow
-    for (int i = 0; i < this->gridRows; i++)
-    {
-        for (int j = 0; j < this->gridCols; j++)
-        {
-            // Z kamieniami (odbijanie sie)
-            if (courseGridMap[i][j] == 2) // Sprawdzenie czy to jest kamien
-            {
-                sf::FloatRect ballBounds = this->ball->getGlobalBounds();
-                sf::FloatRect rockBounds = this->courseGrid[i][j].getGlobalBounds();
-
-                // W co uderzyla pilka
-                float top = fabs(ballBounds.top + ballBounds.height - rockBounds.top);
-                float right = fabs(rockBounds.left + rockBounds.width - ballBounds.left);
-                float bottom = fabs(rockBounds.top + rockBounds.height - ballBounds.top);
-                float left = fabs(ballBounds.left + ballBounds.width - rockBounds.left);
-
-                if (ballBounds.intersects(rockBounds))
-                {
-                    // Gora
-                    if (
-                        top < right && top < bottom && top < left)
-                    {
-                        this->ball->setPosition(sf::Vector2f(
-                            ballBounds.left + ballBounds.width / 2,
-                            rockBounds.top - ballBounds.height / 2));
-                        this->ball->setVelocity(sf::Vector2f(
-                            this->ball->getVelocity().x,
-                            this->ball->getVelocity().y * -1));
-                    }
-                    // Prawo
-                    else if (
-                        right < bottom && right < left && right < top)
-                    {
-                        this->ball->setPosition(sf::Vector2f(
-                            rockBounds.left + rockBounds.width + ballBounds.width / 2,
-                            ballBounds.top + ballBounds.height / 2));
-                        this->ball->setVelocity(sf::Vector2f(
-                            this->ball->getVelocity().x * -1,
-                            this->ball->getVelocity().y));
-                    }
-                    // Dol
-                    else if (
-                        bottom < left && bottom < top && bottom < right)
-                    {
-                        this->ball->setPosition(sf::Vector2f(
-                            ballBounds.left + ballBounds.width / 2,
-                            rockBounds.top + rockBounds.height + ballBounds.height / 2));
-                        this->ball->setVelocity(sf::Vector2f(
-                            this->ball->getVelocity().x,
-                            this->ball->getVelocity().y * -1));
-                    }
-                    // Lewo
-                    else if (left < top && left < right && left < bottom)
-                    {
-                        this->ball->setPosition(sf::Vector2f(
-                            rockBounds.left - ballBounds.width / 2,
-                            ballBounds.top + ballBounds.height / 2));
-                        this->ball->setVelocity(sf::Vector2f(
-                            this->ball->getVelocity().x * -1,
-                            this->ball->getVelocity().y));
-                    }
-                }
-            }
-        }
-    }
-
     this->ball->update(window);
 
     // Sprawdzenie kolizji
@@ -226,40 +158,24 @@ void GameplayScreen::update(sf::WindowBase &window)
     // Z plansza
     if (ballL <= courseL)
     {
-        this->ball->setPosition(sf::Vector2f(
-            courseL + ballRadius,
-            ballT + ballRadius));
-        this->ball->setVelocity(sf::Vector2f(
-            this->ball->getVelocity().x * -1,
-            this->ball->getVelocity().y));
+        this->ball->setPositionX(courseL + ballRadius);
+        this->ball->setVelocityX(this->ball->getVelocity().x * -1);
     }
     else if (ballR >= courseR)
     {
-        this->ball->setPosition(sf::Vector2f(
-            courseR - ballRadius,
-            ballT + ballRadius));
-        this->ball->setVelocity(sf::Vector2f(
-            this->ball->getVelocity().x * -1,
-            this->ball->getVelocity().y));
+        this->ball->setPositionX(courseR - ballRadius);
+        this->ball->setVelocityX(this->ball->getVelocity().x * -1);
     }
 
     if (ballT <= courseT)
     {
-        this->ball->setPosition(sf::Vector2f(
-            ballL + ballRadius,
-            courseT + ballRadius));
-        this->ball->setVelocity(sf::Vector2f(
-            this->ball->getVelocity().x,
-            this->ball->getVelocity().y * -1));
+        this->ball->setPositionY(courseT + ballRadius);
+        this->ball->setVelocityY(this->ball->getVelocity().y * -1);
     }
     else if (ballB >= courseB)
     {
-        this->ball->setPosition(sf::Vector2f(
-            ballL + ballRadius,
-            courseB - ballRadius));
-        this->ball->setVelocity(sf::Vector2f(
-            this->ball->getVelocity().x,
-            this->ball->getVelocity().y * -1));
+        this->ball->setPositionY(courseB - ballRadius);
+        this->ball->setVelocityY(this->ball->getVelocity().y * -1);
     }
 }
 void GameplayScreen::render(sf::RenderTarget &target)

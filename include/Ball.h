@@ -15,8 +15,10 @@ public:
 
     sf::FloatRect getGlobalBounds();
     sf::Vector2f getVelocity();
-    void setVelocity(sf::Vector2f newVelocity);
-    void setPosition(sf::Vector2f newPos);
+    void setVelocityX(float newVel);
+    void setVelocityY(float newVel);
+    void setPositionX(float newPos);
+    void setPositionY(float newPos);
 
     void update(sf::WindowBase &window);
     void render(sf::RenderTarget &target);
