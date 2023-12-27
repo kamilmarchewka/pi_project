@@ -1,33 +1,25 @@
-#include <SFML/Graphics.hpp>
+#ifndef BALL_H
+#define BALL_H
 
-#include "Board.h"
+#include "pch.h"
 
 class Ball
 {
 private:
-    float size;
-    float posX;
-    float posY;
-    float velocityX;
-    float velocityY;
-
-    sf::RectangleShape ball;
-
-    void initVariables();
-    void initShape();
+    sf::Sprite ball;
+    sf::Vector2f velocity;
 
 public:
-    Ball();
+    Ball(sf::Texture &texture);
     ~Ball();
 
-    sf::Vector2f getPosition();
-    sf::Vector2f getSize();
+    sf::FloatRect getGlobalBounds();
+    sf::Vector2f getVelocity();
+    void setVelocity(sf::Vector2f newVelocity);
+    void setPosition(sf::Vector2f newPos);
 
-    void setVelocity(sf::WindowBase *window);
-    void changePosition(float velX, float velY);
-    void checkBoardCollision(Board *board);
-
-    void update(sf::WindowBase *window, Board *board);
-
-    void draw(sf::RenderTarget *target);
+    void update(sf::WindowBase &window);
+    void render(sf::RenderTarget &target);
 };
+
+#endif
