@@ -21,9 +21,12 @@ private:
     sf::Text titleText;        // Naglowek z nr lvlu
     sf::Text strokesLimitText; // Naglowek z liczba pozostalych uderzen
 
-    int gridRows;                 // Liczba rzedow na planszy
-    int gridCols;                 // Liczba kolumn na planszy
-    sf::Sprite spritesMap[8][16]; // Tablica ze spriteami
+    int gridRows; // Liczba rzedow na planszy
+    int gridCols; // Liczba kolumn na planszy
+
+    std::vector<sf::Sprite> wallsVector; // Wektor przechowujacy wszystkie sciany
+    std::vector<sf::Sprite> grassVector; // Wektor przechowujacy trawe jasna i ciemna
+    sf::Sprite spritesMap[8][16];        // Tablica ze spriteami
 
     Ball *ball; // Pointer do pilki
 
@@ -36,7 +39,7 @@ public:
     GameplayScreen(int lvl, int strokesLimit, int logicalMap[8][16]);
     ~GameplayScreen();
 
-    void initCourseObstackles();
+    void initObstacklesSprites();
 
     void update(sf::WindowBase &window);
     void render(sf::RenderTarget &target);

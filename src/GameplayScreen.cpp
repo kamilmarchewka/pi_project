@@ -64,44 +64,46 @@ void GameplayScreen::initMaxStrokesTitle()
         this->course.getGlobalBounds().left,
         this->course.getGlobalBounds().top - 20));
 }
-
-void GameplayScreen::initCourseObstackles()
+void GameplayScreen::initObstacklesSprites()
 {
 
     // 0 - light grass
     // 1 - dark grass
     // 2 - rock
 
-    // Tworzenie dynamicznej tablicy spriteow
+    // Dodawania spriteow do odpowiednich vektorow
     for (int i = 0; i < this->gridRows; i++)
     {
         for (int j = 0; j < this->gridCols; j++)
         {
             sf::Sprite s;
 
+            // Ustawienie pozycji
+            s.setPosition(sf::Vector2f(
+                this->course.getGlobalBounds().left + this->borderThickness + (j * 62.5),
+                this->course.getGlobalBounds().top + this->borderThickness + (i * 62.5)));
+
+            // Ustawienie tekstury
             switch (this->logicalMap[i][j])
             {
             case 0:
                 s.setTexture(this->grassLightTexture);
+                this->grassVector.push_back(s);
                 break;
 
             case 1:
                 s.setTexture(this->grassDarkTexture);
+                this->grassVector.push_back(s);
                 break;
 
             case 2:
                 s.setTexture(this->rockTexture);
+                this->wallsVector.push_back(s);
                 break;
 
             default:
                 break;
             }
-
-            s.setPosition(sf::Vector2f(
-                this->course.getGlobalBounds().left + this->borderThickness + (j * 62.5),
-                this->course.getGlobalBounds().top + this->borderThickness + (i * 62.5)));
-
-            this->spritesMap[i][j] = s;
         }
     }
 }
@@ -133,7 +135,7 @@ GameplayScreen::GameplayScreen(int lvl, int strokesLimit, int logicalMap[8][16])
     this->initMaxStrokesTitle();
 
     // Rysowanie planszy (przeszkod)
-    this->initCourseObstackles();
+    this->initObstacklesSprites();
 
     // Inicjalizacja pilki
     this->ball = new Ball(this->whiteBallTexture);
@@ -193,10 +195,11 @@ void GameplayScreen::render(sf::RenderTarget &target)
     target.draw(this->titleText);
     target.draw(this->strokesLimitText);
 
-    // Draw course with obstacles
-    for (int i = 0; i < this->gridRows; i++)
-        for (int j = 0; j < this->gridCols; j++)
-            target.draw(this->spritesMap[i][j]);
+    // Rysowanie wszystkich spriteow
+    for (int i = 0; i < this->grassVector.size(); i++) // Trawa
+        target.draw(grassVector[i]);
+    for (int i = 0; i < this->wallsVector.size(); i++) // Sciany
+        target.draw(wallsVector[i]);
 
     this->ball->render(target);
 }
