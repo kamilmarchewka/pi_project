@@ -9,6 +9,7 @@ Ball::Ball(sf::Texture &texture)
         this->ball.getGlobalBounds().height / 2));
 
     this->ball.setPosition(sf::Vector2f(400, 350));
+    this->ball.scale(sf::Vector2f(0.5, 0.5));
 
     this->velocity = sf::Vector2f(0, 0);
 }
