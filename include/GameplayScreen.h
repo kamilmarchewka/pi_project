@@ -28,6 +28,9 @@ private:
     Ball *ball; // Pointer do pilki
 
     void initAssets();
+    void initCourse();
+    void initLvlTitle();
+    void initMaxStrokesTitle();
 
 public:
     GameplayScreen(int lvl, int strokesLimit, int logicalMap[8][16]);

@@ -22,6 +22,48 @@ void GameplayScreen::initAssets()
         std::cout << "ERROR::GameplayScreen::TEXTURES - ball_white.png\n";
     this->whiteBallTexture.setSmooth(true);
 }
+void GameplayScreen::initCourse()
+{
+    // Inicjalizaja pola
+    this->course.setFillColor(sf::Color(146, 186, 59, 255)); // Kolor
+    this->course.setSize(sf::Vector2f(1000, 500));           // Rozmiar
+    this->course.setOrigin(sf::Vector2f(1000 / 2, 500 / 2)); // Origin - srodek pola
+    this->course.setPosition(sf::Vector2f(600, 350 + 50));   // Pozycja - srodek ekranu (lekko przesuniete w dol)
+
+    this->course.setOutlineColor(sf::Color(108, 88, 76, 255));
+    this->course.setOutlineThickness(this->borderThickness);
+}
+void GameplayScreen::initLvlTitle()
+{
+    // Inicjalizacja tytulu
+    sf::String titleString = "Lvl: " + std::to_string(this->currentLvl);
+
+    this->titleText.setString(titleString);                   // Napis
+    this->titleText.setFont(this->font);                      // Czcionka
+    this->titleText.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
+    this->titleText.setOrigin(sf::Vector2f(                   // Origin - srodek dolnej krawedzi
+        this->titleText.getGlobalBounds().width / 2,
+        this->titleText.getGlobalBounds().height + 9));
+    this->titleText.setPosition(sf::Vector2f( // Pozycja - nad polem
+        1200 / 2,
+        this->course.getGlobalBounds().top - 20));
+}
+void GameplayScreen::initMaxStrokesTitle()
+{
+    // Inicjalizacja maks. liczby uderzen
+    sf::String maxStrokesString = "Strzaly: " + std::to_string(this->strokesLimit);
+
+    this->strokesLimitText.setString(maxStrokesString);              // Napis
+    this->strokesLimitText.setFont(this->font);                      // Czcionka
+    this->strokesLimitText.setCharacterSize(20);                     // Rozmiar
+    this->strokesLimitText.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
+    this->strokesLimitText.setOrigin(sf::Vector2f(                   // Origin - lewy dol
+        this->strokesLimitText.getGlobalBounds().left,
+        this->strokesLimitText.getGlobalBounds().height));
+    this->strokesLimitText.setPosition(sf::Vector2f( // Pozycja - nad polem z lewej strony
+        this->course.getGlobalBounds().left,
+        this->course.getGlobalBounds().top - 20));
+}
 
 void GameplayScreen::initCourseObstackles()
 {
@@ -79,44 +121,16 @@ GameplayScreen::GameplayScreen(int lvl, int strokesLimit, int logicalMap[8][16])
         {
             this->logicalMap[i][j] = logicalMap[i][j];
         }
-
     this->borderThickness = 15; // Grubosc drewnianego ogrodzenia
 
-    // Inicjalizaja pola
-    this->course.setFillColor(sf::Color(146, 186, 59, 255)); // Kolor
-    this->course.setSize(sf::Vector2f(1000, 500));           // Rozmiar
-    this->course.setOrigin(sf::Vector2f(1000 / 2, 500 / 2)); // Origin - srodek pola
-    this->course.setPosition(sf::Vector2f(600, 350 + 50));   // Pozycja - srodek ekranu (lekko przesuniete w dol)
+    // Inicjalizacja pola
+    this->initCourse();
 
-    this->course.setOutlineColor(sf::Color(108, 88, 76, 255));
-    this->course.setOutlineThickness(this->borderThickness);
-
-    // Inicjalizacja tytulu
-    sf::String titleString = "Lvl: " + std::to_string(this->currentLvl);
-
-    this->titleText.setString(titleString);                   // Napis
-    this->titleText.setFont(this->font);                      // Czcionka
-    this->titleText.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
-    this->titleText.setOrigin(sf::Vector2f(                   // Origin - srodek dolnej krawedzi
-        this->titleText.getGlobalBounds().width / 2,
-        this->titleText.getGlobalBounds().height + 9));
-    this->titleText.setPosition(sf::Vector2f( // Pozycja - nad polem
-        1200 / 2,
-        this->course.getGlobalBounds().top - 20));
+    // Inicjalizacja tytulu z lvlem
+    this->initLvlTitle();
 
     // Inicjalizacja maks. liczby uderzen
-    sf::String maxStrokesString = "Strzaly: " + std::to_string(this->strokesLimit);
-
-    this->strokesLimitText.setString(maxStrokesString);              // Napis
-    this->strokesLimitText.setFont(this->font);                      // Czcionka
-    this->strokesLimitText.setCharacterSize(20);                     // Rozmiar
-    this->strokesLimitText.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
-    this->strokesLimitText.setOrigin(sf::Vector2f(                   // Origin - lewy dol
-        this->strokesLimitText.getGlobalBounds().left,
-        this->strokesLimitText.getGlobalBounds().height));
-    this->strokesLimitText.setPosition(sf::Vector2f( // Pozycja - nad polem z lewej strony
-        this->course.getGlobalBounds().left,
-        this->course.getGlobalBounds().top - 20));
+    this->initMaxStrokesTitle();
 
     // Rysowanie planszy (przeszkod)
     this->initCourseObstackles();
@@ -172,6 +186,7 @@ void GameplayScreen::update(sf::WindowBase &window)
         this->ball->setVelocityY(this->ball->getVelocity().y * -1);
     }
 }
+
 void GameplayScreen::render(sf::RenderTarget &target)
 {
     target.draw(this->course);
