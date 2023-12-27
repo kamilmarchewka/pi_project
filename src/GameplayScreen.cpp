@@ -25,22 +25,10 @@ void GameplayScreen::initAssets()
 
 void GameplayScreen::initCourseObstackles()
 {
-    this->gridRows = 8;  // Ilosc rzedow
-    this->gridCols = 16; // Ilosc kolumn
 
     // 0 - light grass
     // 1 - dark grass
     // 2 - rock
-
-    // Logiczna reprezentacja pol
-    int courseGridMap[8][16] = {{0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
-                                {1, 0, 1, 2, 2, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
-                                {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1},
-                                {1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 2, 0, 1, 0},
-                                {0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 2, 1, 0, 1},
-                                {1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0},
-                                {0, 1, 0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 2, 1, 0, 1},
-                                {1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 2, 0, 1, 0}};
 
     // Tworzenie dynamicznej tablicy spriteow
     for (int i = 0; i < this->gridRows; i++)
@@ -49,7 +37,7 @@ void GameplayScreen::initCourseObstackles()
         {
             sf::Sprite s;
 
-            switch (courseGridMap[i][j])
+            switch (this->logicalMap[i][j])
             {
             case 0:
                 s.setTexture(this->grassLightTexture);
@@ -71,19 +59,27 @@ void GameplayScreen::initCourseObstackles()
                 this->course.getGlobalBounds().left + this->borderThickness + (j * 62.5),
                 this->course.getGlobalBounds().top + this->borderThickness + (i * 62.5)));
 
-            courseGrid[i][j] = s;
+            this->spritesMap[i][j] = s;
         }
     }
 }
 
-GameplayScreen::GameplayScreen(int lvl)
+GameplayScreen::GameplayScreen(int lvl, int strokesLimit, int logicalMap[8][16])
 {
     // Ladowanie fontow i tekstur
     this->initAssets();
 
     // Inicjalizacja zmiennych
-    this->currentLvl = 1;
-    this->strokesLimit = 10;
+    this->gridRows = 8;  // Ilosc rzedow
+    this->gridCols = 16; // Ilosc kolumn
+    this->currentLvl = lvl;
+    this->strokesLimit = strokesLimit;
+    for (int i = 0; i < gridRows; i++) // Skopiowanie tablicy, do lokalnej tablicy z logiczna reprezentacja mapy
+        for (int j = 0; j < gridCols; j++)
+        {
+            this->logicalMap[i][j] = logicalMap[i][j];
+        }
+
     this->borderThickness = 15; // Grubosc drewnianego ogrodzenia
 
     // Inicjalizaja pola
@@ -137,14 +133,6 @@ GameplayScreen::~GameplayScreen()
 void GameplayScreen::update(sf::WindowBase &window)
 {
     // TODO: To sie musi brac z jednego miejsca
-    int courseGridMap[8][16] = {{0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
-                                {1, 0, 1, 2, 2, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
-                                {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1},
-                                {1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 2, 0, 1, 0},
-                                {0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 2, 1, 0, 1},
-                                {1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0},
-                                {0, 1, 0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 2, 1, 0, 1},
-                                {1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 2, 0, 1, 0}};
 
     this->ball->update(window);
 
@@ -193,7 +181,7 @@ void GameplayScreen::render(sf::RenderTarget &target)
     // Draw course with obstacles
     for (int i = 0; i < this->gridRows; i++)
         for (int j = 0; j < this->gridCols; j++)
-            target.draw(this->courseGrid[i][j]);
+            target.draw(this->spritesMap[i][j]);
 
     this->ball->render(target);
 }

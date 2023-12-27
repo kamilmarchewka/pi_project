@@ -47,6 +47,8 @@ private:
     // All screens -------------
     Button *exitBtn;
 
+    void initAssets();
+
 public:
     Game();
     ~Game();
