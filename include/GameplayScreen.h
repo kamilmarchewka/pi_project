@@ -10,7 +10,7 @@ class GameplayScreen
 {
 private:
     sf::Font font;
-    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, whiteBallTexture;
+    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, whiteBallTexture, holeTexture;
 
     int currentLvl;        // Aktualnie wyswietlany lvl
     int strokesLimit;      // Limit uderzen dla danego poziomu
@@ -30,6 +30,8 @@ private:
 
     Ball *ball; // Pointer do pilki
 
+    sf::Sprite hole; // Dolek
+
     void initAssets();
     void initCourse();
     void initLvlTitle();
@@ -38,6 +40,7 @@ private:
 
     void courseBordersCollision();
     void wallsCollision();
+    void holeCollision();
 
 public:
     GameplayScreen(int lvl, int strokesLimit, int logicalMap[8][16]);

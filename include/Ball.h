@@ -15,6 +15,7 @@ public:
 
     sf::FloatRect getGlobalBounds();
     sf::Vector2f getVelocity();
+    sf::Vector2f getPosition();
     void setVelocityX(float newVel);
     void setVelocityY(float newVel);
     void setPositionX(float newPos);
