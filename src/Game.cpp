@@ -105,6 +105,11 @@ void Game::update()
         }
     }
 
+    // Animacja przyciskow gdy najedzie sie myszka
+    this->playBtn->updateHover(this->window);
+    this->lvlsBtn->updateHover(this->window);
+    this->optionsBtn->updateHover(this->window);
+
     // Dzialanie przycisku exit
     if (this->gameScreen == 1 || this->gameScreen == 2 || this->gameScreen == 3)
     {

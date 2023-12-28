@@ -35,6 +35,23 @@ bool Button::isClicked(sf::WindowBase &window)
                : false;
 }
 
+void Button::updateHover(sf::WindowBase &window)
+{
+    // Pozycja myszki wewnatrz okna gry
+    sf::Vector2f mousePos = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
+    sf::FloatRect buttonBounds = this->button.getGlobalBounds();
+
+    if (
+        mousePos.x >= buttonBounds.left && mousePos.x <= buttonBounds.left + buttonBounds.width &&
+        mousePos.y >= buttonBounds.top && mousePos.y <= buttonBounds.top + buttonBounds.height)
+    {
+        this->button.setScale(sf::Vector2f(1, 1));
+    }
+    else
+    {
+        this->button.setScale(sf::Vector2f(0.95, 0.95));
+    }
+}
 void Button::render(sf::RenderTarget &target)
 {
     target.draw(this->button); // Renderowanie przycisku we wskazanym targecie
