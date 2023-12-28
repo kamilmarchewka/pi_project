@@ -11,6 +11,9 @@
 class Game
 {
 private:
+    std::string lvlsPathArray[3]; // Przechowuje sciezki do plikow z lvlami
+    int lvlsPathArrayLength;
+
     /**
      * Aktualnie wywietlany ekran gry
      * 0 - menu glowne
