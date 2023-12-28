@@ -49,7 +49,7 @@ void Ball::setPositionY(float newPos)
         newPos));
 }
 
-void Ball::update(sf::WindowBase &window, int &strokesLimit, int &gameState)
+void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState)
 {
     // Strzelaj tylko, jezeli gra sie nie skonczyla => liczba strokeow > 0
     if (gameState == -1)
@@ -66,7 +66,7 @@ void Ball::update(sf::WindowBase &window, int &strokesLimit, int &gameState)
             // Mysz w stosunku do pilki - nad lub pod pilka
             this->velocity.y = (ballPos.y - mousePos.y) / 5.f;
 
-            strokesLimit--;
+            leftStrokes--;
         }
     }
     // Move
