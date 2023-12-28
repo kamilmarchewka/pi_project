@@ -372,7 +372,7 @@ void GameplayScreen::update(sf::WindowBase &window, std::string *lvlsPathArray, 
     // Kolizja ze scianami
     this->wallsCollision();
 
-    this->ball->update(window, this->leftStrokes, this->gameState);
+    this->ball->update(window, this->leftStrokes, this->gameState, isMouseBtnPressedRef);
 
     // Zmniejszenie liczby uderzen
     this->setStrokesLimitText(sf::String("Strzaly: " + std::to_string(this->leftStrokes)));
