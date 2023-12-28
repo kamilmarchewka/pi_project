@@ -20,8 +20,13 @@ private:
      */
     int gameScreen;
 
+    int musicIsOn;
+
     sf::RenderWindow window; // Okno gry
     sf::Event event;         // Event
+
+    // Music
+    sf::Music backgroundMusic; // Muzyka w tle
 
     // Textures
     sf::Texture
@@ -29,7 +34,8 @@ private:
         playBtnTexture,
         lvlsBtnTexture,
         optionsBtnTexture,
-        exitBtnTexture;
+        exitBtnTexture,
+        musicBtnTexture;
 
     // Screen 0 ----------------
     sf::Sprite mainBg;
@@ -37,6 +43,8 @@ private:
     Button *playBtn;
     Button *lvlsBtn;
     Button *optionsBtn;
+
+    Button *musicBtn;
 
     // Screen 1 ----------------
     GameplayScreen *GameplayScreenLvl1; // Ekran z plansza, nr poziomu itd.

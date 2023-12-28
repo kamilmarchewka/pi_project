@@ -8,7 +8,7 @@ Ball::Ball(sf::Texture &texture)
         this->ball.getGlobalBounds().width / 2,
         this->ball.getGlobalBounds().height / 2));
 
-    this->ball.setPosition(sf::Vector2f(400, 350));
+    this->ball.setPosition(sf::Vector2f(162, 350 + 50));
 
     this->velocity = sf::Vector2f(0, 0);
 }
@@ -23,6 +23,10 @@ sf::FloatRect Ball::getGlobalBounds()
 sf::Vector2f Ball::getVelocity()
 {
     return this->velocity;
+}
+sf::Vector2f Ball::getPosition()
+{
+    return this->ball.getPosition();
 }
 void Ball::setVelocityX(float newVel)
 {

@@ -17,10 +17,19 @@ void GameplayScreen::initAssets()
     if (!(this->rockTexture.loadFromFile("assets/rock.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - rock.png\n";
     this->rockTexture.setSmooth(true);
+    if (!(this->sandTexture.loadFromFile("assets/sand.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - sand.png\n";
+    this->sandTexture.setSmooth(true);
+
     // Ladowanie tekstur pilek
     if (!(this->whiteBallTexture.loadFromFile("assets/ball_white.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - ball_white.png\n";
     this->whiteBallTexture.setSmooth(true);
+
+    // Tekstura dolka
+    if (!(this->holeTexture.loadFromFile("assets/hole.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - hole.png\n";
+    this->holeTexture.setSmooth(true);
 }
 void GameplayScreen::initCourse()
 {
@@ -70,6 +79,7 @@ void GameplayScreen::initObstacklesSprites()
     // 0 - light grass
     // 1 - dark grass
     // 2 - rock
+    // 3 - sand
 
     // Dodawania spriteow do odpowiednich vektorow
     for (int i = 0; i < this->gridRows; i++)
@@ -99,6 +109,11 @@ void GameplayScreen::initObstacklesSprites()
             case 2:
                 s.setTexture(this->rockTexture);
                 this->wallsVector.push_back(s);
+                break;
+
+            case 3:
+                s.setTexture(this->sandTexture);
+                this->sandVector.push_back(s);
                 break;
 
             default:
@@ -134,8 +149,15 @@ GameplayScreen::GameplayScreen(int lvl, int strokesLimit, int logicalMap[8][16])
     // Inicjalizacja maks. liczby uderzen
     this->initMaxStrokesTitle();
 
-    // Rysowanie planszy (przeszkod)
+    // Inicjalizacja planszy (przeszkod)
     this->initObstacklesSprites();
+
+    // Dolek
+    this->hole.setTexture(this->holeTexture);
+    this->hole.setOrigin(sf::Vector2f(
+        this->hole.getGlobalBounds().width / 2,
+        this->hole.getGlobalBounds().height / 2));
+    this->hole.setPosition(sf::Vector2f(1000 + 40, 350 + 50));
 
     // Inicjalizacja pilki
     this->ball = new Ball(this->whiteBallTexture);
@@ -239,16 +261,66 @@ void GameplayScreen::wallsCollision()
         }
     }
 }
+void GameplayScreen::sandCollision()
+{
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+
+    for (int i = 0; i < this->sandVector.size(); i++)
+    {
+        sf::FloatRect sandBounds = sandVector[i].getGlobalBounds();
+
+        // Sprawdzenie czy w nastepnej klatce nastapi kolizja
+        if (ballBounds.intersects(sandBounds))
+        {
+            // Zmniejszenie predkosci pilki
+            float k = 0.8;
+            this->ball->setVelocityX(this->ball->getVelocity().x * k);
+            this->ball->setVelocityY(this->ball->getVelocity().y * k);
+        }
+    }
+}
+void GameplayScreen::holeCollision()
+{
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds();
+    sf::FloatRect holeBounds = this->hole.getGlobalBounds();
+    // Sprawdzenie, czy pilka przelatuje przez dolek
+    if (ballBounds.intersects(holeBounds))
+    {
+        // Sprawdzenie czy srodek pilki jest odpowiednio blisko srodka dolka
+        sf::Vector2f ballPos = this->ball->getPosition();
+        sf::Vector2f ballVel = this->ball->getVelocity();
+        sf::Vector2f holePos = this->hole.getPosition();
+
+        float distance = sqrt(pow(ballPos.x - holePos.x, 2) + pow(ballPos.y - holePos.y, 2) * 1.f);
+        float ballSpeed = sqrt(pow(ballVel.x, 2) + pow(ballVel.y, 2) * 1.f);
+
+        if (distance < 10.f && ballSpeed < 5.f)
+        {
+            this->ball->setVelocityX(0);
+            this->ball->setVelocityY(0);
+            this->ball->setPositionX(holePos.x);
+            this->ball->setPositionY(holePos.y);
+        }
+    }
+}
+
 void GameplayScreen::update(sf::WindowBase &window)
 {
     // TODO: To sie musi brac z jednego miejsca
 
+    // Kolizja ze scianami
     this->wallsCollision();
 
     this->ball->update(window);
 
+    // Kolizja z piaskiem
+    this->sandCollision();
+
     // Kolizja z polem
     this->courseBordersCollision();
+
+    // Kolizja z dolkiem
+    this->holeCollision();
 }
 
 void GameplayScreen::render(sf::RenderTarget &target)
@@ -262,6 +334,10 @@ void GameplayScreen::render(sf::RenderTarget &target)
         target.draw(grassVector[i]);
     for (int i = 0; i < this->wallsVector.size(); i++) // Sciany
         target.draw(wallsVector[i]);
+    for (int i = 0; i < this->sandVector.size(); i++) // Piasek
+        target.draw(sandVector[i]);
+
+    target.draw(this->hole); // Dolek
 
     this->ball->render(target);
 }
