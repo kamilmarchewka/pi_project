@@ -59,6 +59,7 @@ Game::Game()
 {
     this->gameScreen = 0; // Zaczecie gry na ekranie z menu glownym
     this->musicIsOn = 0;  // Domyslnie muzyka jest wylaczona
+    this->isMouseBtnPressed = false;
 
     this->window.create(sf::VideoMode(1200, 700), "MiniGolf", sf::Style::Default); // Inicjalizacja okna
     this->window.setFramerateLimit(30);                                            // Ustawienie limitu klatek do 30 fps
@@ -120,6 +121,10 @@ void Game::update()
         {                         // Sprawdzenie czy tym klawiszem jest ESC
             this->window.close(); // Zamkniecie okna
         }
+        if (this->event.type == sf::Event::MouseButtonReleased)
+        {
+            this->isMouseBtnPressed = false;
+        }
     }
 
     // Animacja przyciskow gdy najedzie sie myszka
@@ -132,8 +137,10 @@ void Game::update()
     if (this->gameScreen == 1 || this->gameScreen == 2 || this->gameScreen == 3)
     {
         // Spraawdzenie czy przycisk jest klikniety
-        if (this->exitBtn->isClicked(this->window))
+        if (this->exitBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
+            this->isMouseBtnPressed = true;
+
             // Powrot do ekranu z menu
             this->gameScreen = this->exitBtn->getValue();
 
@@ -148,25 +155,33 @@ void Game::update()
     if (this->gameScreen == 0)
     {
         // Logika menu
-        if (this->playBtn->isClicked(this->window))
+        if (this->playBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
+            this->isMouseBtnPressed = true;
+
             this->gameScreen = this->playBtn->getValue();
             this->GameplayScreenLvl1 = new GameplayScreen(lvl1, lvl1Strokes, lvl1Map);
         }
-        else if (this->lvlsBtn->isClicked(this->window))
+        else if (this->lvlsBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
+            this->isMouseBtnPressed = true;
+
             this->gameScreen = this->lvlsBtn->getValue();
             std::cout << "POZIOMY zostal wcisniety\n";
         }
-        else if (this->optionsBtn->isClicked(this->window))
+        else if (this->optionsBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
+            this->isMouseBtnPressed = true;
+
             this->gameScreen = this->optionsBtn->getValue();
             std::cout << "USTAWIENIA zostal wcisniety\n";
         }
 
         // Wlaczanie / wylaczanie musycki
-        if (this->musicBtn->isClicked(this->window))
+        if (this->musicBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
+            this->isMouseBtnPressed = true;
+
             if (musicIsOn)
             {
                 this->musicIsOn = 0;

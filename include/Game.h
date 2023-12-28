@@ -21,6 +21,7 @@ private:
     int gameScreen;
 
     int musicIsOn;
+    bool isMouseBtnPressed;
 
     sf::RenderWindow window; // Okno gry
     sf::Event event;         // Event
