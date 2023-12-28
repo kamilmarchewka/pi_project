@@ -42,11 +42,23 @@ void Game::initAssets()
     if (!(this->exitBtnTexture.loadFromFile("assets/exit_icon.png")))
         std::cout << "ERROR::TEXTURES - exit_icon.png\n";
     this->exitBtnTexture.setSmooth(true); // Wyrownanie krawedzi
+
+    // Music btn
+    if (!(this->musicBtnTexture.loadFromFile("assets/music.png")))
+        std::cout << "ERROR::TEXTURES - music.png\n";
+    this->musicBtnTexture.setSmooth(true); // Wyrownanie krawedzi
+
+    // Ladowanie muzyki
+    this->backgroundMusic.openFromFile("assets/background_music.ogg");
+    this->backgroundMusic.setVolume(30.f);
+    // this->backgroundMusic.play();
+    this->backgroundMusic.setLoop(true);
 }
 
 Game::Game()
 {
     this->gameScreen = 0; // Zaczecie gry na ekranie z menu glownym
+    this->musicIsOn = 0;  // Domyslnie muzyka jest wylaczona
 
     this->window.create(sf::VideoMode(1200, 700), "MiniGolf", sf::Style::Default); // Inicjalizacja okna
     this->window.setFramerateLimit(30);                                            // Ustawienie limitu klatek do 30 fps
@@ -64,6 +76,9 @@ Game::Game()
     this->lvlsBtn = new Button(this->lvlsBtnTexture, sf::Vector2f(600, 450 + menuTopOffset), 2);
     this->optionsBtn = new Button(this->optionsBtnTexture, sf::Vector2f(600, 530 + menuTopOffset), 3);
 
+    this->musicBtn = new Button(this->musicBtnTexture, sf::Vector2f(1180, 30), -1);
+    this->musicBtn->setTextureRect(sf::IntRect(34, 0, 34, 34));
+
     // Screen 1 ----------------
 
     // All screens -------------
@@ -75,6 +90,8 @@ Game::~Game()
     delete this->playBtn;
     delete this->lvlsBtn;
     delete this->optionsBtn;
+
+    delete this->musicBtn;
 
     // Screen 1 ----------------
     delete this->GameplayScreenLvl1;
@@ -109,6 +126,7 @@ void Game::update()
     this->playBtn->updateHover(this->window);
     this->lvlsBtn->updateHover(this->window);
     this->optionsBtn->updateHover(this->window);
+    this->musicBtn->updateHover(this->window);
 
     // Dzialanie przycisku exit
     if (this->gameScreen == 1 || this->gameScreen == 2 || this->gameScreen == 3)
@@ -145,6 +163,23 @@ void Game::update()
             this->gameScreen = this->optionsBtn->getValue();
             std::cout << "USTAWIENIA zostal wcisniety\n";
         }
+
+        // Wlaczanie / wylaczanie musycki
+        if (this->musicBtn->isClicked(this->window))
+        {
+            if (musicIsOn)
+            {
+                this->musicIsOn = 0;
+                this->musicBtn->setTextureRect(sf::IntRect(34, 0, 34, 34));
+                this->backgroundMusic.pause(); // Zatrzymanie muzyki
+            }
+            else
+            {
+                this->musicIsOn = 1;
+                this->musicBtn->setTextureRect(sf::IntRect(0, 0, 34, 34));
+                this->backgroundMusic.play(); // Wznowienie muzyki
+            }
+        }
     }
     else if (this->gameScreen == 1)
     {
@@ -178,6 +213,7 @@ void Game::render()
         this->playBtn->render(this->window);
         this->lvlsBtn->render(this->window);
         this->optionsBtn->render(this->window);
+        this->musicBtn->render(this->window);
         break;
 
     case 1:

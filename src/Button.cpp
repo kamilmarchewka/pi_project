@@ -25,6 +25,7 @@ bool Button::isClicked(sf::WindowBase &window)
     sf::Vector2f mousePos = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
 
     return (
+
                sf::Mouse::isButtonPressed(sf::Mouse::Left) && // Sprawdzenie czy kliknieto LPM
                // Sprawdzenie czy kliknieto wewnatrz przycisku graj
                mousePos.x >= this->button.getGlobalBounds().left &&
@@ -33,6 +34,11 @@ bool Button::isClicked(sf::WindowBase &window)
                mousePos.y <= this->button.getGlobalBounds().top + this->button.getGlobalBounds().height)
                ? true
                : false;
+}
+
+void Button::setTextureRect(sf::IntRect rect)
+{
+    this->button.setTextureRect(rect);
 }
 
 void Button::updateHover(sf::WindowBase &window)
