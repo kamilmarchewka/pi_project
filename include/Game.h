@@ -45,7 +45,8 @@ private:
         musicBtnTexture,
         Level1BtnTexture,
         Level2BtnTexture,
-        Level3BtnTexture;
+        Level3BtnTexture,
+        LevelsTexture;
 
     // Screen 0 ----------------
     sf::Sprite mainBg;
@@ -61,12 +62,12 @@ private:
 
     // Screen 2 ----------------
     sf::Text LevelsTitle;
-    Button *Level1Btn;
-    Button *Level2Btn;
-    Button *Level3Btn;
-    Button *Level4Btn;
-    Button *Level5Btn;
-    Button *Level6Btn;
+    Button *lvlsButtonArr[6];
+    int allLevels;
+    int unlockedLevels;
+    Button *lvlButton;
+    std::vector<Button *> LevelsBtnVector;
+
     // Screen 3 ----------------
 
     // All screens -------------

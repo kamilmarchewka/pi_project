@@ -57,6 +57,11 @@ void Game::initAssets()
         std::cout << "ERROR::TEXTURES - l3_btn.png\n";
     this->Level3BtnTexture.setSmooth(true);
 
+    // Levels
+    if (!(this->LevelsTexture.loadFromFile("assets/lvls_texture.png")))
+        std::cout << "ERROR::TEXTURES - lvls_texture.png\n";
+    this->LevelsTexture.setSmooth(true);
+
     // Ladowanie muzyki
     this->backgroundMusic.openFromFile("assets/background_music.ogg");
     this->backgroundMusic.setVolume(30.f);
@@ -78,6 +83,8 @@ Game::Game()
         this->lvlsPathArray[i] = path;
     }
 
+    this->allLevels = 6;
+    this->unlockedLevels = 2;
     this->gameScreen = 0;    // Zaczecie gry na ekranie z menu glownym
     this->musicIsOn = false; // Domyslnie muzyka jest wylaczona
     this->isMouseBtnPressed = false;
@@ -115,14 +122,22 @@ Game::Game()
         this->LevelsTitle.getGlobalBounds().height + 9));
     this->LevelsTitle.setPosition(sf::Vector2f(1200 / 2, 170));
 
-    float lvlsTopOffset = 300;
-    float lvlsLineHeight = 200;
-    this->Level1Btn = new Button(this->Level1BtnTexture, sf::Vector2f(600 - 200, lvlsTopOffset), 1);
-    this->Level2Btn = new Button(this->Level2BtnTexture, sf::Vector2f(600, lvlsTopOffset), 2);
-    this->Level3Btn = new Button(this->Level3BtnTexture, sf::Vector2f(600 + 200, lvlsTopOffset), 3);
-    this->Level4Btn = new Button(this->Level1BtnTexture, sf::Vector2f(600 - 200, lvlsTopOffset + lvlsLineHeight), 4);
-    this->Level5Btn = new Button(this->Level2BtnTexture, sf::Vector2f(600, lvlsTopOffset + lvlsLineHeight), 5);
-    this->Level6Btn = new Button(this->Level3BtnTexture, sf::Vector2f(600 + 200, lvlsTopOffset + lvlsLineHeight), 5);
+    for (int i = 0; i < this->allLevels; i++) // Bo jest 6 poziomow
+    {
+        sf::Vector2f btnPos = sf::Vector2f(780 + 170 * i, 300); // 1. rzad
+        if (i > 2)                                              // 2. rzad
+        {
+            btnPos = sf::Vector2f(270 + 170 * i, 500);
+        }
+
+        sf::IntRect texturePos = sf::IntRect(120 * (i + 1), 0, 120, 148);
+        if (i >= this->unlockedLevels) // Pokak kludke, jezeli poziom nie jest odblokowany
+        {
+            texturePos = sf::IntRect(0, 0, 120, 148);
+        }
+        this->lvlsButtonArr[i] = new Button(this->LevelsTexture, btnPos, i + 1);
+        this->lvlsButtonArr[i]->setTextureRect(texturePos);
+    }
 
     // All screens -------------
     this->exitBtn = new Button(this->exitBtnTexture, sf::Vector2f(1200 - 35, 30), 0);
@@ -140,12 +155,12 @@ Game::~Game()
     delete this->GameplayScreenLvl1;
 
     // Screen 2 ----------------
-    delete this->Level1Btn;
-    delete this->Level2Btn;
-    delete this->Level3Btn;
-    delete this->Level4Btn;
-    delete this->Level5Btn;
-    delete this->Level6Btn;
+    delete this->lvlButton;
+
+    for (int i = 0; i < this->allLevels; i++)
+    { // Bo jest 6 poziomow
+        delete this->lvlsButtonArr[i];
+    }
 
     // All screens -------------
     delete this->exitBtn;
@@ -254,23 +269,14 @@ void Game::update()
     else if (this->gameScreen == 2)
     {
         // Wybor poziomu
-        // Poziom 1
-        if (this->Level1Btn->isClicked(this->window))
+        for (int i = 0; i < allLevels; i++)
         {
-            this->isMouseBtnPressed = true;
-            this->currentLvl = this->Level1Btn->getValue();
-        }
-        // Poziom 2
-        if (this->Level2Btn->isClicked(this->window))
-        {
-            this->isMouseBtnPressed = true;
-            this->currentLvl = this->Level2Btn->getValue();
-        }
-        // Poziom 3
-        if (this->Level3Btn->isClicked(this->window))
-        {
-            this->isMouseBtnPressed = true;
-            this->currentLvl = this->Level3Btn->getValue();
+            Button *currentBtn = this->lvlsButtonArr[i];
+            if (currentBtn->isClicked(this->window) && !this->isMouseBtnPressed && i < unlockedLevels)
+            {
+                this->isMouseBtnPressed = true;
+                this->currentLvl = currentBtn->getValue();
+            }
         }
     }
     else if (this->gameScreen == 3)
@@ -306,12 +312,11 @@ void Game::render()
 
     case 2:
         this->window.draw(this->LevelsTitle);
-        this->Level1Btn->render(this->window);
-        this->Level2Btn->render(this->window);
-        this->Level3Btn->render(this->window);
-        this->Level4Btn->render(this->window);
-        this->Level5Btn->render(this->window);
-        this->Level6Btn->render(this->window);
+
+        for (int i = 0; i < this->allLevels; i++)
+        { // Bo jest 6 poziomow
+            this->lvlsButtonArr[i]->render(this->window);
+        }
         break;
 
     case 3:
