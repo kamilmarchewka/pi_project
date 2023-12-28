@@ -57,6 +57,16 @@ void Game::initAssets()
 
 Game::Game()
 {
+    // Przypisanie sciezek do plikow z poziomami do tablicy
+    this->lvlsPathArrayLength = sizeof(this->lvlsPathArray) / sizeof(std::string);
+    for (int i = 0; i < lvlsPathArrayLength; i++)
+    {
+        std::string lvlNum = std::to_string(i + 1);
+        std::string path = "data/lvl_" + lvlNum + ".txt";
+        std::cout << path << std::endl;
+        this->lvlsPathArray[i] = path;
+    }
+
     this->gameScreen = 0; // Zaczecie gry na ekranie z menu glownym
     this->musicIsOn = 0;  // Domyslnie muzyka jest wylaczona
     this->isMouseBtnPressed = false;
@@ -160,7 +170,7 @@ void Game::update()
             this->isMouseBtnPressed = true;
 
             this->gameScreen = this->playBtn->getValue();
-            this->GameplayScreenLvl1 = new GameplayScreen(lvl1, lvl1Strokes, lvl1Map);
+            this->GameplayScreenLvl1 = new GameplayScreen(this->lvlsPathArray[1]);
         }
         else if (this->lvlsBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {

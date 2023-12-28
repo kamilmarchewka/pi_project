@@ -44,7 +44,7 @@ private:
     void holeCollision();
 
 public:
-    GameplayScreen(int lvl, int strokesLimit, int logicalMap[8][16]);
+    GameplayScreen(std::string pathToLvl);
     ~GameplayScreen();
 
     void update(sf::WindowBase &window);

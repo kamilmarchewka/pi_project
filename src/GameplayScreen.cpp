@@ -123,22 +123,41 @@ void GameplayScreen::initObstacklesSprites()
     }
 }
 
-GameplayScreen::GameplayScreen(int lvl, int strokesLimit, int logicalMap[8][16])
+GameplayScreen::GameplayScreen(std::string pathToLvl)
 {
     // Ladowanie fontow i tekstur
     this->initAssets();
 
     // Inicjalizacja zmiennych
-    this->gridRows = 8;  // Ilosc rzedow
-    this->gridCols = 16; // Ilosc kolumn
-    this->currentLvl = lvl;
-    this->strokesLimit = strokesLimit;
-    for (int i = 0; i < gridRows; i++) // Skopiowanie tablicy, do lokalnej tablicy z logiczna reprezentacja mapy
-        for (int j = 0; j < gridCols; j++)
-        {
-            this->logicalMap[i][j] = logicalMap[i][j];
-        }
+    this->gridRows = 8;         // Ilosc rzedow
+    this->gridCols = 16;        // Ilosc kolumn
     this->borderThickness = 15; // Grubosc drewnianego ogrodzenia
+
+    // Odczyt poziomu z pliku i zapisanie go do zmiennych
+    std::fstream odczyt;
+    int logicalValue;
+
+    odczyt.open(pathToLvl, std::ios::in);
+    if (!odczyt.good())
+    {
+        std::cout << "ERROR::GameplayScreen.cpp: Nie udalo sie odczytac poziomu z pliku" << std::endl;
+        exit(0);
+    }
+
+    odczyt >> this->currentLvl;
+    odczyt >> this->strokesLimit;
+
+    for (int i = 0; i < gridRows; ++i)
+    {
+        for (int j = 0; j < gridCols; ++j)
+        {
+            odczyt >> logicalValue;
+            std::cout << logicalValue << "\n";
+            logicalMap[i][j] = logicalValue; // Wypelnienie tablicy z logiczna reprezentacja pol
+        }
+    }
+
+    odczyt.close();
 
     // Inicjalizacja pola
     this->initCourse();
