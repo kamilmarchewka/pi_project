@@ -248,7 +248,8 @@ void Game::update()
     }
     else if (this->gameScreen == 1)
     {
-        this->GameplayScreenLvl1->update(this->window);
+        this->GameplayScreenLvl1->update(this->window, this->lvlsPathArray, this->lvlsPathArrayLength, this->currentLvl, this->isMouseBtnPressed);
+        std::cout << "game.cpp " << this->currentLvl << std::endl;
     }
     else if (this->gameScreen == 2)
     {

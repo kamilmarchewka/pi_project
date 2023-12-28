@@ -16,6 +16,7 @@ private:
      * 1 - win
      */
     int gameState;
+
     sf::Font font;
     sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, replayBtnTexture, nextLvlBtnTexture;
 
@@ -28,9 +29,8 @@ private:
     sf::RectangleShape course; // Pole golfowe
     sf::Text titleText;        // Naglowek z nr lvlu
     sf::Text leftStrokesText;  // Naglowek z liczba pozostalych uderzen
-
-    int gridRows; // Liczba rzedow na planszy
-    int gridCols; // Liczba kolumn na planszy
+    int gridRows;              // Liczba rzedow na planszy
+    int gridCols;              // Liczba kolumn na planszy
 
     std::vector<sf::Sprite> grassVector; // Wektor przechowujacy trawe jasna i ciemna
     std::vector<sf::Sprite> wallsVector; // Wektor przechowujacy wszystkie sciany
@@ -42,17 +42,17 @@ private:
 
     // Ekran wygranej / przegranej
     sf::Sprite endGameScreen;
-    // Przycisk replay
     Button *replayBtn;
-    // Przycisk nastepny lvl
     Button *nextLvlBtn;
 
+    // Init
     void initAssets();
     void initCourse();
     void initLvlTitle();
     void initMaxStrokesTitle();
-    void initObstacklesSprites();
+    void setUpObstacles();
 
+    // Kolizje
     void courseBordersCollision();
     void wallsCollision();
     void sandCollision();
@@ -62,7 +62,11 @@ public:
     GameplayScreen(std::string pathToLvl);
     ~GameplayScreen();
 
-    void update(sf::WindowBase &window);
+    void setTitleText(sf::String newTitle);
+    void setStrokesLimitText(sf::String newText);
+    void readLvlFromFile(std::string pathToFile);
+
+    void update(sf::WindowBase &window, std::string *lvlsPathArray, int lvlsPathArrayLength, int &currentLvlRef, bool &isMouseBtnPressedRef);
     void render(sf::RenderTarget &target);
 };
 
