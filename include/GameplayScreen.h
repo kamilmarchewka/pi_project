@@ -10,7 +10,7 @@ class GameplayScreen
 {
 private:
     sf::Font font;
-    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, whiteBallTexture, holeTexture;
+    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, whiteBallTexture, holeTexture;
 
     int currentLvl;        // Aktualnie wyswietlany lvl
     int strokesLimit;      // Limit uderzen dla danego poziomu
@@ -24,9 +24,9 @@ private:
     int gridRows; // Liczba rzedow na planszy
     int gridCols; // Liczba kolumn na planszy
 
-    std::vector<sf::Sprite> wallsVector; // Wektor przechowujacy wszystkie sciany
     std::vector<sf::Sprite> grassVector; // Wektor przechowujacy trawe jasna i ciemna
-    sf::Sprite spritesMap[8][16];        // Tablica ze spriteami
+    std::vector<sf::Sprite> wallsVector; // Wektor przechowujacy wszystkie sciany
+    std::vector<sf::Sprite> sandVector;  // Wektor przechowujacy wszystkie sciany
 
     Ball *ball; // Pointer do pilki
 
@@ -40,6 +40,7 @@ private:
 
     void courseBordersCollision();
     void wallsCollision();
+    void sandCollision();
     void holeCollision();
 
 public:

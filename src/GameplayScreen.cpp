@@ -17,6 +17,9 @@ void GameplayScreen::initAssets()
     if (!(this->rockTexture.loadFromFile("assets/rock.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - rock.png\n";
     this->rockTexture.setSmooth(true);
+    if (!(this->sandTexture.loadFromFile("assets/sand.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - sand.png\n";
+    this->sandTexture.setSmooth(true);
 
     // Ladowanie tekstur pilek
     if (!(this->whiteBallTexture.loadFromFile("assets/ball_white.png")))
@@ -76,6 +79,7 @@ void GameplayScreen::initObstacklesSprites()
     // 0 - light grass
     // 1 - dark grass
     // 2 - rock
+    // 3 - sand
 
     // Dodawania spriteow do odpowiednich vektorow
     for (int i = 0; i < this->gridRows; i++)
@@ -105,6 +109,11 @@ void GameplayScreen::initObstacklesSprites()
             case 2:
                 s.setTexture(this->rockTexture);
                 this->wallsVector.push_back(s);
+                break;
+
+            case 3:
+                s.setTexture(this->sandTexture);
+                this->sandVector.push_back(s);
                 break;
 
             default:
@@ -252,6 +261,24 @@ void GameplayScreen::wallsCollision()
         }
     }
 }
+void GameplayScreen::sandCollision()
+{
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+
+    for (int i = 0; i < this->sandVector.size(); i++)
+    {
+        sf::FloatRect sandBounds = sandVector[i].getGlobalBounds();
+
+        // Sprawdzenie czy w nastepnej klatce nastapi kolizja
+        if (ballBounds.intersects(sandBounds))
+        {
+            // Zmniejszenie predkosci pilki
+            float k = 0.8;
+            this->ball->setVelocityX(this->ball->getVelocity().x * k);
+            this->ball->setVelocityY(this->ball->getVelocity().y * k);
+        }
+    }
+}
 void GameplayScreen::holeCollision()
 {
     sf::FloatRect ballBounds = this->ball->getGlobalBounds();
@@ -281,9 +308,13 @@ void GameplayScreen::update(sf::WindowBase &window)
 {
     // TODO: To sie musi brac z jednego miejsca
 
+    // Kolizja ze scianami
     this->wallsCollision();
 
     this->ball->update(window);
+
+    // Kolizja z piaskiem
+    this->sandCollision();
 
     // Kolizja z polem
     this->courseBordersCollision();
@@ -303,6 +334,8 @@ void GameplayScreen::render(sf::RenderTarget &target)
         target.draw(grassVector[i]);
     for (int i = 0; i < this->wallsVector.size(); i++) // Sciany
         target.draw(wallsVector[i]);
+    for (int i = 0; i < this->sandVector.size(); i++) // Piasek
+        target.draw(sandVector[i]);
 
     target.draw(this->hole); // Dolek
 
