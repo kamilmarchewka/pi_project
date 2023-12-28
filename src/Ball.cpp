@@ -49,10 +49,10 @@ void Ball::setPositionY(float newPos)
         newPos));
 }
 
-void Ball::update(sf::WindowBase &window, int &strokesLimit)
+void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState)
 {
-    // Strzelaj tylko, jezeli liczba strokeow do wykorzystania jest > 0
-    if (strokesLimit > 0)
+    // Strzelaj tylko, jezeli gra sie nie skonczyla => liczba strokeow > 0
+    if (gameState == -1)
     {
         // Strzelanie = ustawianie odpowiedniego velocity tylko jezeli aktualnie velocity = 0
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && (this->velocity.x == 0.f && this->velocity.y == 0.f))
@@ -66,9 +66,7 @@ void Ball::update(sf::WindowBase &window, int &strokesLimit)
             // Mysz w stosunku do pilki - nad lub pod pilka
             this->velocity.y = (ballPos.y - mousePos.y) / 5.f;
 
-            // TODO zmniejszenie liczby strokeow
-            strokesLimit--;
-            std::cout << "Strokes Limit wewnatrz ball.cpp: " << strokesLimit << std::endl;
+            leftStrokes--;
         }
     }
     // Move
@@ -82,6 +80,12 @@ void Ball::update(sf::WindowBase &window, int &strokesLimit)
         this->velocity = sf::Vector2f(0, 0);
 
     this->velocity *= 0.96f;
+
+    // Sprawdzanie czy pilka sie porusza i aktualizowanie zmiennej
+    if (this->velocity.x == 0 && this->velocity.y == 0)
+        this->isMoving = false;
+    else
+        this->isMoving = true;
 }
 void Ball::render(sf::RenderTarget &target)
 {

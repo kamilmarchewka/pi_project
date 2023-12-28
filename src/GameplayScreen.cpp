@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GameplayScreen.h"
+#include "Button.h"
 
 void GameplayScreen::initAssets()
 {
@@ -30,6 +31,20 @@ void GameplayScreen::initAssets()
     if (!(this->holeTexture.loadFromFile("assets/hole.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - hole.png\n";
     this->holeTexture.setSmooth(true);
+
+    // Tekstury ekranu wygranej / przegranej
+    if (!(this->winBgTexture.loadFromFile("assets/win_screen_bg.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - win_screen_bg.png\n";
+    this->winBgTexture.setSmooth(true);
+    if (!(this->loseBgTexture.loadFromFile("assets/lose_screen_bg.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - lose_screen_bg.png\n";
+    this->loseBgTexture.setSmooth(true);
+    if (!(this->replayBtnTexture.loadFromFile("assets/repeat_btn.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - repeat_btn.png\n";
+    this->replayBtnTexture.setSmooth(true);
+    if (!(this->nextLvlBtnTexture.loadFromFile("assets/next_lvl_btn.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - next_lvl_btn.png\n";
+    this->nextLvlBtnTexture.setSmooth(true);
 }
 void GameplayScreen::initCourse()
 {
@@ -60,16 +75,16 @@ void GameplayScreen::initLvlTitle()
 void GameplayScreen::initMaxStrokesTitle()
 {
     // Inicjalizacja maks. liczby uderzen
-    sf::String maxStrokesString = "Strzaly: " + std::to_string(this->strokesLimit);
+    sf::String maxStrokesString = "Strzaly: " + std::to_string(this->leftStrokes);
 
-    this->strokesLimitText.setString(maxStrokesString);              // Napis
-    this->strokesLimitText.setFont(this->font);                      // Czcionka
-    this->strokesLimitText.setCharacterSize(20);                     // Rozmiar
-    this->strokesLimitText.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
-    this->strokesLimitText.setOrigin(sf::Vector2f(                   // Origin - lewy dol
-        this->strokesLimitText.getGlobalBounds().left,
-        this->strokesLimitText.getGlobalBounds().height));
-    this->strokesLimitText.setPosition(sf::Vector2f( // Pozycja - nad polem z lewej strony
+    this->leftStrokesText.setString(maxStrokesString);              // Napis
+    this->leftStrokesText.setFont(this->font);                      // Czcionka
+    this->leftStrokesText.setCharacterSize(20);                     // Rozmiar
+    this->leftStrokesText.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
+    this->leftStrokesText.setOrigin(sf::Vector2f(                   // Origin - lewy dol
+        this->leftStrokesText.getGlobalBounds().left,
+        this->leftStrokesText.getGlobalBounds().height));
+    this->leftStrokesText.setPosition(sf::Vector2f( // Pozycja - nad polem z lewej strony
         this->course.getGlobalBounds().left,
         this->course.getGlobalBounds().top - 20));
 }
@@ -129,6 +144,7 @@ GameplayScreen::GameplayScreen(std::string pathToLvl)
     this->initAssets();
 
     // Inicjalizacja zmiennych
+    this->gameState = -1;
     this->gridRows = 8;         // Ilosc rzedow
     this->gridCols = 16;        // Ilosc kolumn
     this->borderThickness = 15; // Grubosc drewnianego ogrodzenia
@@ -146,6 +162,7 @@ GameplayScreen::GameplayScreen(std::string pathToLvl)
 
     odczyt >> this->currentLvl;
     odczyt >> this->strokesLimit;
+    this->leftStrokes = this->strokesLimit;
 
     for (int i = 0; i < gridRows; ++i)
     {
@@ -170,7 +187,7 @@ GameplayScreen::GameplayScreen(std::string pathToLvl)
     // Inicjalizacja planszy (przeszkod)
     this->initObstacklesSprites();
 
-    // Dolek
+    // Inicjalizacja dolka
     this->hole.setTexture(this->holeTexture);
     this->hole.setOrigin(sf::Vector2f(
         this->hole.getGlobalBounds().width / 2,
@@ -179,10 +196,19 @@ GameplayScreen::GameplayScreen(std::string pathToLvl)
 
     // Inicjalizacja pilki
     this->ball = new Ball(this->whiteBallTexture);
+
+    // Inicjalizacja ekranu wygranej / przegranej
+    this->endGameScreen.setTexture(this->winBgTexture); // Musimy ustawic, zeby mial jakies wymiary
+    this->endGameScreen.setOrigin(sf::Vector2f(this->endGameScreen.getGlobalBounds().width / 2, this->endGameScreen.getGlobalBounds().height / 2));
+    this->endGameScreen.setPosition(sf::Vector2f(600, 350));
+    this->replayBtn = new Button(this->replayBtnTexture, sf::Vector2f(600 - 80, 375), -1);
+    this->nextLvlBtn = new Button(this->nextLvlBtnTexture, sf::Vector2f(600 + 80, 375), -1);
 }
 GameplayScreen::~GameplayScreen()
 {
     delete this->ball;
+    delete this->replayBtn;
+    delete this->nextLvlBtn;
     std::cout << "GameplayScreen has been destroyed\n";
 }
 
@@ -318,6 +344,9 @@ void GameplayScreen::holeCollision()
             this->ball->setVelocityY(0);
             this->ball->setPositionX(holePos.x);
             this->ball->setPositionY(holePos.y);
+
+            this->gameState = 1; // Wygralismy
+            this->endGameScreen.setTexture(this->winBgTexture);
         }
     }
 }
@@ -327,10 +356,10 @@ void GameplayScreen::update(sf::WindowBase &window)
     // Kolizja ze scianami
     this->wallsCollision();
 
-    this->ball->update(window, this->strokesLimit);
+    this->ball->update(window, this->leftStrokes, this->gameState);
 
     // Aktualizacja napisu z pozostala liczba strzalow
-    this->strokesLimitText.setString(sf::String("Strzaly: " + std::to_string(this->strokesLimit)));
+    this->leftStrokesText.setString(sf::String("Strzaly: " + std::to_string(this->leftStrokes)));
 
     // Kolizja z piaskiem
     this->sandCollision();
@@ -340,13 +369,35 @@ void GameplayScreen::update(sf::WindowBase &window)
 
     // Kolizja z dolkiem
     this->holeCollision();
+
+    // Poczekanie az pilka sie zatrzyma i sprawdzenie czy przypadkiem juz nie przegralismy
+    if (!this->ball->isMoving && this->gameState == -1)
+    {
+        if (this->leftStrokes <= 0)
+        {
+            this->gameState = 0;
+            this->endGameScreen.setTexture(this->loseBgTexture);
+        }
+    }
+
+    // Obsluga przyciskow na ekranie konca gry
+    if (this->gameState != -1)
+    {
+        if (this->replayBtn->isClicked(window))
+        {
+            this->gameState = -1;
+            this->leftStrokes = this->strokesLimit;
+            this->ball->setPositionX(162);
+            this->ball->setPositionY(350 + 50);
+        }
+    }
 }
 
 void GameplayScreen::render(sf::RenderTarget &target)
 {
     target.draw(this->course);
     target.draw(this->titleText);
-    target.draw(this->strokesLimitText);
+    target.draw(this->leftStrokesText);
 
     // Rysowanie wszystkich spriteow
     for (int i = 0; i < this->grassVector.size(); i++) // Trawa
@@ -359,4 +410,12 @@ void GameplayScreen::render(sf::RenderTarget &target)
     target.draw(this->hole); // Dolek
 
     this->ball->render(target);
+
+    // Ewentualny ekran wygranej / przegranej
+    if (gameState != -1)
+    {
+        target.draw(this->endGameScreen);
+        this->replayBtn->render(target);
+        this->nextLvlBtn->render(target);
+    }
 }

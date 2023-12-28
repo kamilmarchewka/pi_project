@@ -158,7 +158,7 @@ void Game::update()
             this->isMouseBtnPressed = true;
 
             this->gameScreen = this->playBtn->getValue();
-            this->GameplayScreenLvl1 = new GameplayScreen(this->lvlsPathArray[1]);
+            this->GameplayScreenLvl1 = new GameplayScreen(this->lvlsPathArray[0]);
         }
         else if (this->lvlsBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {

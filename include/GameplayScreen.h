@@ -4,22 +4,30 @@
 #include "pch.h"
 
 #include "Ball.h"
+#include "Button.h"
 
 // Taka nakladka, ktora zostanie nalozona na ten 'normalny' ekran;
 class GameplayScreen
 {
 private:
+    /**
+     * -1 - playgin
+     * 0 - lose
+     * 1 - win
+     */
+    int gameState;
     sf::Font font;
-    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, whiteBallTexture, holeTexture;
+    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, replayBtnTexture, nextLvlBtnTexture;
 
-    int currentLvl;        // Aktualnie wyswietlany lvl
-    int strokesLimit;      // Limit uderzen dla danego poziomu
+    int currentLvl;   // Aktualnie wyswietlany lvl
+    int strokesLimit; // Limit uderzen dla danego poziomu
+    int leftStrokes;
     int logicalMap[8][16]; // Logiczna mapa przedstawiajaca gdzie znajduja sie jakie przeskzody
 
     float borderThickness;
     sf::RectangleShape course; // Pole golfowe
     sf::Text titleText;        // Naglowek z nr lvlu
-    sf::Text strokesLimitText; // Naglowek z liczba pozostalych uderzen
+    sf::Text leftStrokesText;  // Naglowek z liczba pozostalych uderzen
 
     int gridRows; // Liczba rzedow na planszy
     int gridCols; // Liczba kolumn na planszy
@@ -31,6 +39,13 @@ private:
     Ball *ball; // Pointer do pilki
 
     sf::Sprite hole; // Dolek
+
+    // Ekran wygranej / przegranej
+    sf::Sprite endGameScreen;
+    // Przycisk replay
+    Button *replayBtn;
+    // Przycisk nastepny lvl
+    Button *nextLvlBtn;
 
     void initAssets();
     void initCourse();
