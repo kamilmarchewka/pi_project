@@ -49,10 +49,11 @@ void Ball::setPositionY(float newPos)
         newPos));
 }
 
-void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState)
+void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool &isMouseBtnPressedRef)
 {
     // Strzelaj tylko, jezeli gra sie nie skonczyla => liczba strokeow > 0
-    if (gameState == -1)
+    // i jeżeli przycisk nie jest aktualnie klikniety
+    if (gameState == -1 && !isMouseBtnPressedRef)
     {
         // Strzelanie = ustawianie odpowiedniego velocity tylko jezeli aktualnie velocity = 0
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && (this->velocity.x == 0.f && this->velocity.y == 0.f))

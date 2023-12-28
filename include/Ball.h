@@ -23,7 +23,7 @@ public:
     void setPositionX(float newPos);
     void setPositionY(float newPos);
 
-    void update(sf::WindowBase &window, int &leftStrokes, int &gameState);
+    void update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool &isMouseBtnPressedRef);
     void render(sf::RenderTarget &target);
 };
 
