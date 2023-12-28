@@ -152,7 +152,6 @@ GameplayScreen::GameplayScreen(std::string pathToLvl)
         for (int j = 0; j < gridCols; ++j)
         {
             odczyt >> logicalValue;
-            std::cout << logicalValue << "\n";
             logicalMap[i][j] = logicalValue; // Wypelnienie tablicy z logiczna reprezentacja pol
         }
     }
