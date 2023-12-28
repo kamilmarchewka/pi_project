@@ -21,7 +21,7 @@ public:
     void setPositionX(float newPos);
     void setPositionY(float newPos);
 
-    void update(sf::WindowBase &window);
+    void update(sf::WindowBase &window, int &strokesLimit);
     void render(sf::RenderTarget &target);
 };
 

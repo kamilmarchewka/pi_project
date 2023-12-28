@@ -324,12 +324,13 @@ void GameplayScreen::holeCollision()
 
 void GameplayScreen::update(sf::WindowBase &window)
 {
-    // TODO: To sie musi brac z jednego miejsca
-
     // Kolizja ze scianami
     this->wallsCollision();
 
-    this->ball->update(window);
+    this->ball->update(window, this->strokesLimit);
+
+    // Aktualizacja napisu z pozostala liczba strzalow
+    this->strokesLimitText.setString(sf::String("Strzaly: " + std::to_string(this->strokesLimit)));
 
     // Kolizja z piaskiem
     this->sandCollision();
