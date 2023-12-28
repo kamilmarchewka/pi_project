@@ -55,8 +55,8 @@ Game::Game()
         this->lvlsPathArray[i] = path;
     }
 
-    this->gameScreen = 0; // Zaczecie gry na ekranie z menu glownym
-    this->musicIsOn = 0;  // Domyslnie muzyka jest wylaczona
+    this->gameScreen = 0;    // Zaczecie gry na ekranie z menu glownym
+    this->musicIsOn = false; // Domyslnie muzyka jest wylaczona
     this->isMouseBtnPressed = false;
 
     this->window.create(sf::VideoMode(1200, 700), "MiniGolf", sf::Style::Default); // Inicjalizacja okna
@@ -182,13 +182,13 @@ void Game::update()
 
             if (musicIsOn)
             {
-                this->musicIsOn = 0;
+                this->musicIsOn = false;
                 this->musicBtn->setTextureRect(sf::IntRect(34, 0, 34, 34));
                 this->backgroundMusic.pause(); // Zatrzymanie muzyki
             }
             else
             {
-                this->musicIsOn = 1;
+                this->musicIsOn = true;
                 this->musicBtn->setTextureRect(sf::IntRect(0, 0, 34, 34));
                 this->backgroundMusic.play(); // Wznowienie muzyki
             }

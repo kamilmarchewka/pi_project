@@ -12,7 +12,7 @@ class Game
 {
 private:
     std::string lvlsPathArray[3]; // Przechowuje sciezki do plikow z lvlami
-    int lvlsPathArrayLength;
+    int lvlsPathArrayLength;      // Dlugosc, jest liczona automatycznie
 
     /**
      * Aktualnie wywietlany ekran gry
@@ -23,7 +23,7 @@ private:
      */
     int gameScreen;
 
-    int musicIsOn;
+    bool musicIsOn;
     bool isMouseBtnPressed;
 
     sf::RenderWindow window; // Okno gry
