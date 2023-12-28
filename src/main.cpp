@@ -1,33 +1,56 @@
-// Standard library includes
-#include <iostream>
+#include "pch.h"
 
-// SFML includes
-#include <SFML/Graphics.hpp>
-
-// Game includes
 #include "Game.h"
-#include "Ball.h"
 
-/**
- * Main entry point of the application
- * Function that runs the entire game loop
- */
+// LVLS
+//----------------- 1 ---------------
+int lvl1 = 1;
+int lvl1Strokes = 5;
+int lvl1Map[8][16] = {{0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+                      {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
+                      {0, 1, 0, 1, 0, 3, 3, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+                      {1, 0, 1, 0, 3, 3, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0},
+                      {0, 1, 0, 1, 3, 3, 0, 2, 0, 1, 0, 1, 0, 1, 0, 1},
+                      {1, 0, 1, 0, 3, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
+                      {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+                      {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0}};
+//----------------- 2 ---------------
+int lvl2 = 2;
+int lvl2Strokes = 3;
+int lvl2Map[8][16] = {{0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+                      {1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0},
+                      {0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 0, 1, 0, 1},
+                      {1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0},
+                      {0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 0, 1, 0, 1},
+                      {1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 2, 0, 1, 0, 1, 0},
+                      {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1},
+                      {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 0}};
+//----------------- 3 ---------------
+int lvl3 = 3;
+int lvl3Strokes = 1;
+int lvl3Map[8][16] = {{0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+                      {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
+                      {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+                      {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
+                      {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+                      {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
+                      {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
+                      {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0}};
+
 int main()
 {
-  // Create an instance of the Game class
+  // Stworzenie obiektu Game
   Game game;
-  // Game loop, runs until the game is over
-  // updates the game 60 times per second
-  while (game.isRunning())
-  {
-    // Update
-    // All the logic of the game is updated here
-    game.update();
 
-    // Draw and display the game
+  // Game loop
+  while (game.getWindow().isOpen()) // Sprawdzenie czy okno jest otwarte
+  {
+    // Aktualizacja
+    game.update();
+    // Renderowanie
     game.render();
   }
 
-  // Game has ended
+  // Koniec gry
   return 0;
 }

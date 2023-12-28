@@ -1,36 +1,28 @@
 #ifndef BALL_H
 #define BALL_H
-// Standard includes
 
-// SFML includes
-#include <SFML/Graphics.hpp>
+#include "pch.h"
 
 class Ball
 {
 private:
-    // Variables
-    sf::CircleShape circle;
-    sf::Vector2f position;
+    sf::Sprite ball;
     sf::Vector2f velocity;
 
-    // Functions
-    void initVariables();
-    void initShape();
-
 public:
-    // Constructor and destructor
-    Ball();
+    Ball(sf::Texture &texture);
     ~Ball();
 
-    // Accessors
+    sf::FloatRect getGlobalBounds();
+    sf::Vector2f getVelocity();
+    sf::Vector2f getPosition();
+    void setVelocityX(float newVel);
+    void setVelocityY(float newVel);
+    void setPositionX(float newPos);
+    void setPositionY(float newPos);
 
-    // Modifiers
-    void move(float x, float y);
-
-    // Functions
-    void shoot(sf::RenderWindow *window);
-    void update(sf::RenderWindow *window);
-    void render(sf::RenderTarget *target);
+    void update(sf::WindowBase &window);
+    void render(sf::RenderTarget &target);
 };
 
 #endif

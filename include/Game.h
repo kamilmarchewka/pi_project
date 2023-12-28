@@ -1,50 +1,70 @@
 #ifndef GAME_H
 #define GAME_H
 
-// Standard includes
-#include <iostream>
+#include "pch.h"
 
-// SFML includes
-#include <SFML/Graphics.hpp>
+// Screen 0 ----------------
+#include "Button.h"
+// Screen 1 ----------------
+#include "GameplayScreen.h"
 
-// Game includes
-#include "Ball.h"
-
-/**
- * Game class
- * Renders the game and handles the game loop
- * handles user input, updates the game and renders the game
- */
 class Game
 {
 private:
-    // Variables
-    sf::RenderWindow *window; // Pointer to a window object
-    sf::VideoMode videoMode;  // Video mode object, holds width and height of the window
-    std::string title;        // Title of the window
-    // Variable for holding sfml events
-    sf::Event event;
+    /**
+     * Aktualnie wywietlany ekran gry
+     * 0 - menu glowne
+     * 1 - ekran gry
+     * 2 - poziomy
+     * 3 - ustawienia gry
+     */
+    int gameScreen;
 
-    Ball ball;
+    int musicIsOn;
+    bool isMouseBtnPressed;
 
-    // Functions
-    void initVariables();
-    void initWindow();
+    sf::RenderWindow window; // Okno gry
+    sf::Event event;         // Event
+
+    // Music
+    sf::Music backgroundMusic; // Muzyka w tle
+
+    // Textures
+    sf::Texture
+        mainBgTexture,
+        playBtnTexture,
+        lvlsBtnTexture,
+        optionsBtnTexture,
+        exitBtnTexture,
+        musicBtnTexture;
+
+    // Screen 0 ----------------
+    sf::Sprite mainBg;
+
+    Button *playBtn;
+    Button *lvlsBtn;
+    Button *optionsBtn;
+
+    Button *musicBtn;
+
+    // Screen 1 ----------------
+    GameplayScreen *GameplayScreenLvl1; // Ekran z plansza, nr poziomu itd.
+
+    // Screen 2 ----------------
+    // Screen 3 ----------------
+
+    // All screens -------------
+    Button *exitBtn;
+
+    void initAssets();
 
 public:
-    // Constructor and destructor
     Game();
     ~Game();
 
-    // Accessors
-    const bool isRunning() const;
+    sf::RenderWindow &getWindow(); // Zwraca okno gry
 
-    // Modifiers
-
-    // Functions
-    void poolEvents();
-    void update();
-    void render();
+    void update(); // Aktualizuje gre
+    void render(); // Renderuje gre
 };
-
 #endif
