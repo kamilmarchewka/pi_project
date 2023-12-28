@@ -9,8 +9,14 @@
 class GameplayScreen
 {
 private:
+    /**
+     * -1 - playgin
+     * 0 - lose
+     * 1 - win
+     */
+    int gameState;
     sf::Font font;
-    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, whiteBallTexture, holeTexture;
+    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture;
 
     int currentLvl;        // Aktualnie wyswietlany lvl
     int strokesLimit;      // Limit uderzen dla danego poziomu
@@ -31,6 +37,9 @@ private:
     Ball *ball; // Pointer do pilki
 
     sf::Sprite hole; // Dolek
+
+    // Ekran wygranej / przegranej
+    sf::Sprite endGameScreen;
 
     void initAssets();
     void initCourse();

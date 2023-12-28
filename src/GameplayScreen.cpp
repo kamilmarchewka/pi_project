@@ -30,6 +30,14 @@ void GameplayScreen::initAssets()
     if (!(this->holeTexture.loadFromFile("assets/hole.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - hole.png\n";
     this->holeTexture.setSmooth(true);
+
+    // Tekstury ekranu wygranej / przegranej
+    if (!(this->winBgTexture.loadFromFile("assets/win_screen_bg.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - win_screen_bg.png\n";
+    this->winBgTexture.setSmooth(true);
+    if (!(this->loseBgTexture.loadFromFile("assets/lose_screen_bg.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - lose_screen_bg.png\n";
+    this->loseBgTexture.setSmooth(true);
 }
 void GameplayScreen::initCourse()
 {
@@ -129,6 +137,7 @@ GameplayScreen::GameplayScreen(std::string pathToLvl)
     this->initAssets();
 
     // Inicjalizacja zmiennych
+    this->gameState = -1;
     this->gridRows = 8;         // Ilosc rzedow
     this->gridCols = 16;        // Ilosc kolumn
     this->borderThickness = 15; // Grubosc drewnianego ogrodzenia
@@ -170,7 +179,7 @@ GameplayScreen::GameplayScreen(std::string pathToLvl)
     // Inicjalizacja planszy (przeszkod)
     this->initObstacklesSprites();
 
-    // Dolek
+    // Inicjalizacja dolka
     this->hole.setTexture(this->holeTexture);
     this->hole.setOrigin(sf::Vector2f(
         this->hole.getGlobalBounds().width / 2,
@@ -179,6 +188,11 @@ GameplayScreen::GameplayScreen(std::string pathToLvl)
 
     // Inicjalizacja pilki
     this->ball = new Ball(this->whiteBallTexture);
+
+    // Inicjalizacja ekranu wygranej / przegranej
+    this->endGameScreen.setTexture(this->winBgTexture); // Musimy ustawic, zeby mial jakies wymiary
+    this->endGameScreen.setOrigin(sf::Vector2f(this->endGameScreen.getGlobalBounds().width / 2, this->endGameScreen.getGlobalBounds().height / 2));
+    this->endGameScreen.setPosition(sf::Vector2f(600, 350));
 }
 GameplayScreen::~GameplayScreen()
 {
@@ -318,6 +332,9 @@ void GameplayScreen::holeCollision()
             this->ball->setVelocityY(0);
             this->ball->setPositionX(holePos.x);
             this->ball->setPositionY(holePos.y);
+
+            this->gameState = 1; // Wygralismy
+            this->endGameScreen.setTexture(this->winBgTexture);
         }
     }
 }
@@ -327,7 +344,7 @@ void GameplayScreen::update(sf::WindowBase &window)
     // Kolizja ze scianami
     this->wallsCollision();
 
-    this->ball->update(window, this->strokesLimit);
+    this->ball->update(window, this->strokesLimit, this->gameState);
 
     // Aktualizacja napisu z pozostala liczba strzalow
     this->strokesLimitText.setString(sf::String("Strzaly: " + std::to_string(this->strokesLimit)));
@@ -340,6 +357,16 @@ void GameplayScreen::update(sf::WindowBase &window)
 
     // Kolizja z dolkiem
     this->holeCollision();
+
+    // Poczekanie az pilka sie zatrzyma i sprawdzenie czy przypadkiem juz nie przegralismy
+    if (!this->ball->isMoving && this->gameState == -1)
+    {
+        if (this->strokesLimit <= 0)
+        {
+            this->gameState = 0;
+            this->endGameScreen.setTexture(this->loseBgTexture);
+        }
+    }
 }
 
 void GameplayScreen::render(sf::RenderTarget &target)
@@ -359,4 +386,10 @@ void GameplayScreen::render(sf::RenderTarget &target)
     target.draw(this->hole); // Dolek
 
     this->ball->render(target);
+
+    // Ewentualny ekran wygranej / przegranej
+    if (gameState != -1)
+    {
+        target.draw(this->endGameScreen);
+    }
 }
