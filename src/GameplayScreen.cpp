@@ -191,7 +191,7 @@ GameplayScreen::~GameplayScreen()
     delete this->ball;
     delete this->replayBtn;
     delete this->nextLvlBtn;
-    std::cout << "GameplayScreen has been destroyed\n";
+    // std::cout << "GameplayScreen has been destroyed\n";
 }
 
 void GameplayScreen::setTitleText(sf::String newTitle)
@@ -376,7 +376,7 @@ void GameplayScreen::holeCollision(int allLvls)
 
 void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLvl, int allLvls, int &unlockedLvls, bool &isMouseBtnPressed)
 {
-    std::cout << "All levels: " << allLvls << " currentLvl: " << currentLvl << std::endl;
+    // std::cout << "All levels: " << allLvls << " currentLvl: " << currentLvl << std::endl;
     // Kolizja ze scianami
     this->wallsCollision();
 

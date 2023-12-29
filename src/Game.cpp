@@ -336,9 +336,9 @@ void Game::update()
             }
         }
 
-        std::cout << "Prev: " << this->prevLvl << std::endl;
-        std::cout << "Current: " << this->currentLvl << std::endl;
-        std::cout << "Selected: " << this->selectedLvl << std::endl;
+        // std::cout << "Prev: " << this->prevLvl << std::endl;
+        // std::cout << "Current: " << this->currentLvl << std::endl;
+        // std::cout << "Selected: " << this->selectedLvl << std::endl;
 
         for (int i = 0; i < this->allLvls; i++)
         {
@@ -352,6 +352,10 @@ void Game::update()
                     this->prevLvl = this->currentLvl;
                     this->currentLvl = this->lvlsBtnsVector[i]->getValue();
                 }
+
+                // Wlaczamy ekran gry
+                this->gameScreen = 1;
+                this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl);
             }
         }
     }
