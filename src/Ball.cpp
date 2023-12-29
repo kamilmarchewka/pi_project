@@ -3,6 +3,7 @@
 
 Ball::Ball(sf::Texture &texture)
 {
+    //std::cout<<texture;
     this->ball.setTexture(texture);
     this->ball.setOrigin(sf::Vector2f(
         this->ball.getGlobalBounds().width / 2,

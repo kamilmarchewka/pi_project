@@ -12,7 +12,7 @@ class Game
 {
 private:
     sf::Font InterBlack;
-
+    std::fstream zap;
     int currentLvl;               // Okresla to, jaki jest wybrany lvl w danym momencie
     std::string lvlsPathArray[6]; // Przechowuje sciezki do plikow z lvlami
     int lvlsPathArrayLength;      // Dlugosc, jest liczona automatycznie
@@ -25,6 +25,8 @@ private:
      * 3 - ustawienia gry
      */
     int gameScreen;
+    long long int volume;
+    int currentBall;
 
     bool musicIsOn;
     bool isMouseBtnPressed;
@@ -43,6 +45,12 @@ private:
         optionsBtnTexture,
         exitBtnTexture,
         musicBtnTexture,
+        PlusTexture,
+        MinusTexture,
+        RedBallTexture,
+        BlueBallTexture,
+        YellowBallTexture,
+        WhiteBallTexture,
         Level1BtnTexture,
         Level2BtnTexture,
         Level3BtnTexture,
@@ -56,7 +64,6 @@ private:
     Button *playBtn;
     Button *lvlsBtn;
     Button *optionsBtn;
-
     Button *musicBtn;
 
     // Screen 1 ----------------
@@ -71,7 +78,17 @@ private:
     Button *Level5Btn;
     Button *Level6Btn;
     // Screen 3 ----------------
-
+    sf::Text OptionsTitle1;
+    sf::Text OptionsTitle2;
+    sf::Text OptionsTitle3;
+    Button *musiconBtn;
+    Button *musicoffBtn;
+    Button *Plus;
+    Button *Minus;
+    Button *WhiteBall;
+    Button *RedBall;
+    Button *BlueBall;
+    Button *YellowBall;
     // All screens -------------
     Button *exitBtn;
 
