@@ -90,7 +90,7 @@ Game::Game()
     this->currentLvl = 1;
     this->prevLvl = 0;
     this->selectedLvl = 1;
-    this->allLvls = 6;
+    this->allLvls = 15;
     this->unlockedLvls = 1;
 
     this->musicIsOn = false; // Domyslnie muzyka jest wylaczona
@@ -130,15 +130,28 @@ Game::Game()
     this->LevelsTitle.setPosition(sf::Vector2f(1200 / 2, 170));
 
     // Inicjalizacja przyciskow
-    int leftOffset = 760;
+    int leftOffset = 1100;
     int sideSpacing = 200;
+    float btnLeft, btnTop;
     for (int i = 0; i < this->allLvls; i++)
     {
-        sf::Vector2f btnPos = sf::Vector2f(
-            i <= 2 ? leftOffset + i * sideSpacing : leftOffset + (i - 3) * sideSpacing,
-            i <= 2 ? 300 : 500);
+        if (i < 5)
+        {
+            btnLeft = leftOffset + i * sideSpacing;
+            btnTop = 260;
+        }
+        else if (i < 10)
+        {
+            btnLeft = leftOffset + (i - 5) * sideSpacing;
+            btnTop = 260 + 155;
+        }
+        else if (i < 15)
+        {
+            btnLeft = leftOffset + (i - 5 * 2) * sideSpacing;
+            btnTop = 260 + 155 * 2;
+        }
 
-        Button *btn = new Button(this->LevelsTexture, btnPos, i + 1);
+        Button *btn = new Button(this->LevelsTexture, sf::Vector2f(btnLeft, btnTop), i + 1);
 
         if (i < unlockedLvls)
         {
