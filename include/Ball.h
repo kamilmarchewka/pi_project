@@ -8,6 +8,8 @@ class Ball
 private:
     sf::Sprite ball;
     sf::Vector2f velocity;
+    float friction;     // Okresla o ile zostanie zmniejszona predkosc w nastepnej klatce
+    float stopTreshold; // Graniczna predkosc, przy niej nastepuje calkowite zatrzymanie
 
 public:
     Ball(sf::Texture &texture);
@@ -18,6 +20,10 @@ public:
     sf::FloatRect getGlobalBounds();
     sf::Vector2f getVelocity();
     sf::Vector2f getPosition();
+    float getFriction();
+    float getStopTreshold();
+    void setFriction(float k);
+    void setStopTreshold(float newTreshold);
     void setVelocityX(float newVel);
     void setVelocityY(float newVel);
     void setPositionX(float newPos);

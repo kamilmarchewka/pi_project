@@ -10,6 +10,8 @@ Ball::Ball(sf::Texture &texture)
 
     this->ball.setPosition(sf::Vector2f(162, 350 + 50));
 
+    this->stopTreshold = 0.35;
+    this->friction = 0.96;
     this->velocity = sf::Vector2f(0, 0);
 }
 Ball::~Ball()
@@ -27,6 +29,22 @@ sf::Vector2f Ball::getVelocity()
 sf::Vector2f Ball::getPosition()
 {
     return this->ball.getPosition();
+}
+float Ball::getStopTreshold()
+{
+    return this->stopTreshold;
+}
+float Ball::getFriction()
+{
+    return this->friction;
+}
+void Ball::setFriction(float k)
+{
+    this->friction = k;
+}
+void Ball::setStopTreshold(float newTreshold)
+{
+    this->stopTreshold = newTreshold;
 }
 void Ball::setVelocityX(float newVel)
 {
@@ -74,13 +92,12 @@ void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool
     this->ball.move(this->velocity);
 
     // Zachamowanie pilki przy zbyt malym velocity
-    float velocityTollerance = 0.35f; // jezeli ktorakolwiek z wartosci velocity jest mniejsza, pilka stanie
-    if (fabs(this->velocity.x) >= fabs(this->velocity.y) && fabs(this->velocity.x) < velocityTollerance)
+    if (fabs(this->velocity.x) >= fabs(this->velocity.y) && fabs(this->velocity.x) < this->stopTreshold)
         this->velocity = sf::Vector2f(0, 0);
-    else if (fabs(this->velocity.x) < fabs(this->velocity.y) && fabs(this->velocity.y) < velocityTollerance)
+    else if (fabs(this->velocity.x) < fabs(this->velocity.y) && fabs(this->velocity.y) < this->stopTreshold)
         this->velocity = sf::Vector2f(0, 0);
 
-    this->velocity *= 0.96f;
+    this->velocity *= this->friction;
 
     // Sprawdzanie czy pilka sie porusza i aktualizowanie zmiennej
     if (this->velocity.x == 0 && this->velocity.y == 0)

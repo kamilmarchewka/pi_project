@@ -21,6 +21,9 @@ void GameplayScreen::initAssets()
     if (!(this->sandTexture.loadFromFile("assets/sand.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - sand.png\n";
     this->sandTexture.setSmooth(true);
+    if (!(this->iceTexture.loadFromFile("assets/ice.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - ice.png\n";
+    this->iceTexture.setSmooth(true);
 
     // Ladowanie tekstur pilek
     if (!(this->whiteBallTexture.loadFromFile("assets/ball_white.png")))
@@ -95,11 +98,13 @@ void GameplayScreen::setUpObstacles()
     // 1 - dark grass
     // 2 - rock
     // 3 - sand
+    // 4 - ice
 
     // Czyszczenie vektorow, na wypadek gdyby byly zajete
     this->grassVector.clear();
     this->wallsVector.clear();
     this->sandVector.clear();
+    this->iceVector.clear();
 
     // Dodawania spriteow do odpowiednich vektorow
     for (int i = 0; i < this->gridRows; i++)
@@ -134,6 +139,10 @@ void GameplayScreen::setUpObstacles()
             case 3:
                 s.setTexture(this->sandTexture);
                 this->sandVector.push_back(s);
+                break;
+            case 4:
+                s.setTexture(this->iceTexture);
+                this->iceVector.push_back(s);
                 break;
 
             default:
@@ -267,6 +276,26 @@ void GameplayScreen::courseBordersCollision()
         this->ball->setVelocityX(this->ball->getVelocity().x * -1);
     }
 }
+void GameplayScreen::grassCollision()
+{
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+    float friction = 0.96f;
+    float stopTreshold = 0.35;
+
+    for (int i = 0; i < this->grassVector.size(); i++)
+    {
+        sf::FloatRect grassBounds = grassVector[i].getGlobalBounds();
+
+        // Sprawdzenie czy w nastepnej klatce nastapi kolizja
+        if (ballBounds.intersects(grassBounds))
+        {
+            if (this->ball->getFriction() != friction)
+                this->ball->setFriction(friction);
+            if (this->ball->getStopTreshold() != stopTreshold)
+                this->ball->setStopTreshold(stopTreshold);
+        }
+    }
+}
 void GameplayScreen::wallsCollision()
 {
     sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
@@ -328,18 +357,38 @@ void GameplayScreen::wallsCollision()
 void GameplayScreen::sandCollision()
 {
     sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+    float friction = 0.5f;
 
     for (int i = 0; i < this->sandVector.size(); i++)
     {
         sf::FloatRect sandBounds = sandVector[i].getGlobalBounds();
 
         // Sprawdzenie czy w nastepnej klatce nastapi kolizja
-        if (ballBounds.intersects(sandBounds))
+        if (ballBounds.intersects(sandBounds) && this->ball->getFriction() != friction)
         {
-            // Zmniejszenie predkosci pilki
-            float k = 0.8;
-            this->ball->setVelocityX(this->ball->getVelocity().x * k);
-            this->ball->setVelocityY(this->ball->getVelocity().y * k);
+            this->ball->setFriction(friction);
+        }
+    }
+}
+void GameplayScreen::iceCollision()
+{
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+    float friction = 0.97f;
+    float stopTreshold = 0.1f;
+
+    for (int i = 0; i < this->iceVector.size(); i++)
+    {
+        sf::FloatRect iceBounds = iceVector[i].getGlobalBounds();
+
+        // Sprawdzenie czy pilka styka sie z lodem
+        if (ballBounds.intersects(iceBounds))
+        {
+            if (this->ball->getFriction() != friction)
+                // Zmniejszenie predkosci pilki
+                this->ball->setFriction(0.99);
+
+            if (this->ball->getStopTreshold() != stopTreshold)
+                this->ball->setStopTreshold(stopTreshold);
         }
     }
 }
@@ -385,8 +434,14 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
     // Zmniejszenie liczby uderzen
     this->setStrokesLimitText(sf::String("Strzaly: " + std::to_string(this->strokesLeft)));
 
+    // Kolizja z trawa
+    this->grassCollision();
+
     // Kolizja z piaskiem
     this->sandCollision();
+
+    // Kolizja z lodem
+    this->iceCollision();
 
     // Kolizja z polem
     this->courseBordersCollision();
@@ -485,6 +540,8 @@ void GameplayScreen::render(sf::RenderTarget &target, int allLvls)
         target.draw(wallsVector[i]);
     for (int i = 0; i < this->sandVector.size(); i++) // Piasek
         target.draw(sandVector[i]);
+    for (int i = 0; i < this->iceVector.size(); i++) // Lod
+        target.draw(iceVector[i]);
 
     target.draw(this->hole); // Dolek
 

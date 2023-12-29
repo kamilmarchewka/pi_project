@@ -18,7 +18,7 @@ private:
     int gameState;
 
     sf::Font font;
-    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, gameFinishedBgTexture, replayBtnTexture, nextLvlBtnTexture;
+    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, iceTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, gameFinishedBgTexture, replayBtnTexture, nextLvlBtnTexture;
 
     int lvl;          // Aktualnie wyswietlany lvl
     int strokesLimit; // Limit uderzen dla danego poziomu
@@ -34,7 +34,8 @@ private:
 
     std::vector<sf::Sprite> grassVector; // Wektor przechowujacy trawe jasna i ciemna
     std::vector<sf::Sprite> wallsVector; // Wektor przechowujacy wszystkie sciany
-    std::vector<sf::Sprite> sandVector;  // Wektor przechowujacy wszystkie sciany
+    std::vector<sf::Sprite> sandVector;  // Wektor przechowujacy wszystkie piaski
+    std::vector<sf::Sprite> iceVector;   // Wektor przechowujacy wszystkie lody
 
     Ball *ball; // Pointer do pilki
 
@@ -54,8 +55,10 @@ private:
 
     // Kolizje
     void courseBordersCollision();
+    void grassCollision();
     void wallsCollision();
     void sandCollision();
+    void iceCollision();
     void holeCollision(int allLvls);
 
 public:
