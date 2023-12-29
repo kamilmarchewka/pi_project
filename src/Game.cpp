@@ -88,7 +88,7 @@ Game::Game()
     this->isMouseBtnPressed = false;
 
     this->currentLvl = 1;
-    this->allLvls = 3;
+    this->allLvls = 6;
     this->unlockedLvls = 2;
 
     this->musicIsOn = false; // Domyslnie muzyka jest wylaczona
@@ -127,6 +127,35 @@ Game::Game()
         this->LevelsTitle.getGlobalBounds().height + 9));
     this->LevelsTitle.setPosition(sf::Vector2f(1200 / 2, 170));
 
+    // Inicjalizacja przyciskow
+    int leftOffset = 760;
+    int sideSpacing = 200;
+    for (int i = 0; i < this->allLvls; i++)
+    {
+        sf::Vector2f btnPos = sf::Vector2f(
+            i <= 2 ? leftOffset + i * sideSpacing : leftOffset + (i - 3) * sideSpacing,
+            i <= 2 ? 300 : 500);
+
+        Button *btn = new Button(this->LevelsTexture, btnPos, i + 1);
+
+        if (i < unlockedLvls)
+        {
+            btn->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148 - 21));
+            btn->setPositionY(btn->getPosition().y + 21);
+
+            // Zaznaczenie obecnie wybranego poziomu
+            if ((i + 1) == this->currentLvl)
+            {
+                btn->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148));
+                btn->setPositionY(btn->getPosition().y - 21);
+            }
+        }
+        else
+            btn->setTextureRect(sf::IntRect(0, 0, 120, 148));
+
+        this->lvlsBtnsVector.push_back(btn);
+    }
+
     // All screens -------------
     this->exitBtn = new Button(this->exitBtnTexture, sf::Vector2f(1200 - 35, 30), 0);
 }
@@ -143,6 +172,11 @@ Game::~Game()
     delete this->GameplayScreenLvl1;
 
     // Screen 2 ----------------
+
+    for (int i = 0; i < this->allLvls; i++)
+    {
+        delete this->lvlsBtnsVector[i];
+    }
 
     // All screens -------------
     delete this->exitBtn;
@@ -244,6 +278,39 @@ void Game::update()
     }
     else if (this->gameScreen == 2)
     {
+        for (int i = 0; i < allLvls; i++)
+        {
+            // Zmiana poziomu
+            if (this->lvlsBtnsVector[i]->isClicked(this->window) && !this->isMouseBtnPressed && i < unlockedLvls) // Spraawdzenie czy kliknieto przycisk
+            {
+                this->isMouseBtnPressed = true;
+
+                if (!(this->currentLvl == this->lvlsBtnsVector[i]->getValue())) // Sprawdzenie czy klikniety przycisk nie jest obecnym poziomem
+                {
+                    // Zmiana stylu starego wybranego poziomu
+                    for (int i = 0; i < this->allLvls; i++)
+                    {
+                        if (this->currentLvl == (i + 1))
+                        {
+                            this->lvlsBtnsVector[i]->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148 - 21));
+                            this->lvlsBtnsVector[i]->setPositionY(this->lvlsBtnsVector[i]->getPosition().y + 21);
+                        }
+                    }
+
+                    this->currentLvl = lvlsBtnsVector[i]->getValue(); // Zmiana obecnego poziomu
+
+                    // Zmiana stylu nowo wybranego poziomu
+                    for (int i = 0; i < this->allLvls; i++)
+                    {
+                        if (this->currentLvl == (i + 1))
+                        {
+                            this->lvlsBtnsVector[i]->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148));
+                            this->lvlsBtnsVector[i]->setPositionY(this->lvlsBtnsVector[i]->getPosition().y - 21);
+                        }
+                    }
+                }
+            }
+        }
     }
     else if (this->gameScreen == 3)
     {
@@ -278,6 +345,11 @@ void Game::render()
 
     case 2:
         this->window.draw(this->LevelsTitle);
+
+        for (int i = 0; i < this->allLvls; i++)
+        {
+            this->lvlsBtnsVector[i]->render(this->window);
+        }
 
         break;
 

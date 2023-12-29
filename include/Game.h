@@ -66,6 +66,7 @@ private:
 
     // Screen 2 ----------------
     sf::Text LevelsTitle;
+    std::vector<Button *> lvlsBtnsVector;
 
     // Screen 3 ----------------
 

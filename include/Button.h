@@ -21,6 +21,8 @@ public:
     bool isClicked(sf::WindowBase &window); // Zwraca true - jezeli przycisk jest klikniety i false jezeli nie
 
     void setTextureRect(sf::IntRect rect);
+    void setPositionY(float newPos);
+    sf::Vector2f getPosition();
 
     void updateHover(sf::WindowBase &window);
     void render(sf::RenderTarget &target); // Renderuje przycisk w targecie

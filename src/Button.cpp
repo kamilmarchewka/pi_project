@@ -40,6 +40,14 @@ void Button::setTextureRect(sf::IntRect rect)
 {
     this->button.setTextureRect(rect);
 }
+void Button::setPositionY(float newPos)
+{
+    this->button.setPosition(sf::Vector2f(this->button.getPosition().x, newPos));
+}
+sf::Vector2f Button::getPosition()
+{
+    return this->button.getPosition();
+}
 
 void Button::updateHover(sf::WindowBase &window)
 {
