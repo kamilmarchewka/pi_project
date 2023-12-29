@@ -368,7 +368,7 @@ void GameplayScreen::holeCollision()
     }
 }
 
-void GameplayScreen::update(sf::WindowBase &window, int &currentLvl, int allLvls, int &unlockedLevels, bool &isMouseBtnPressed)
+void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLvl, int allLvls, int &unlockedLvls, bool &isMouseBtnPressed)
 {
     std::cout << "All levels: " << allLvls << " currentLvl: " << currentLvl << std::endl;
     // Kolizja ze scianami
@@ -409,13 +409,39 @@ void GameplayScreen::update(sf::WindowBase &window, int &currentLvl, int allLvls
             this->ball->setPositionX(162);
             this->ball->setPositionY(350 + 50);
         }
-        else if (this->nextLvlBtn->isClicked(window) && !isMouseBtnPressed)
+        else if (this->nextLvlBtn->isClicked(window) && !isMouseBtnPressed && this->gameState == 1)
         {
             isMouseBtnPressed = true;
             // Sprawdzenie, czy istnieje kolejny lvl
-            if ((currentLvl < allLvls))
+            // Kolejny lvl jest odblokowany
+            if (currentLvl < unlockedLvls)
             {
+                prevLvl = currentLvl;
+                currentLvl++;
+                this->lvl = currentLvl;
+                this->gameState = -1;
 
+                // Ladowanie od nowa kolejnego poziomu
+                // Wczytanie danych z pliku
+                this->readLvlFromFile(this->lvl);
+
+                // Aktualizacja tytulu
+                this->setTitleText(sf::String("Lvl: " + std::to_string(this->lvl)));
+
+                // Liczba uderzen sama sie aktualizuje, wiec nie trzeba tego robic tutaj
+
+                // Zaaktualizowanie wektorow ze spriteami
+                this->setUpObstacles();
+
+                // Ustawienie pilki na pozycje startowa
+                this->ball->setPositionX(162);
+                this->ball->setPositionY(350 + 50);
+            }
+            // Jestesmy na ostatnim lvlu, ktory jest odblokowany
+            else if ((currentLvl == unlockedLvls && currentLvl < allLvls))
+            {
+                unlockedLvls++;
+                prevLvl = currentLvl;
                 currentLvl++;
                 this->lvl = currentLvl;
                 this->gameState = -1;

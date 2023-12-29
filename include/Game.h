@@ -22,7 +22,9 @@ private:
     int gameScreen;
     bool isMouseBtnPressed;
 
-    int currentLvl; // Okresla to, jaki jest wybrany lvl w danym momencie
+    int currentLvl;  // Okresla to, jaki jest wybrany lvl w danym momencie
+    int prevLvl;     // Poprzedni lvl
+    int selectedLvl; // Zaznaczony lvl w menu z poziomami
     int allLvls;
     int unlockedLvls;
 

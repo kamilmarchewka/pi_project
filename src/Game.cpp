@@ -88,8 +88,10 @@ Game::Game()
     this->isMouseBtnPressed = false;
 
     this->currentLvl = 1;
+    this->prevLvl = 0;
+    this->selectedLvl = 1;
     this->allLvls = 6;
-    this->unlockedLvls = 2;
+    this->unlockedLvls = 1;
 
     this->musicIsOn = false; // Domyslnie muzyka jest wylaczona
     // -----------------
@@ -142,16 +144,18 @@ Game::Game()
         {
             btn->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148 - 21));
             btn->setPositionY(btn->getPosition().y + 21);
-
-            // Zaznaczenie obecnie wybranego poziomu
-            if ((i + 1) == this->currentLvl)
-            {
-                btn->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148));
-                btn->setPositionY(btn->getPosition().y - 21);
-            }
         }
         else
-            btn->setTextureRect(sf::IntRect(0, 0, 120, 148));
+        {
+            btn->setTextureRect(sf::IntRect(0, 0, 120, 148 - 21));
+            btn->setPositionY(btn->getPosition().y + 21);
+        }
+
+        if ((i + 1) == this->selectedLvl)
+        {
+            btn->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148));
+            btn->setPositionY(btn->getPosition().y - 21);
+        }
 
         this->lvlsBtnsVector.push_back(btn);
     }
@@ -273,12 +277,57 @@ void Game::update()
     }
     else if (this->gameScreen == 1)
     {
-        this->GameplayScreenLvl1->update(this->window, this->currentLvl, this->allLvls, this->unlockedLvls, this->isMouseBtnPressed);
+        if (this->currentLvl != this->selectedLvl)
+        {
+
+            for (int i = 0; i < this->allLvls; i++)
+            {
+                if ((i + 1) == this->prevLvl)
+                {
+                    this->lvlsBtnsVector[i]->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148 - 21));
+                    this->lvlsBtnsVector[i]->setPositionY(this->lvlsBtnsVector[i]->getPosition().y + 21);
+                }
+                else if ((i + 1) == this->currentLvl)
+                {
+                    this->lvlsBtnsVector[i]->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148));
+                    this->lvlsBtnsVector[i]->setPositionY(this->lvlsBtnsVector[i]->getPosition().y - 21);
+
+                    this->selectedLvl = this->currentLvl;
+                }
+            }
+        }
+
+        this->GameplayScreenLvl1->update(this->window, this->prevLvl, this->currentLvl, this->allLvls, this->unlockedLvls, this->isMouseBtnPressed);
         // std::cout << "game.cpp " << this->currentLvl << std::endl;
     }
     else if (this->gameScreen == 2)
     {
-        for (int i = 0; i < allLvls; i++)
+        // Zmiana stylu aktualnie wybranego poziomu
+        if (this->currentLvl != this->selectedLvl)
+        {
+
+            for (int i = 0; i < this->allLvls; i++)
+            {
+                if ((i + 1) == this->prevLvl)
+                {
+                    this->lvlsBtnsVector[i]->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148 - 21));
+                    this->lvlsBtnsVector[i]->setPositionY(this->lvlsBtnsVector[i]->getPosition().y + 21);
+                }
+                else if ((i + 1) == this->currentLvl)
+                {
+                    this->lvlsBtnsVector[i]->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148));
+                    this->lvlsBtnsVector[i]->setPositionY(this->lvlsBtnsVector[i]->getPosition().y - 21);
+
+                    this->selectedLvl = this->currentLvl;
+                }
+            }
+        }
+
+        std::cout << "Prev: " << this->prevLvl << std::endl;
+        std::cout << "Current: " << this->currentLvl << std::endl;
+        std::cout << "Selected: " << this->selectedLvl << std::endl;
+
+        for (int i = 0; i < this->allLvls; i++)
         {
             // Zmiana poziomu
             if (this->lvlsBtnsVector[i]->isClicked(this->window) && !this->isMouseBtnPressed && i < unlockedLvls) // Spraawdzenie czy kliknieto przycisk
@@ -287,27 +336,8 @@ void Game::update()
 
                 if (!(this->currentLvl == this->lvlsBtnsVector[i]->getValue())) // Sprawdzenie czy klikniety przycisk nie jest obecnym poziomem
                 {
-                    // Zmiana stylu starego wybranego poziomu
-                    for (int i = 0; i < this->allLvls; i++)
-                    {
-                        if (this->currentLvl == (i + 1))
-                        {
-                            this->lvlsBtnsVector[i]->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148 - 21));
-                            this->lvlsBtnsVector[i]->setPositionY(this->lvlsBtnsVector[i]->getPosition().y + 21);
-                        }
-                    }
-
-                    this->currentLvl = lvlsBtnsVector[i]->getValue(); // Zmiana obecnego poziomu
-
-                    // Zmiana stylu nowo wybranego poziomu
-                    for (int i = 0; i < this->allLvls; i++)
-                    {
-                        if (this->currentLvl == (i + 1))
-                        {
-                            this->lvlsBtnsVector[i]->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148));
-                            this->lvlsBtnsVector[i]->setPositionY(this->lvlsBtnsVector[i]->getPosition().y - 21);
-                        }
-                    }
+                    this->prevLvl = this->currentLvl;
+                    this->currentLvl = this->lvlsBtnsVector[i]->getValue();
                 }
             }
         }

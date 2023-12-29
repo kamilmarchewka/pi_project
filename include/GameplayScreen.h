@@ -66,7 +66,7 @@ public:
     void setStrokesLimitText(sf::String newText);
     void readLvlFromFile(int currentLvl);
 
-    void update(sf::WindowBase &window, int &currentLvl, int allLvls, int &unlockedLevels, bool &isMouseBtnPressed);
+    void update(sf::WindowBase &window, int &prevLvl, int &currentLvl, int allLvls, int &unlockedLevels, bool &isMouseBtnPressed);
     void render(sf::RenderTarget &target, int allLvls);
 };
 
