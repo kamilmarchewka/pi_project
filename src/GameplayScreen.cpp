@@ -60,7 +60,7 @@ void GameplayScreen::initCourse()
 void GameplayScreen::initLvlTitle()
 {
     // Inicjalizacja tytulu
-    this->setTitleText(sf::String("Lvl: " + std::to_string(this->currentLvl))); // Ustawienie napisu
+    this->setTitleText(sf::String("Lvl: " + std::to_string(this->lvl))); // Ustawienie napisu
 
     this->titleText.setFont(this->font);                      // Czcionka
     this->titleText.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
@@ -74,7 +74,7 @@ void GameplayScreen::initLvlTitle()
 void GameplayScreen::initMaxStrokesTitle()
 {
     // Inicjalizacja maks. liczby uderzen
-    this->setStrokesLimitText(sf::String("Strzaly: " + std::to_string(this->leftStrokes))); // Napis
+    this->setStrokesLimitText(sf::String("Strzaly: " + std::to_string(this->strokesLeft))); // Napis
     this->leftStrokesText.setFont(this->font);                                              // Czcionka
     this->leftStrokesText.setCharacterSize(20);                                             // Rozmiar
     this->leftStrokesText.setFillColor(sf::Color(30, 48, 80, 255));                         // Kolor
@@ -140,7 +140,7 @@ void GameplayScreen::setUpObstacles()
     }
 }
 
-GameplayScreen::GameplayScreen(std::string pathToLvl)
+GameplayScreen::GameplayScreen(int &currentLvl)
 {
     // Ladowanie fontow i tekstur
     this->initAssets();
@@ -152,7 +152,7 @@ GameplayScreen::GameplayScreen(std::string pathToLvl)
     this->borderThickness = 15; // Grubosc drewnianego ogrodzenia
 
     // Odczyt poziomu z pliku i zapisanie go do zmiennych
-    this->readLvlFromFile(pathToLvl);
+    this->readLvlFromFile(currentLvl);
 
     // Inicjalizacja pola
     this->initCourse();
@@ -199,8 +199,9 @@ void GameplayScreen::setStrokesLimitText(sf::String newText)
 {
     this->leftStrokesText.setString(newText);
 }
-void GameplayScreen::readLvlFromFile(std::string pathToFile)
+void GameplayScreen::readLvlFromFile(int currentLvl)
 {
+    std::string pathToFile = "data/lvl_" + std::to_string(currentLvl) + ".txt";
 
     std::fstream odczyt;
     int logicalValue;
@@ -212,9 +213,9 @@ void GameplayScreen::readLvlFromFile(std::string pathToFile)
         exit(0);
     }
 
-    odczyt >> this->currentLvl;
+    odczyt >> this->lvl;
     odczyt >> this->strokesLimit;
-    this->leftStrokes = this->strokesLimit;
+    this->strokesLeft = this->strokesLimit;
 
     for (int i = 0; i < gridRows; ++i)
     {
@@ -367,15 +368,16 @@ void GameplayScreen::holeCollision()
     }
 }
 
-void GameplayScreen::update(sf::WindowBase &window, std::string *lvlsPathArray, int lvlsPathArrayLength, int &currentLvlRef, bool &isMouseBtnPressedRef)
+void GameplayScreen::update(sf::WindowBase &window, int &currentLvl, int allLvls, int &unlockedLevels, bool &isMouseBtnPressed)
 {
+    std::cout << "All levels: " << allLvls << " currentLvl: " << currentLvl << std::endl;
     // Kolizja ze scianami
     this->wallsCollision();
 
-    this->ball->update(window, this->leftStrokes, this->gameState, isMouseBtnPressedRef);
+    this->ball->update(window, this->strokesLeft, this->gameState, isMouseBtnPressed);
 
     // Zmniejszenie liczby uderzen
-    this->setStrokesLimitText(sf::String("Strzaly: " + std::to_string(this->leftStrokes)));
+    this->setStrokesLimitText(sf::String("Strzaly: " + std::to_string(this->strokesLeft)));
 
     // Kolizja z piaskiem
     this->sandCollision();
@@ -389,7 +391,7 @@ void GameplayScreen::update(sf::WindowBase &window, std::string *lvlsPathArray, 
     // Poczekanie az pilka sie zatrzyma i sprawdzenie czy przypadkiem juz nie przegralismy
     if (!this->ball->isMoving && this->gameState == -1)
     {
-        if (this->leftStrokes <= 0)
+        if (this->strokesLeft <= 0)
         {
             this->gameState = 0;
             this->endGameScreen.setTexture(this->loseBgTexture);
@@ -399,31 +401,31 @@ void GameplayScreen::update(sf::WindowBase &window, std::string *lvlsPathArray, 
     // Obsluga przyciskow na ekranie konca gry
     if (this->gameState != -1)
     {
-        if (this->replayBtn->isClicked(window) && !isMouseBtnPressedRef)
+        if (this->replayBtn->isClicked(window) && !isMouseBtnPressed)
         {
-            isMouseBtnPressedRef = true;
+            isMouseBtnPressed = true;
             this->gameState = -1;
-            this->leftStrokes = this->strokesLimit;
+            this->strokesLeft = this->strokesLimit;
             this->ball->setPositionX(162);
             this->ball->setPositionY(350 + 50);
         }
-        else if (this->nextLvlBtn->isClicked(window) && !isMouseBtnPressedRef)
+        else if (this->nextLvlBtn->isClicked(window) && !isMouseBtnPressed)
         {
-            isMouseBtnPressedRef = true;
+            isMouseBtnPressed = true;
             // Sprawdzenie, czy istnieje kolejny lvl
-            if ((currentLvlRef < lvlsPathArrayLength))
+            if ((currentLvl < allLvls))
             {
 
-                currentLvlRef++;
-                currentLvl = currentLvlRef;
+                currentLvl++;
+                this->lvl = currentLvl;
                 this->gameState = -1;
 
                 // Ladowanie od nowa kolejnego poziomu
                 // Wczytanie danych z pliku
-                this->readLvlFromFile(lvlsPathArray[this->currentLvl - 1]);
+                this->readLvlFromFile(this->lvl);
 
                 // Aktualizacja tytulu
-                this->setTitleText(sf::String("Lvl: " + std::to_string(this->currentLvl)));
+                this->setTitleText(sf::String("Lvl: " + std::to_string(this->lvl)));
 
                 // Liczba uderzen sama sie aktualizuje, wiec nie trzeba tego robic tutaj
 
@@ -438,7 +440,7 @@ void GameplayScreen::update(sf::WindowBase &window, std::string *lvlsPathArray, 
     }
 }
 
-void GameplayScreen::render(sf::RenderTarget &target)
+void GameplayScreen::render(sf::RenderTarget &target, int allLvls)
 {
     target.draw(this->course);
     target.draw(this->titleText);
@@ -461,6 +463,7 @@ void GameplayScreen::render(sf::RenderTarget &target)
     {
         target.draw(this->endGameScreen);
         this->replayBtn->render(target);
-        this->nextLvlBtn->render(target);
+        if (gameState == 1 && this->lvl < allLvls) // Musimy wygrac i to nie moze byc ostatni lvl
+            this->nextLvlBtn->render(target);
     }
 }

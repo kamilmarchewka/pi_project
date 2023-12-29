@@ -2,6 +2,11 @@
 #include "Game.h"
 #include "GameplayScreen.h"
 
+sf::RenderWindow &Game::getWindow() // Zwraca referencje do okna gry
+{
+    return this->window;
+}
+
 void Game::initAssets()
 {
     // Font
@@ -71,23 +76,23 @@ void Game::initAssets()
 
 Game::Game()
 {
-    this->currentLvl = 1;
-
-    // Przypisanie sciezek do plikow z poziomami do tablicy
-    this->lvlsPathArrayLength = sizeof(this->lvlsPathArray) / sizeof(std::string);
-    for (int i = 0; i < lvlsPathArrayLength; i++)
-    {
-        std::string lvlNum = std::to_string(i + 1);
-        std::string path = "data/lvl_" + lvlNum + ".txt";
-        std::cout << path << std::endl;
-        this->lvlsPathArray[i] = path;
-    }
-
-    this->allLevels = 6;
-    this->unlockedLevels = 2;
-    this->gameScreen = 0;    // Zaczecie gry na ekranie z menu glownym
-    this->musicIsOn = false; // Domyslnie muzyka jest wylaczona
+    // Controls
+    /**
+     * Aktualnie wywietlany ekran gry
+     * 0 - menu glowne
+     * 1 - ekran gry
+     * 2 - poziomy
+     * 3 - ustawienia gry
+     */
+    this->gameScreen = 0;
     this->isMouseBtnPressed = false;
+
+    this->currentLvl = 1;
+    this->allLvls = 3;
+    this->unlockedLvls = 2;
+
+    this->musicIsOn = false; // Domyslnie muzyka jest wylaczona
+    // -----------------
 
     this->window.create(sf::VideoMode(1200, 700), "MiniGolf", sf::Style::Default); // Inicjalizacja okna
     this->window.setFramerateLimit(30);                                            // Ustawienie limitu klatek do 30 fps
@@ -122,23 +127,6 @@ Game::Game()
         this->LevelsTitle.getGlobalBounds().height + 9));
     this->LevelsTitle.setPosition(sf::Vector2f(1200 / 2, 170));
 
-    for (int i = 0; i < this->allLevels; i++) // Bo jest 6 poziomow
-    {
-        sf::Vector2f btnPos = sf::Vector2f(780 + 170 * i, 300); // 1. rzad
-        if (i > 2)                                              // 2. rzad
-        {
-            btnPos = sf::Vector2f(270 + 170 * i, 500);
-        }
-
-        sf::IntRect texturePos = sf::IntRect(120 * (i + 1), 0, 120, 148);
-        if (i >= this->unlockedLevels) // Pokak kludke, jezeli poziom nie jest odblokowany
-        {
-            texturePos = sf::IntRect(0, 0, 120, 148);
-        }
-        this->lvlsButtonArr[i] = new Button(this->LevelsTexture, btnPos, i + 1);
-        this->lvlsButtonArr[i]->setTextureRect(texturePos);
-    }
-
     // All screens -------------
     this->exitBtn = new Button(this->exitBtnTexture, sf::Vector2f(1200 - 35, 30), 0);
 }
@@ -155,20 +143,9 @@ Game::~Game()
     delete this->GameplayScreenLvl1;
 
     // Screen 2 ----------------
-    delete this->lvlButton;
-
-    for (int i = 0; i < this->allLevels; i++)
-    { // Bo jest 6 poziomow
-        delete this->lvlsButtonArr[i];
-    }
 
     // All screens -------------
     delete this->exitBtn;
-}
-
-sf::RenderWindow &Game::getWindow() // Zwraca referencje do okna gry
-{
-    return this->window;
 }
 
 void Game::update()
@@ -225,14 +202,13 @@ void Game::update()
             this->isMouseBtnPressed = true;
 
             this->gameScreen = this->playBtn->getValue();
-            this->GameplayScreenLvl1 = new GameplayScreen(this->lvlsPathArray[this->currentLvl - 1]);
+            this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl);
         }
         else if (this->lvlsBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
             this->isMouseBtnPressed = true;
 
             this->gameScreen = this->lvlsBtn->getValue();
-            std::cout << "POZIOMY zostal wcisniety\n";
         }
         else if (this->optionsBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
@@ -263,21 +239,11 @@ void Game::update()
     }
     else if (this->gameScreen == 1)
     {
-        this->GameplayScreenLvl1->update(this->window, this->lvlsPathArray, this->lvlsPathArrayLength, this->currentLvl, this->isMouseBtnPressed);
-        std::cout << "game.cpp " << this->currentLvl << std::endl;
+        this->GameplayScreenLvl1->update(this->window, this->currentLvl, this->allLvls, this->unlockedLvls, this->isMouseBtnPressed);
+        // std::cout << "game.cpp " << this->currentLvl << std::endl;
     }
     else if (this->gameScreen == 2)
     {
-        // Wybor poziomu
-        for (int i = 0; i < allLevels; i++)
-        {
-            Button *currentBtn = this->lvlsButtonArr[i];
-            if (currentBtn->isClicked(this->window) && !this->isMouseBtnPressed && i < unlockedLevels)
-            {
-                this->isMouseBtnPressed = true;
-                this->currentLvl = currentBtn->getValue();
-            }
-        }
     }
     else if (this->gameScreen == 3)
     {
@@ -307,16 +273,12 @@ void Game::render()
         break;
 
     case 1:
-        this->GameplayScreenLvl1->render(this->window);
+        this->GameplayScreenLvl1->render(this->window, this->allLvls);
         break;
 
     case 2:
         this->window.draw(this->LevelsTitle);
 
-        for (int i = 0; i < this->allLevels; i++)
-        { // Bo jest 6 poziomow
-            this->lvlsButtonArr[i]->render(this->window);
-        }
         break;
 
     case 3:
