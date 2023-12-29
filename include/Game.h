@@ -11,12 +11,7 @@
 class Game
 {
 private:
-    sf::Font InterBlack;
-
-    int currentLvl;               // Okresla to, jaki jest wybrany lvl w danym momencie
-    std::string lvlsPathArray[3]; // Przechowuje sciezki do plikow z lvlami
-    int lvlsPathArrayLength;      // Dlugosc, jest liczona automatycznie
-
+    // Controls
     /**
      * Aktualnie wywietlany ekran gry
      * 0 - menu glowne
@@ -25,10 +20,21 @@ private:
      * 3 - ustawienia gry
      */
     int gameScreen;
-
-    bool musicIsOn;
     bool isMouseBtnPressed;
 
+    int currentLvl;  // Okresla to, jaki jest wybrany lvl w danym momencie
+    int prevLvl;     // Poprzedni lvl
+    int selectedLvl; // Zaznaczony lvl w menu z poziomami
+    int allLvls;
+    int unlockedLvls;
+
+    bool musicIsOn;
+    // -----------------
+
+    // Czcionka
+    sf::Font InterBlack;
+
+    // Okno
     sf::RenderWindow window; // Okno gry
     sf::Event event;         // Event
 
@@ -45,7 +51,8 @@ private:
         musicBtnTexture,
         Level1BtnTexture,
         Level2BtnTexture,
-        Level3BtnTexture;
+        Level3BtnTexture,
+        LevelsTexture;
 
     // Screen 0 ----------------
     sf::Sprite mainBg;
@@ -61,12 +68,8 @@ private:
 
     // Screen 2 ----------------
     sf::Text LevelsTitle;
-    Button *Level1Btn;
-    Button *Level2Btn;
-    Button *Level3Btn;
-    Button *Level4Btn;
-    Button *Level5Btn;
-    Button *Level6Btn;
+    std::vector<Button *> lvlsBtnsVector;
+
     // Screen 3 ----------------
 
     // All screens -------------

@@ -18,11 +18,11 @@ private:
     int gameState;
 
     sf::Font font;
-    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, replayBtnTexture, nextLvlBtnTexture;
+    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, gameFinishedBgTexture, replayBtnTexture, nextLvlBtnTexture;
 
-    int currentLvl;   // Aktualnie wyswietlany lvl
+    int lvl;          // Aktualnie wyswietlany lvl
     int strokesLimit; // Limit uderzen dla danego poziomu
-    int leftStrokes;
+    int strokesLeft;
     int logicalMap[8][16]; // Logiczna mapa przedstawiajaca gdzie znajduja sie jakie przeskzody
 
     float borderThickness;
@@ -56,18 +56,18 @@ private:
     void courseBordersCollision();
     void wallsCollision();
     void sandCollision();
-    void holeCollision();
+    void holeCollision(int allLvls);
 
 public:
-    GameplayScreen(std::string pathToLvl);
+    GameplayScreen(int &currentLvl);
     ~GameplayScreen();
 
     void setTitleText(sf::String newTitle);
     void setStrokesLimitText(sf::String newText);
-    void readLvlFromFile(std::string pathToFile);
+    void readLvlFromFile(int currentLvl);
 
-    void update(sf::WindowBase &window, std::string *lvlsPathArray, int lvlsPathArrayLength, int &currentLvlRef, bool &isMouseBtnPressedRef);
-    void render(sf::RenderTarget &target);
+    void update(sf::WindowBase &window, int &prevLvl, int &currentLvl, int allLvls, int &unlockedLevels, bool &isMouseBtnPressed);
+    void render(sf::RenderTarget &target, int allLvls);
 };
 
 #endif

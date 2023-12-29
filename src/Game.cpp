@@ -2,6 +2,11 @@
 #include "Game.h"
 #include "GameplayScreen.h"
 
+sf::RenderWindow &Game::getWindow() // Zwraca referencje do okna gry
+{
+    return this->window;
+}
+
 void Game::initAssets()
 {
     // Font
@@ -57,6 +62,11 @@ void Game::initAssets()
         std::cout << "ERROR::TEXTURES - l3_btn.png\n";
     this->Level3BtnTexture.setSmooth(true);
 
+    // Levels
+    if (!(this->LevelsTexture.loadFromFile("assets/lvls_texture.png")))
+        std::cout << "ERROR::TEXTURES - lvls_texture.png\n";
+    this->LevelsTexture.setSmooth(true);
+
     // Ladowanie muzyki
     this->backgroundMusic.openFromFile("assets/background_music.ogg");
     this->backgroundMusic.setVolume(30.f);
@@ -66,21 +76,25 @@ void Game::initAssets()
 
 Game::Game()
 {
-    this->currentLvl = 1;
-
-    // Przypisanie sciezek do plikow z poziomami do tablicy
-    this->lvlsPathArrayLength = sizeof(this->lvlsPathArray) / sizeof(std::string);
-    for (int i = 0; i < lvlsPathArrayLength; i++)
-    {
-        std::string lvlNum = std::to_string(i + 1);
-        std::string path = "data/lvl_" + lvlNum + ".txt";
-        std::cout << path << std::endl;
-        this->lvlsPathArray[i] = path;
-    }
-
-    this->gameScreen = 0;    // Zaczecie gry na ekranie z menu glownym
-    this->musicIsOn = false; // Domyslnie muzyka jest wylaczona
+    // Controls
+    /**
+     * Aktualnie wywietlany ekran gry
+     * 0 - menu glowne
+     * 1 - ekran gry
+     * 2 - poziomy
+     * 3 - ustawienia gry
+     */
+    this->gameScreen = 0;
     this->isMouseBtnPressed = false;
+
+    this->currentLvl = 1;
+    this->prevLvl = 0;
+    this->selectedLvl = 1;
+    this->allLvls = 15;
+    this->unlockedLvls = 15;
+
+    this->musicIsOn = false; // Domyslnie muzyka jest wylaczona
+    // -----------------
 
     this->window.create(sf::VideoMode(1200, 700), "MiniGolf", sf::Style::Default); // Inicjalizacja okna
     this->window.setFramerateLimit(30);                                            // Ustawienie limitu klatek do 30 fps
@@ -115,14 +129,49 @@ Game::Game()
         this->LevelsTitle.getGlobalBounds().height + 9));
     this->LevelsTitle.setPosition(sf::Vector2f(1200 / 2, 170));
 
-    float lvlsTopOffset = 300;
-    float lvlsLineHeight = 200;
-    this->Level1Btn = new Button(this->Level1BtnTexture, sf::Vector2f(600 - 200, lvlsTopOffset), 1);
-    this->Level2Btn = new Button(this->Level2BtnTexture, sf::Vector2f(600, lvlsTopOffset), 2);
-    this->Level3Btn = new Button(this->Level3BtnTexture, sf::Vector2f(600 + 200, lvlsTopOffset), 3);
-    this->Level4Btn = new Button(this->Level1BtnTexture, sf::Vector2f(600 - 200, lvlsTopOffset + lvlsLineHeight), 4);
-    this->Level5Btn = new Button(this->Level2BtnTexture, sf::Vector2f(600, lvlsTopOffset + lvlsLineHeight), 5);
-    this->Level6Btn = new Button(this->Level3BtnTexture, sf::Vector2f(600 + 200, lvlsTopOffset + lvlsLineHeight), 5);
+    // Inicjalizacja przyciskow
+    int leftOffset = 1100;
+    int sideSpacing = 200;
+    float btnLeft, btnTop;
+    for (int i = 0; i < this->allLvls; i++)
+    {
+        if (i < 5)
+        {
+            btnLeft = leftOffset + i * sideSpacing;
+            btnTop = 260;
+        }
+        else if (i < 10)
+        {
+            btnLeft = leftOffset + (i - 5) * sideSpacing;
+            btnTop = 260 + 155;
+        }
+        else if (i < 15)
+        {
+            btnLeft = leftOffset + (i - 5 * 2) * sideSpacing;
+            btnTop = 260 + 155 * 2;
+        }
+
+        Button *btn = new Button(this->LevelsTexture, sf::Vector2f(btnLeft, btnTop), i + 1);
+
+        if (i < unlockedLvls)
+        {
+            btn->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148 - 21));
+            btn->setPositionY(btn->getPosition().y + 21);
+        }
+        else
+        {
+            btn->setTextureRect(sf::IntRect(0, 0, 120, 148 - 21));
+            btn->setPositionY(btn->getPosition().y + 21);
+        }
+
+        if ((i + 1) == this->selectedLvl)
+        {
+            btn->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148));
+            btn->setPositionY(btn->getPosition().y - 21);
+        }
+
+        this->lvlsBtnsVector.push_back(btn);
+    }
 
     // All screens -------------
     this->exitBtn = new Button(this->exitBtnTexture, sf::Vector2f(1200 - 35, 30), 0);
@@ -140,20 +189,14 @@ Game::~Game()
     delete this->GameplayScreenLvl1;
 
     // Screen 2 ----------------
-    delete this->Level1Btn;
-    delete this->Level2Btn;
-    delete this->Level3Btn;
-    delete this->Level4Btn;
-    delete this->Level5Btn;
-    delete this->Level6Btn;
+
+    for (int i = 0; i < this->allLvls; i++)
+    {
+        delete this->lvlsBtnsVector[i];
+    }
 
     // All screens -------------
     delete this->exitBtn;
-}
-
-sf::RenderWindow &Game::getWindow() // Zwraca referencje do okna gry
-{
-    return this->window;
 }
 
 void Game::update()
@@ -210,14 +253,13 @@ void Game::update()
             this->isMouseBtnPressed = true;
 
             this->gameScreen = this->playBtn->getValue();
-            this->GameplayScreenLvl1 = new GameplayScreen(this->lvlsPathArray[this->currentLvl - 1]);
+            this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl);
         }
         else if (this->lvlsBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
             this->isMouseBtnPressed = true;
 
             this->gameScreen = this->lvlsBtn->getValue();
-            std::cout << "POZIOMY zostal wcisniety\n";
         }
         else if (this->optionsBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
@@ -248,29 +290,69 @@ void Game::update()
     }
     else if (this->gameScreen == 1)
     {
-        this->GameplayScreenLvl1->update(this->window, this->lvlsPathArray, this->lvlsPathArrayLength, this->currentLvl, this->isMouseBtnPressed);
-        std::cout << "game.cpp " << this->currentLvl << std::endl;
+        if (this->currentLvl != this->selectedLvl)
+        {
+
+            for (int i = 0; i < this->allLvls; i++)
+            {
+                if ((i + 1) == this->prevLvl)
+                {
+                    this->lvlsBtnsVector[i]->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148 - 21));
+                    this->lvlsBtnsVector[i]->setPositionY(this->lvlsBtnsVector[i]->getPosition().y + 21);
+                }
+                else if ((i + 1) == this->currentLvl)
+                {
+                    this->lvlsBtnsVector[i]->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148));
+                    this->lvlsBtnsVector[i]->setPositionY(this->lvlsBtnsVector[i]->getPosition().y - 21);
+
+                    this->selectedLvl = this->currentLvl;
+                }
+            }
+        }
+
+        this->GameplayScreenLvl1->update(this->window, this->prevLvl, this->currentLvl, this->allLvls, this->unlockedLvls, this->isMouseBtnPressed);
+        // std::cout << "game.cpp " << this->currentLvl << std::endl;
     }
     else if (this->gameScreen == 2)
     {
-        // Wybor poziomu
-        // Poziom 1
-        if (this->Level1Btn->isClicked(this->window))
+        // Zmiana stylu aktualnie wybranego poziomu
+        if (this->currentLvl != this->selectedLvl)
         {
-            this->isMouseBtnPressed = true;
-            this->currentLvl = this->Level1Btn->getValue();
+
+            for (int i = 0; i < this->allLvls; i++)
+            {
+                if ((i + 1) == this->prevLvl)
+                {
+                    this->lvlsBtnsVector[i]->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148 - 21));
+                    this->lvlsBtnsVector[i]->setPositionY(this->lvlsBtnsVector[i]->getPosition().y + 21);
+                }
+                else if ((i + 1) == this->currentLvl)
+                {
+                    this->lvlsBtnsVector[i]->setTextureRect(sf::IntRect(120 * (i + 1), 0, 120, 148));
+                    this->lvlsBtnsVector[i]->setPositionY(this->lvlsBtnsVector[i]->getPosition().y - 21);
+
+                    this->selectedLvl = this->currentLvl;
+                }
+            }
         }
-        // Poziom 2
-        if (this->Level2Btn->isClicked(this->window))
+
+        std::cout << "Prev: " << this->prevLvl << std::endl;
+        std::cout << "Current: " << this->currentLvl << std::endl;
+        std::cout << "Selected: " << this->selectedLvl << std::endl;
+
+        for (int i = 0; i < this->allLvls; i++)
         {
-            this->isMouseBtnPressed = true;
-            this->currentLvl = this->Level2Btn->getValue();
-        }
-        // Poziom 3
-        if (this->Level3Btn->isClicked(this->window))
-        {
-            this->isMouseBtnPressed = true;
-            this->currentLvl = this->Level3Btn->getValue();
+            // Zmiana poziomu
+            if (this->lvlsBtnsVector[i]->isClicked(this->window) && !this->isMouseBtnPressed && i < unlockedLvls) // Spraawdzenie czy kliknieto przycisk
+            {
+                this->isMouseBtnPressed = true;
+
+                if (!(this->currentLvl == this->lvlsBtnsVector[i]->getValue())) // Sprawdzenie czy klikniety przycisk nie jest obecnym poziomem
+                {
+                    this->prevLvl = this->currentLvl;
+                    this->currentLvl = this->lvlsBtnsVector[i]->getValue();
+                }
+            }
         }
     }
     else if (this->gameScreen == 3)
@@ -301,17 +383,17 @@ void Game::render()
         break;
 
     case 1:
-        this->GameplayScreenLvl1->render(this->window);
+        this->GameplayScreenLvl1->render(this->window, this->allLvls);
         break;
 
     case 2:
         this->window.draw(this->LevelsTitle);
-        this->Level1Btn->render(this->window);
-        this->Level2Btn->render(this->window);
-        this->Level3Btn->render(this->window);
-        this->Level4Btn->render(this->window);
-        this->Level5Btn->render(this->window);
-        this->Level6Btn->render(this->window);
+
+        for (int i = 0; i < this->allLvls; i++)
+        {
+            this->lvlsBtnsVector[i]->render(this->window);
+        }
+
         break;
 
     case 3:
