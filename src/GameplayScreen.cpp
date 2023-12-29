@@ -39,6 +39,9 @@ void GameplayScreen::initAssets()
     if (!(this->loseBgTexture.loadFromFile("assets/lose_screen_bg.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - lose_screen_bg.png\n";
     this->loseBgTexture.setSmooth(true);
+    if (!(this->gameFinishedBgTexture.loadFromFile("assets/game_finished_texture.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - game_finished_texture.png\n";
+    this->gameFinishedBgTexture.setSmooth(true);
     if (!(this->replayBtnTexture.loadFromFile("assets/repeat_btn.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - repeat_btn.png\n";
     this->replayBtnTexture.setSmooth(true);
@@ -340,7 +343,7 @@ void GameplayScreen::sandCollision()
         }
     }
 }
-void GameplayScreen::holeCollision()
+void GameplayScreen::holeCollision(int allLvls)
 {
     sf::FloatRect ballBounds = this->ball->getGlobalBounds();
     sf::FloatRect holeBounds = this->hole.getGlobalBounds();
@@ -364,6 +367,9 @@ void GameplayScreen::holeCollision()
 
             this->gameState = 1; // Wygralismy
             this->endGameScreen.setTexture(this->winBgTexture);
+
+            if (this->lvl >= allLvls)
+                this->endGameScreen.setTexture(this->gameFinishedBgTexture);
         }
     }
 }
@@ -386,7 +392,7 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
     this->courseBordersCollision();
 
     // Kolizja z dolkiem
-    this->holeCollision();
+    this->holeCollision(allLvls);
 
     // Poczekanie az pilka sie zatrzyma i sprawdzenie czy przypadkiem juz nie przegralismy
     if (!this->ball->isMoving && this->gameState == -1)
@@ -399,7 +405,7 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
     }
 
     // Obsluga przyciskow na ekranie konca gry
-    if (this->gameState != -1)
+    if (this->gameState != -1 && this->lvl < allLvls)
     {
         if (this->replayBtn->isClicked(window) && !isMouseBtnPressed)
         {
@@ -484,12 +490,15 @@ void GameplayScreen::render(sf::RenderTarget &target, int allLvls)
 
     this->ball->render(target);
 
-    // Ewentualny ekran wygranej / przegranej
+    // Ewentualny ekran wygranej / przegranej / konca gry
     if (gameState != -1)
     {
         target.draw(this->endGameScreen);
-        this->replayBtn->render(target);
-        if (gameState == 1 && this->lvl < allLvls) // Musimy wygrac i to nie moze byc ostatni lvl
-            this->nextLvlBtn->render(target);
+        if (this->lvl < allLvls)
+        {
+            this->replayBtn->render(target);
+            if (gameState == 1) // Musimy wygrac i to nie moze byc ostatni lvl
+                this->nextLvlBtn->render(target);
+        }
     }
 }

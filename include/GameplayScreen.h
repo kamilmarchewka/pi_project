@@ -18,7 +18,7 @@ private:
     int gameState;
 
     sf::Font font;
-    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, replayBtnTexture, nextLvlBtnTexture;
+    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, gameFinishedBgTexture, replayBtnTexture, nextLvlBtnTexture;
 
     int lvl;          // Aktualnie wyswietlany lvl
     int strokesLimit; // Limit uderzen dla danego poziomu
@@ -56,7 +56,7 @@ private:
     void courseBordersCollision();
     void wallsCollision();
     void sandCollision();
-    void holeCollision();
+    void holeCollision(int allLvls);
 
 public:
     GameplayScreen(int &currentLvl);
