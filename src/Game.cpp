@@ -5,60 +5,74 @@
 void Game::initAssets()
 {
     // Font
-    if (!this->InterBlack.loadFromFile("assets/fonts/Inter-Black.ttf"))
+    if (!this->InterBlack.loadFromFile("../assets/fonts/Inter-Black.ttf"))
     {
         std::cout << "ERROR::FONTS - Inter-Black.ttf\n";
     }
 
     // Ladowanie textur
     // Tlo
-    if (!(this->mainBgTexture.loadFromFile("assets/background.png")))
+    if (!(this->mainBgTexture.loadFromFile("../assets/background.png")))
         std::cout
             << "ERROR::TEXTURES - background.png\n";
     this->mainBgTexture.setSmooth(true); // Wyrownanie krawedzi
 
     // Play btn
-    if (!(this->playBtnTexture.loadFromFile("assets/play_btn.png")))
+    if (!(this->playBtnTexture.loadFromFile("../assets/play_btn.png")))
         std::cout << "ERROR::TEXTURES - play_btn.png\n";
     this->playBtnTexture.setSmooth(true); // Wyrownanie krawedzi
 
     // Lvls btn
-    if (!(this->lvlsBtnTexture.loadFromFile("assets/poziomy_btn.png")))
+    if (!(this->lvlsBtnTexture.loadFromFile("../assets/poziomy_btn.png")))
         std::cout << "ERROR::TEXTURES - poziomy_btn.png\n";
     this->lvlsBtnTexture.setSmooth(true); // Wyrownanie krawedzi
 
     // Options btn
-    if (!(this->optionsBtnTexture.loadFromFile("assets/ustawienia_btn.png")))
+    if (!(this->optionsBtnTexture.loadFromFile("../assets/ustawienia_btn.png")))
         std::cout << "ERROR::TEXTURES - ustawienia_btn.png\n";
     this->optionsBtnTexture.setSmooth(true); // Wyrownanie krawedzi
 
     // Exit btn
-    if (!(this->exitBtnTexture.loadFromFile("assets/exit_icon.png")))
+    if (!(this->exitBtnTexture.loadFromFile("../assets/exit_icon.png")))
         std::cout << "ERROR::TEXTURES - exit_icon.png\n";
     this->exitBtnTexture.setSmooth(true); // Wyrownanie krawedzi
 
     // Music btn
-    if (!(this->musicBtnTexture.loadFromFile("assets/music.png")))
+    if (!(this->musicBtnTexture.loadFromFile("../assets/music.png")))
         std::cout << "ERROR::TEXTURES - music.png\n";
     this->musicBtnTexture.setSmooth(true); // Wyrownanie krawedzi
 
     // Level 1 - przycisk
-    if (!(this->Level1BtnTexture.loadFromFile("assets/l1_btn.png")))
+    if (!(this->Level1BtnTexture.loadFromFile("../assets/l1_btn.png")))
         std::cout << "ERROR::TEXTURES - l1_btn.png\n";
     this->Level1BtnTexture.setSmooth(true);
 
     // Level 2 - przycisk
-    if (!(this->Level2BtnTexture.loadFromFile("assets/l2_btn.png")))
+    if (!(this->Level2BtnTexture.loadFromFile("../assets/l2_btn.png")))
         std::cout << "ERROR::TEXTURES - l2_btn.png\n";
     this->Level2BtnTexture.setSmooth(true);
 
     // Level 3 - przycisk
-    if (!(this->Level3BtnTexture.loadFromFile("assets/l3_btn.png")))
+    if (!(this->Level3BtnTexture.loadFromFile("../assets/l3_btn.png")))
         std::cout << "ERROR::TEXTURES - l3_btn.png\n";
     this->Level3BtnTexture.setSmooth(true);
 
+    // Level 4 - przycisk
+    if (!(this->Level4BtnTexture.loadFromFile("../assets/l4_btn.png")))
+        std::cout << "ERROR::TEXTURES - l4_btn.png\n";
+    this->Level4BtnTexture.setSmooth(true);
+
+    // Level 5 - przycisk
+    if (!(this->Level5BtnTexture.loadFromFile("../assets/l5_btn.png")))
+        std::cout << "ERROR::TEXTURES - l5_btn.png\n";
+    this->Level5BtnTexture.setSmooth(true);
+
+    // Level 6 - przycisk
+    if (!(this->Level6BtnTexture.loadFromFile("../assets/l6_btn.png")))
+        std::cout << "ERROR::TEXTURES - l6_btn.png\n";
+    this->Level6BtnTexture.setSmooth(true);
     // Ladowanie muzyki
-    this->backgroundMusic.openFromFile("assets/background_music.ogg");
+    this->backgroundMusic.openFromFile("../assets/background_music.ogg");
     this->backgroundMusic.setVolume(30.f);
     // this->backgroundMusic.play();
     this->backgroundMusic.setLoop(true);
@@ -66,14 +80,14 @@ void Game::initAssets()
 
 Game::Game()
 {
-    this->currentLvl = 1;
+    //this->currentLvl = 1;
 
     // Przypisanie sciezek do plikow z poziomami do tablicy
     this->lvlsPathArrayLength = sizeof(this->lvlsPathArray) / sizeof(std::string);
     for (int i = 0; i < lvlsPathArrayLength; i++)
     {
         std::string lvlNum = std::to_string(i + 1);
-        std::string path = "data/lvl_" + lvlNum + ".txt";
+        std::string path = "../data/lvl_" + lvlNum + ".txt";
         std::cout << path << std::endl;
         this->lvlsPathArray[i] = path;
     }
@@ -120,9 +134,9 @@ Game::Game()
     this->Level1Btn = new Button(this->Level1BtnTexture, sf::Vector2f(600 - 200, lvlsTopOffset), 1);
     this->Level2Btn = new Button(this->Level2BtnTexture, sf::Vector2f(600, lvlsTopOffset), 2);
     this->Level3Btn = new Button(this->Level3BtnTexture, sf::Vector2f(600 + 200, lvlsTopOffset), 3);
-    this->Level4Btn = new Button(this->Level1BtnTexture, sf::Vector2f(600 - 200, lvlsTopOffset + lvlsLineHeight), 4);
-    this->Level5Btn = new Button(this->Level2BtnTexture, sf::Vector2f(600, lvlsTopOffset + lvlsLineHeight), 5);
-    this->Level6Btn = new Button(this->Level3BtnTexture, sf::Vector2f(600 + 200, lvlsTopOffset + lvlsLineHeight), 5);
+    this->Level4Btn = new Button(this->Level4BtnTexture, sf::Vector2f(600 - 200, lvlsTopOffset + lvlsLineHeight), 4);
+    this->Level5Btn = new Button(this->Level5BtnTexture, sf::Vector2f(600, lvlsTopOffset + lvlsLineHeight), 5);
+    this->Level6Btn = new Button(this->Level6BtnTexture, sf::Vector2f(600 + 200, lvlsTopOffset + lvlsLineHeight), 5);
 
     // All screens -------------
     this->exitBtn = new Button(this->exitBtnTexture, sf::Vector2f(1200 - 35, 30), 0);
@@ -189,8 +203,8 @@ void Game::update()
         // Spraawdzenie czy przycisk jest klikniety
         if (this->exitBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
             this->isMouseBtnPressed = true;
-
             // Powrot do ekranu z menu
             this->gameScreen = this->exitBtn->getValue();
 
@@ -207,22 +221,23 @@ void Game::update()
         // Logika menu
         if (this->playBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            this->currentLvl = 1;
             this->isMouseBtnPressed = true;
-
             this->gameScreen = this->playBtn->getValue();
             this->GameplayScreenLvl1 = new GameplayScreen(this->lvlsPathArray[this->currentLvl - 1]);
         }
         else if (this->lvlsBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
             this->isMouseBtnPressed = true;
-
             this->gameScreen = this->lvlsBtn->getValue();
             std::cout << "POZIOMY zostal wcisniety\n";
         }
         else if (this->optionsBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
             this->isMouseBtnPressed = true;
-
             this->gameScreen = this->optionsBtn->getValue();
             std::cout << "USTAWIENIA zostal wcisniety\n";
         }
@@ -234,12 +249,14 @@ void Game::update()
 
             if (musicIsOn)
             {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
                 this->musicIsOn = false;
                 this->musicBtn->setTextureRect(sf::IntRect(34, 0, 34, 34));
                 this->backgroundMusic.pause(); // Zatrzymanie muzyki
             }
             else
             {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
                 this->musicIsOn = true;
                 this->musicBtn->setTextureRect(sf::IntRect(0, 0, 34, 34));
                 this->backgroundMusic.play(); // Wznowienie muzyki
@@ -249,7 +266,7 @@ void Game::update()
     else if (this->gameScreen == 1)
     {
         this->GameplayScreenLvl1->update(this->window, this->lvlsPathArray, this->lvlsPathArrayLength, this->currentLvl, this->isMouseBtnPressed);
-        std::cout << "game.cpp " << this->currentLvl << std::endl;
+        //std::cout << "game.cpp " << this->currentLvl << std::endl;
     }
     else if (this->gameScreen == 2)
     {
@@ -257,20 +274,56 @@ void Game::update()
         // Poziom 1
         if (this->Level1Btn->isClicked(this->window))
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            this->currentLvl = 1;
             this->isMouseBtnPressed = true;
-            this->currentLvl = this->Level1Btn->getValue();
+            this->gameScreen = this->playBtn->getValue();
+            this->GameplayScreenLvl1 = new GameplayScreen(this->lvlsPathArray[this->currentLvl - 1]);
         }
         // Poziom 2
         if (this->Level2Btn->isClicked(this->window))
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            this->currentLvl = 2;
             this->isMouseBtnPressed = true;
-            this->currentLvl = this->Level2Btn->getValue();
+            this->gameScreen = this->playBtn->getValue();
+            this->GameplayScreenLvl1 = new GameplayScreen(this->lvlsPathArray[this->currentLvl - 1]);
         }
         // Poziom 3
         if (this->Level3Btn->isClicked(this->window))
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            this->currentLvl = 3;
             this->isMouseBtnPressed = true;
-            this->currentLvl = this->Level3Btn->getValue();
+            this->gameScreen = this->playBtn->getValue();
+            this->GameplayScreenLvl1 = new GameplayScreen(this->lvlsPathArray[this->currentLvl - 1]);
+        }
+        // Poziom 4
+        if (this->Level4Btn->isClicked(this->window))
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));            
+            this->currentLvl = 4;
+            this->isMouseBtnPressed = true;
+            this->gameScreen = this->playBtn->getValue();
+            this->GameplayScreenLvl1 = new GameplayScreen(this->lvlsPathArray[this->currentLvl - 1]);
+        }
+        // Poziom 5
+        if (this->Level5Btn->isClicked(this->window))
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            this->currentLvl = 5;
+            this->isMouseBtnPressed = true;
+            this->gameScreen = this->playBtn->getValue();
+            this->GameplayScreenLvl1 = new GameplayScreen(this->lvlsPathArray[this->currentLvl - 1]);
+        }
+        // Poziom 6
+        if (this->Level6Btn->isClicked(this->window))
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            this->currentLvl = 6;
+            this->isMouseBtnPressed = true;
+            this->gameScreen = this->playBtn->getValue();
+            this->GameplayScreenLvl1 = new GameplayScreen(this->lvlsPathArray[this->currentLvl - 1]);
         }
     }
     else if (this->gameScreen == 3)

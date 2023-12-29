@@ -5,44 +5,50 @@
 void GameplayScreen::initAssets()
 {
     // Ladowanie fontow
-    if (!(this->font.loadFromFile("assets/fonts/Inter-SemiBold.ttf")))
+    if (!(this->font.loadFromFile("../assets/fonts/Inter-SemiBold.ttf")))
         std::cout << "ERROR::GameplayScreen::FONTS - Inter-SemiBold.ttf";
 
     // Ladowanie tekstur blokow
-    if (!(this->grassDarkTexture.loadFromFile("assets/grass_dark.png")))
+    if (!(this->grassDarkTexture.loadFromFile("../assets/grass_dark.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - grass_dark.png\n";
     this->grassDarkTexture.setSmooth(true);
-    if (!(this->grassLightTexture.loadFromFile("assets/grass_light.png")))
+    if (!(this->grassLightTexture.loadFromFile("../assets/grass_light.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - grass_light.png\n";
     this->grassLightTexture.setSmooth(true);
-    if (!(this->rockTexture.loadFromFile("assets/rock.png")))
+    if (!(this->rockTexture.loadFromFile("../assets/rock.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - rock.png\n";
     this->rockTexture.setSmooth(true);
-    if (!(this->sandTexture.loadFromFile("assets/sand.png")))
+    if (!(this->sandTexture.loadFromFile("../assets/sand.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - sand.png\n";
     this->sandTexture.setSmooth(true);
+    if (!(this->waterTexture.loadFromFile("../assets/water.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - water.png\n";
+    this->waterTexture.setSmooth(true);
+    if (!(this->iceTexture.loadFromFile("../assets/ice.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - ice.png\n";
+    this->iceTexture.setSmooth(true);
 
     // Ladowanie tekstur pilek
-    if (!(this->whiteBallTexture.loadFromFile("assets/ball_white.png")))
+    if (!(this->whiteBallTexture.loadFromFile("../assets/ball_white.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - ball_white.png\n";
     this->whiteBallTexture.setSmooth(true);
 
     // Tekstura dolka
-    if (!(this->holeTexture.loadFromFile("assets/hole.png")))
+    if (!(this->holeTexture.loadFromFile("../assets/hole.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - hole.png\n";
     this->holeTexture.setSmooth(true);
 
     // Tekstury ekranu wygranej / przegranej
-    if (!(this->winBgTexture.loadFromFile("assets/win_screen_bg.png")))
+    if (!(this->winBgTexture.loadFromFile("../assets/win_screen_bg.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - win_screen_bg.png\n";
     this->winBgTexture.setSmooth(true);
-    if (!(this->loseBgTexture.loadFromFile("assets/lose_screen_bg.png")))
+    if (!(this->loseBgTexture.loadFromFile("../assets/lose_screen_bg.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - lose_screen_bg.png\n";
     this->loseBgTexture.setSmooth(true);
-    if (!(this->replayBtnTexture.loadFromFile("assets/repeat_btn.png")))
+    if (!(this->replayBtnTexture.loadFromFile("../assets/repeat_btn.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - repeat_btn.png\n";
     this->replayBtnTexture.setSmooth(true);
-    if (!(this->nextLvlBtnTexture.loadFromFile("assets/next_lvl_btn.png")))
+    if (!(this->nextLvlBtnTexture.loadFromFile("../assets/next_lvl_btn.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - next_lvl_btn.png\n";
     this->nextLvlBtnTexture.setSmooth(true);
 }
@@ -92,7 +98,8 @@ void GameplayScreen::setUpObstacles()
     // 1 - dark grass
     // 2 - rock
     // 3 - sand
-
+    // 4 - water
+    // 5 - ice
     // Czyszczenie vektorow, na wypadek gdyby byly zajete
     this->grassVector.clear();
     this->wallsVector.clear();
@@ -132,7 +139,14 @@ void GameplayScreen::setUpObstacles()
                 s.setTexture(this->sandTexture);
                 this->sandVector.push_back(s);
                 break;
-
+            case 4:
+                s.setTexture(this->waterTexture);
+                this->waterVector.push_back(s);
+                break;
+            case 5:
+                s.setTexture(this->iceTexture);
+                this->iceVector.push_back(s);
+                break;
             default:
                 break;
             }
@@ -339,6 +353,60 @@ void GameplayScreen::sandCollision()
         }
     }
 }
+void GameplayScreen::waterCollision(){
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+
+    for (int i = 0; i < this->waterVector.size(); i++)
+    {
+        sf::FloatRect waterBounds = waterVector[i].getGlobalBounds();
+        float k = 0.8;
+        float l = 1.15;
+        // Sprawdzenie czy w nastepnej klatce nastapi kolizja
+        if (ballBounds.intersects(waterBounds))
+        {
+            // Zmniana predkosci pilki
+            float l = 1.0002;
+            this->ball->setVelocityY(this->ball->getVelocity().y * (l+0.1));
+            //std::cout<<this->ball->getVelocity().y<<"\n";
+            if(fabs(this->ball->getVelocity().y)>6){
+                this->ball->setVelocityY(this->ball->getVelocity().y /2);
+            }
+            else if(fabs(this->ball->getVelocity().y)>=4){
+                this->ball->setVelocityX(this->ball->getVelocity().x * pow(1.2,2));
+            }
+            else{
+            this->ball->setVelocityX(this->ball->getVelocity().x / l);
+            }
+            if(fabs(this->ball->getVelocity().x)>=2){
+                this->ball->setVelocityX(this->ball->getVelocity().x / 10);
+            }
+        }
+    }
+}
+void GameplayScreen::iceCollision()
+{
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+
+    for (int i = 0; i < this->iceVector.size(); i++)
+    {
+        sf::FloatRect iceBounds = iceVector[i].getGlobalBounds();
+
+        // Sprawdzenie czy w nastepnej klatce nastapi kolizja
+        if (ballBounds.intersects(iceBounds))
+        {
+            // Zmniejszenie predkosci pilki
+            float k = 1.125;
+            if(sqrt(pow(this->ball->getVelocity().x,2)+pow(this->ball->getVelocity().x,2))<7.5){
+            this->ball->setVelocityX(this->ball->getVelocity().x * k);
+            this->ball->setVelocityY(this->ball->getVelocity().y * k);
+            }
+            else{
+                this->ball->setVelocityX(this->ball->getVelocity().x /3);
+            this->ball->setVelocityY(this->ball->getVelocity().y /3);
+            }
+        }
+    }
+}
 void GameplayScreen::holeCollision()
 {
     sf::FloatRect ballBounds = this->ball->getGlobalBounds();
@@ -380,6 +448,12 @@ void GameplayScreen::update(sf::WindowBase &window, std::string *lvlsPathArray, 
     // Kolizja z piaskiem
     this->sandCollision();
 
+    // Kolizja z wodą
+    this->waterCollision();
+
+    // Kolizja z lodem
+    this->iceCollision();
+
     // Kolizja z polem
     this->courseBordersCollision();
 
@@ -401,6 +475,7 @@ void GameplayScreen::update(sf::WindowBase &window, std::string *lvlsPathArray, 
     {
         if (this->replayBtn->isClicked(window) && !isMouseBtnPressedRef)
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
             isMouseBtnPressedRef = true;
             this->gameState = -1;
             this->leftStrokes = this->strokesLimit;
@@ -409,6 +484,7 @@ void GameplayScreen::update(sf::WindowBase &window, std::string *lvlsPathArray, 
         }
         else if (this->nextLvlBtn->isClicked(window) && !isMouseBtnPressedRef)
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
             isMouseBtnPressedRef = true;
             // Sprawdzenie, czy istnieje kolejny lvl
             if ((currentLvlRef < lvlsPathArrayLength))
@@ -451,6 +527,10 @@ void GameplayScreen::render(sf::RenderTarget &target)
         target.draw(wallsVector[i]);
     for (int i = 0; i < this->sandVector.size(); i++) // Piasek
         target.draw(sandVector[i]);
+    for (int i = 0; i < this->waterVector.size(); i++) // Woda
+        target.draw(waterVector[i]);
+    for (int i = 0; i < this->iceVector.size(); i++) // Woda
+        target.draw(iceVector[i]);
 
     target.draw(this->hole); // Dolek
 
