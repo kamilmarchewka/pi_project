@@ -3,6 +3,11 @@
 
 Ball::Ball(sf::Texture &texture)
 {
+    // Zaladowanie tekstury strzalki do celowania
+    if (!(this->aimingArrowTexture.loadFromFile("assets/aiming_arrow.png")))
+        std::cout << "ERROR::TEXTURES::Ball.cpp - aiming_arrow.png\n";
+    this->aimingArrowTexture.setSmooth(true);
+
     this->ball.setTexture(texture);
     this->ball.setOrigin(sf::Vector2f(
         this->ball.getGlobalBounds().width / 2,
@@ -10,12 +15,37 @@ Ball::Ball(sf::Texture &texture)
 
     this->ball.setPosition(sf::Vector2f(162, 350 + 50));
 
+    this->isMoving = false;
+    this->isAiming = false;
     this->stopTreshold = 0.35;
     this->friction = 0.96;
     this->velocity = sf::Vector2f(0, 0);
+
+    // Ustawienie strzalki do celowania
+    this->aimingArrow.setTexture(this->aimingArrowTexture);
+    this->aimingArrow.setOrigin(0, this->aimingArrow.getGlobalBounds().height / 2);
+    this->aimingArrow.setPosition(this->ball.getPosition().x, this->ball.getPosition().y);
+    // this->aimingArrow.rotate(45.f);
 }
 Ball::~Ball()
 {
+}
+
+float Ball::obliczKat(float xStrzalki, float yStrzalki, float xKursora, float yKursora)
+{
+    double deltaX = xKursora - xStrzalki;
+    double deltaY = yKursora - yStrzalki;
+
+    // Używamy atan2, aby obliczyć kąt w radianach
+    double katRadiany = std::atan2(deltaY, deltaX);
+
+    // Zamieniamy kąt na stopnie i dodajemy 180 stopni
+    double katStopnie = std::fmod((katRadiany * 180.0 / M_PI) + 360.0, 360.0);
+
+    // Obrót strzałki będzie przeciwny do kąta, a grot strzałki będzie po przeciwną stronie
+    double katDoObrotu = std::fmod(katStopnie + 180.0, 360.0);
+
+    return katDoObrotu;
 }
 
 sf::FloatRect Ball::getGlobalBounds()
@@ -69,17 +99,42 @@ void Ball::setPositionY(float newPos)
 
 void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool &isMouseBtnPressedRef)
 {
+    // Pozycja myszy
+    sf::Vector2f mousePos = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
+    // Pozycja pilki
+    sf::Vector2f ballPos = this->ball.getPosition();
+
+    if (!this->isMoving && gameState == -1 && !this->isAiming && !isMouseBtnPressedRef)
+    {
+        this->isAiming = true;
+    }
+    else if ((this->isMoving || gameState != -1) && this->isAiming)
+    {
+        this->isAiming = false;
+    }
+
+    if (isAiming)
+    {
+        // Ustawienie pozycji strzalki
+        this->aimingArrow.setPosition(ballPos.x, ballPos.y);
+        float distance = sqrt(pow(mousePos.x - ballPos.x, 2) + pow(mousePos.y - ballPos.y, 2));
+        float scaleX = distance / 100.f;
+        this->aimingArrow.setScale(sf::Vector2f(scaleX, this->aimingArrow.getScale().y));
+
+        // Obracanie sie strzalki
+        float kat = this->obliczKat(this->aimingArrow.getPosition().x, this->aimingArrow.getPosition().y,
+                                    mousePos.x, mousePos.y);
+        this->aimingArrow.setRotation(kat);
+    }
+
     // Strzelaj tylko, jezeli gra sie nie skonczyla => liczba strokeow > 0
     // i jeżeli przycisk nie jest aktualnie klikniety
+    // + obsluga logiki strzalki do celowania
     if (gameState == -1 && !isMouseBtnPressedRef)
     {
-        // Strzelanie = ustawianie odpowiedniego velocity tylko jezeli aktualnie velocity = 0
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && (this->velocity.x == 0.f && this->velocity.y == 0.f))
+        // Strzelanie
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !this->isMoving)
         {
-            // Pozycja myszy
-            sf::Vector2f mousePos = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
-            sf::Vector2f ballPos = this->ball.getPosition();
-
             // Mysz w stosunku do pilki - z lewej strony lub z prawej strony
             this->velocity.x = (ballPos.x - mousePos.x) / 5.f;
             // Mysz w stosunku do pilki - nad lub pod pilka
@@ -88,6 +143,7 @@ void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool
             leftStrokes--;
         }
     }
+
     // Move
     this->ball.move(this->velocity);
 
@@ -105,7 +161,10 @@ void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool
     else
         this->isMoving = true;
 }
-void Ball::render(sf::RenderTarget &target)
+void Ball::render(sf::RenderTarget &target, int &gameState)
 {
+    if (this->isAiming && gameState == -1)
+        target.draw(this->aimingArrow);
+
     target.draw(this->ball);
 }
