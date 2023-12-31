@@ -157,32 +157,32 @@ Game::Game()
         this->LevelsTitle.getGlobalBounds().height + 9));
     this->LevelsTitle.setPosition(sf::Vector2f(1200 / 2, 170));
     // Napisy w opcjach
-    this->OptionsTitle1.setString("Sound ON\t\t\t\t\tSound OFF");// Napis
+    this->OptionsTitle1.setString("Sound ON:\n\nSound OFF:");// Napis
     this->OptionsTitle1.setFont(this->InterBlack);                // Czcionka
     this->OptionsTitle1.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
-    this->OptionsTitle1.setCharacterSize(15);
+    this->OptionsTitle1.setCharacterSize(20);
     this->OptionsTitle1.setOrigin(sf::Vector2f( // Origin - srodek dolnej krawedzi
     this->OptionsTitle1.getGlobalBounds().width / 2,
     this->OptionsTitle1.getGlobalBounds().height + 9));
-    this->OptionsTitle1.setPosition(sf::Vector2f(600, 75));
+    this->OptionsTitle1.setPosition(sf::Vector2f(450, 112));
 
-    this->OptionsTitle2.setString("Change volume");// Napis
+    this->OptionsTitle2.setString("Change volume:");// Napis
     this->OptionsTitle2.setFont(this->InterBlack);                // Czcionka
     this->OptionsTitle2.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
     this->OptionsTitle2.setCharacterSize(20);
     this->OptionsTitle2.setOrigin(sf::Vector2f( // Origin - srodek dolnej krawedzi
     this->OptionsTitle2.getGlobalBounds().width / 2,
     this->OptionsTitle2.getGlobalBounds().height + 9));
-    this->OptionsTitle2.setPosition(sf::Vector2f(500, 210));
+    this->OptionsTitle2.setPosition(sf::Vector2f(450, 210));
 
-    this->OptionsTitle3.setString("Wybierz kolor pilki");// Napis
+    this->OptionsTitle3.setString("Wybierz kolor pilki:");// Napis
     this->OptionsTitle3.setFont(this->InterBlack);                // Czcionka
     this->OptionsTitle3.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
     this->OptionsTitle3.setCharacterSize(20);
     this->OptionsTitle3.setOrigin(sf::Vector2f( // Origin - srodek dolnej krawedzi
     this->OptionsTitle3.getGlobalBounds().width / 2,
     this->OptionsTitle3.getGlobalBounds().height + 9));
-    this->OptionsTitle3.setPosition(sf::Vector2f(600, 350));
+    this->OptionsTitle3.setPosition(sf::Vector2f(450, 320));
 
     float lvlsTopOffset = 300;
     float lvlsLineHeight = 200;
@@ -194,19 +194,18 @@ Game::Game()
     this->Level6Btn = new Button(this->Level6BtnTexture, sf::Vector2f(600 + 200, lvlsTopOffset + lvlsLineHeight), 5);
 
     // Screen 3 ----------------
-    this->musiconBtn = new Button(this->musicBtnTexture, sf::Vector2f(400, 75), -1);
-    this->musicoffBtn = new Button(this->musicBtnTexture, sf::Vector2f(800, 75), -1);
+    this->musiconBtn = new Button(this->musicBtnTexture, sf::Vector2f(700, 50), -1);
+    this->musicoffBtn = new Button(this->musicBtnTexture, sf::Vector2f(700, 100), -1);
     this->musiconBtn->setTextureRect(sf::IntRect(0, 0, 34, 34));
     this->musicoffBtn->setTextureRect(sf::IntRect(34, 0, 34, 34));
-    this->Minus = new Button(this->MinusTexture, sf::Vector2f(650, 200), -1);
+    this->Minus = new Button(this->MinusTexture, sf::Vector2f(700, 200), -1);
     this->Plus = new Button(this->PlusTexture, sf::Vector2f(800, 200), -1);
-    this->WhiteBall = new Button(this->WhiteBallTexture, sf::Vector2f(450, 400), -1);
-    this->RedBall = new Button(this->RedBallTexture, sf::Vector2f(550, 400), -1);
-    this->BlueBall = new Button(this->BlueBallTexture, sf::Vector2f(650, 400), -1);
-    this->YellowBall = new Button(this->YellowBallTexture, sf::Vector2f(750, 400), -1);
+    this->WhiteBall = new Button(this->WhiteBallTexture, sf::Vector2f(650, 310), -1);
+    this->RedBall = new Button(this->RedBallTexture, sf::Vector2f(700, 310), -1);
+    this->BlueBall = new Button(this->BlueBallTexture, sf::Vector2f(750, 310), -1);
+    this->YellowBall = new Button(this->YellowBallTexture, sf::Vector2f(800, 310), -1);
     // All screens -------------
     this->exitBtn = new Button(this->exitBtnTexture, sf::Vector2f(1200 - 35, 30), 0);
-    this->currentBall=2;
 }
 Game::~Game()
 {
@@ -434,7 +433,7 @@ void Game::update()
         if (this->Minus->isClicked(this->window))
         {       
             if(volume >1){
-                volume-=25.f;
+                volume-=10.f;
                 std::this_thread::sleep_for(std::chrono::milliseconds(250));
                 this->backgroundMusic.setVolume(volume);
             }
@@ -442,7 +441,7 @@ void Game::update()
         if (this->Minus->isClicked(this->window))
         {       
             if(volume >1){
-                volume-=25.f;
+                volume-=10.f;
                 std::this_thread::sleep_for(std::chrono::milliseconds(250));
                 this->backgroundMusic.setVolume(volume);
             }
@@ -451,25 +450,21 @@ void Game::update()
         {       
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
             this->currentBall=1;
-            std::cout<<currentBall;
         }
         if (this->BlueBall->isClicked(this->window))
         {       
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
             this->currentBall=2;
-            std::cout<<currentBall;
         }
         if (this->RedBall->isClicked(this->window))
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
-            this->currentBall=3;   
-            std::cout<<currentBall;    
+            this->currentBall=3;      
         }
         if (this->YellowBall->isClicked(this->window))
         {       
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
             this->currentBall=4;
-            std::cout<<currentBall;
         }
         zap.open("../data/Ball.txt", std::ios::out);//zapisanie wybranego wariantu piłki do pliku
         zap<<currentBall<<std::endl;
