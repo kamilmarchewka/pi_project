@@ -102,6 +102,10 @@ void Ball::setPositionY(float newPos)
         this->ball.getPosition().x,
         newPos));
 }
+void Ball::setScale(float scale)
+{
+    this->ball.setScale(sf::Vector2f(scale, scale));
+}
 
 void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool &isMouseBtnPressedRef)
 {

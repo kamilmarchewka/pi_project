@@ -35,6 +35,7 @@ public:
     void setVelocityY(float newVel);
     void setPositionX(float newPos);
     void setPositionY(float newPos);
+    void setScale(float scale);
 
     void update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool &isMouseBtnPressedRef);
     void render(sf::RenderTarget &target, int &gameState);

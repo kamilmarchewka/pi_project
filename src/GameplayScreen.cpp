@@ -24,6 +24,9 @@ void GameplayScreen::initAssets()
     if (!(this->iceTexture.loadFromFile("assets/ice.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - ice.png\n";
     this->iceTexture.setSmooth(true);
+    if (!(this->gulfTexture.loadFromFile("assets/gulf.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - gulf.png\n";
+    this->gulfTexture.setSmooth(true);
 
     // Ladowanie tekstur pilek
     if (!(this->whiteBallTexture.loadFromFile("assets/ball_white.png")))
@@ -99,12 +102,14 @@ void GameplayScreen::setUpObstacles()
     // 2 - rock
     // 3 - sand
     // 4 - ice
+    // 5 - gulf
 
     // Czyszczenie vektorow, na wypadek gdyby byly zajete
     this->grassVector.clear();
     this->wallsVector.clear();
     this->sandVector.clear();
     this->iceVector.clear();
+    this->gulfsVector.clear();
 
     // Dodawania spriteow do odpowiednich vektorow
     for (int i = 0; i < this->gridRows; i++)
@@ -143,6 +148,10 @@ void GameplayScreen::setUpObstacles()
             case 4:
                 s.setTexture(this->iceTexture);
                 this->iceVector.push_back(s);
+                break;
+            case 5:
+                s.setTexture(this->gulfTexture);
+                this->gulfsVector.push_back(s);
                 break;
 
             default:
@@ -392,6 +401,36 @@ void GameplayScreen::iceCollision()
         }
     }
 }
+void GameplayScreen::gulfCollision()
+{
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+
+    for (int i = 0; i < this->gulfsVector.size(); i++)
+    {
+        sf::FloatRect gulfBounds = gulfsVector[i].getGlobalBounds();
+
+        // Sprawdzenie czy pilka styka sie z przepascia
+        if (ballBounds.intersects(gulfBounds))
+        {
+            // Sprawdzenie czy srodek pilki 'wpadl' do srodka
+            if (
+                this->ball->getPosition().x >= gulfBounds.left &&
+                this->ball->getPosition().x <= gulfBounds.left + gulfBounds.width &&
+                this->ball->getPosition().y >= gulfBounds.top &&
+                this->ball->getPosition().y <= gulfBounds.top + gulfBounds.height)
+            {
+
+                std::cout << "Przpeascccccc\n";
+                this->ball->setVelocityX(0);
+                this->ball->setVelocityY(0);
+                this->ball->setScale(0.1);
+
+                this->gameState = 0; // Przegralismy
+                this->endGameScreen.setTexture(this->loseBgTexture);
+            }
+        }
+    }
+}
 void GameplayScreen::holeCollision(int allLvls)
 {
     sf::FloatRect ballBounds = this->ball->getGlobalBounds();
@@ -446,6 +485,9 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
     // Kolizja z polem
     this->courseBordersCollision();
 
+    // Kolizja z przepascia
+    this->gulfCollision();
+
     // Kolizja z dolkiem
     this->holeCollision(allLvls);
 
@@ -469,6 +511,7 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
             this->strokesLeft = this->strokesLimit;
             this->ball->setPositionX(162);
             this->ball->setPositionY(350 + 50);
+            this->ball->setScale(1);
         }
         else if (this->nextLvlBtn->isClicked(window) && !isMouseBtnPressed && this->gameState == 1)
         {
@@ -495,6 +538,7 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
                 this->setUpObstacles();
 
                 // Ustawienie pilki na pozycje startowa
+
                 this->ball->setPositionX(162);
                 this->ball->setPositionY(350 + 50);
             }
@@ -519,6 +563,7 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
                 // Zaaktualizowanie wektorow ze spriteami
                 this->setUpObstacles();
 
+                this->ball->setScale(1);
                 // Ustawienie pilki na pozycje startowa
                 this->ball->setPositionX(162);
                 this->ball->setPositionY(350 + 50);
@@ -542,6 +587,8 @@ void GameplayScreen::render(sf::RenderTarget &target, int allLvls)
         target.draw(sandVector[i]);
     for (int i = 0; i < this->iceVector.size(); i++) // Lod
         target.draw(iceVector[i]);
+    for (int i = 0; i < this->gulfsVector.size(); i++) // Lod
+        target.draw(gulfsVector[i]);
 
     target.draw(this->hole); // Dolek
 
