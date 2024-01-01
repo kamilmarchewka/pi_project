@@ -545,7 +545,7 @@ void GameplayScreen::render(sf::RenderTarget &target, int allLvls)
 
     target.draw(this->hole); // Dolek
 
-    this->ball->render(target);
+    this->ball->render(target, this->gameState);
 
     // Ewentualny ekran wygranej / przegranej / konca gry
     if (gameState != -1)
