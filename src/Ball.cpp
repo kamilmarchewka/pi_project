@@ -23,6 +23,7 @@ Ball::Ball(sf::Texture &texture)
     this->stopTreshold = 0.35;
     this->friction = 0.96;
     this->velocity = sf::Vector2f(0, 0);
+    this->maxVelocity = 35.f; // Dla takiej wartosci nie przelatuje przez sciany
 
     // Ustawienie strzalki do celowania
     this->aimingLine.setTexture(this->aimingLineTexture);
@@ -31,15 +32,6 @@ Ball::Ball(sf::Texture &texture)
 
     this->aimingArrow.setTexture(this->aimingArrowTexture);
     this->aimingArrow.setOrigin(this->aimingArrow.getGlobalBounds().width / 2, this->aimingArrow.getGlobalBounds().height / 2);
-
-    // this->aimingArrow.rotate(45.f);
-    // this->aimingLine.rotate(45.f);
-
-    // Oblicz nową pozycję grotu na końcu trzonu po obrocie
-    // sf::Transform transform = this->aimingLine.getTransform();
-    // sf::Vector2f endPosition = transform.transformPoint(sf::Vector2f(this->aimingLine.getLocalBounds().width, this->aimingLine.getLocalBounds().height / 2));
-
-    // this->aimingArrow.setPosition(endPosition);
 }
 Ball::~Ball()
 {
@@ -131,8 +123,20 @@ void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool
     {
         // Ustawienie pozycji linii
         this->aimingLine.setPosition(ballPos.x, ballPos.y);
-        float distance = sqrt(pow(mousePos.x - ballPos.x, 2) + pow(mousePos.y - ballPos.y, 2));
-        float scaleX = distance / 100.f;
+
+        float distanceX = fabs(mousePos.x - ballPos.x) / 6.f;
+        float distanceY = fabs(mousePos.y - ballPos.y) / 6.f;
+        if (distanceX > this->maxVelocity)
+            distanceX = this->maxVelocity;
+        if (distanceY > this->maxVelocity)
+            distanceY = this->maxVelocity;
+
+        std::cout << "Distance = " << distanceX << " " << distanceY << std::endl;
+
+        float distance = sqrt(pow(distanceX, 2) + pow(distanceY, 2));
+
+        float scaleX = distance / this->maxVelocity + 0.2f;
+
         this->aimingLine.setScale(sf::Vector2f(scaleX, 1));
 
         // Obracanie sie linii
@@ -157,9 +161,17 @@ void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !this->isMoving)
         {
             // Mysz w stosunku do pilki - z lewej strony lub z prawej strony
-            this->velocity.x = (ballPos.x - mousePos.x) / 5.f;
+            this->velocity.x = (ballPos.x - mousePos.x) / 6.f;
             // Mysz w stosunku do pilki - nad lub pod pilka
-            this->velocity.y = (ballPos.y - mousePos.y) / 5.f;
+            this->velocity.y = (ballPos.y - mousePos.y) / 6.f;
+
+            // Ograniczenie do max predkosci
+            if (fabs(this->velocity.x) > this->maxVelocity)
+                this->velocity.x = ballPos.x - mousePos.x < 0 ? -1.f * this->maxVelocity : this->maxVelocity;
+            if (fabs(this->velocity.y) > this->maxVelocity)
+                this->velocity.y = ballPos.y - mousePos.y < 0 ? -1.f * this->maxVelocity : this->maxVelocity;
+
+            std::cout << "Velocity = " << this->velocity.x << " " << this->velocity.y << std::endl;
 
             leftStrokes--;
         }
