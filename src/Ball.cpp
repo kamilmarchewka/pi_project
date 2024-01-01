@@ -7,6 +7,9 @@ Ball::Ball(sf::Texture &texture)
     if (!(this->aimingArrowTexture.loadFromFile("assets/aiming_arrow.png")))
         std::cout << "ERROR::TEXTURES::Ball.cpp - aiming_arrow.png\n";
     this->aimingArrowTexture.setSmooth(true);
+    if (!(this->aimingLineTexture.loadFromFile("assets/aiming_line.png")))
+        std::cout << "ERROR::TEXTURES::Ball.cpp - aiming_line.png\n";
+    this->aimingLineTexture.setSmooth(true);
 
     this->ball.setTexture(texture);
     this->ball.setOrigin(sf::Vector2f(
@@ -22,10 +25,21 @@ Ball::Ball(sf::Texture &texture)
     this->velocity = sf::Vector2f(0, 0);
 
     // Ustawienie strzalki do celowania
+    this->aimingLine.setTexture(this->aimingLineTexture);
+    this->aimingLine.setOrigin(0, this->aimingLine.getGlobalBounds().height / 2);
+    this->aimingLine.setPosition(this->ball.getPosition().x, this->ball.getPosition().y);
+
     this->aimingArrow.setTexture(this->aimingArrowTexture);
-    this->aimingArrow.setOrigin(0, this->aimingArrow.getGlobalBounds().height / 2);
-    this->aimingArrow.setPosition(this->ball.getPosition().x, this->ball.getPosition().y);
+    this->aimingArrow.setOrigin(this->aimingArrow.getGlobalBounds().width / 2, this->aimingArrow.getGlobalBounds().height / 2);
+
     // this->aimingArrow.rotate(45.f);
+    // this->aimingLine.rotate(45.f);
+
+    // Oblicz nową pozycję grotu na końcu trzonu po obrocie
+    // sf::Transform transform = this->aimingLine.getTransform();
+    // sf::Vector2f endPosition = transform.transformPoint(sf::Vector2f(this->aimingLine.getLocalBounds().width, this->aimingLine.getLocalBounds().height / 2));
+
+    // this->aimingArrow.setPosition(endPosition);
 }
 Ball::~Ball()
 {
@@ -115,16 +129,23 @@ void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool
 
     if (isAiming)
     {
-        // Ustawienie pozycji strzalki
-        this->aimingArrow.setPosition(ballPos.x, ballPos.y);
+        // Ustawienie pozycji linii
+        this->aimingLine.setPosition(ballPos.x, ballPos.y);
         float distance = sqrt(pow(mousePos.x - ballPos.x, 2) + pow(mousePos.y - ballPos.y, 2));
         float scaleX = distance / 100.f;
-        this->aimingArrow.setScale(sf::Vector2f(scaleX, this->aimingArrow.getScale().y));
+        this->aimingLine.setScale(sf::Vector2f(scaleX, 1));
 
-        // Obracanie sie strzalki
-        float kat = this->obliczKat(this->aimingArrow.getPosition().x, this->aimingArrow.getPosition().y,
+        // Obracanie sie linii
+        float kat = this->obliczKat(this->aimingLine.getPosition().x, this->aimingLine.getPosition().y,
                                     mousePos.x, mousePos.y);
+
+        this->aimingLine.setRotation(kat);
         this->aimingArrow.setRotation(kat);
+
+        sf::Transform transform = this->aimingLine.getTransform();
+        sf::Vector2f endPosition = transform.transformPoint(sf::Vector2f(this->aimingLine.getLocalBounds().width, this->aimingLine.getLocalBounds().height / 2));
+
+        this->aimingArrow.setPosition(endPosition);
     }
 
     // Strzelaj tylko, jezeli gra sie nie skonczyla => liczba strokeow > 0
@@ -164,7 +185,10 @@ void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool
 void Ball::render(sf::RenderTarget &target, int &gameState)
 {
     if (this->isAiming && gameState == -1)
+    {
+        target.draw(this->aimingLine);
         target.draw(this->aimingArrow);
+    }
 
     target.draw(this->ball);
 }
