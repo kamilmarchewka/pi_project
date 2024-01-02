@@ -164,20 +164,26 @@ void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool
         // Strzelanie
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !this->isMoving)
         {
-            // Mysz w stosunku do pilki - z lewej strony lub z prawej strony
-            this->velocity.x = (ballPos.x - mousePos.x) / 6.f;
-            // Mysz w stosunku do pilki - nad lub pod pilka
-            this->velocity.y = (ballPos.y - mousePos.y) / 6.f;
+            // Sprawdzenie czy nie kliknelismy poza oknem
+            if (
+                mousePos.x >= 0 && mousePos.x <= 1200 &&
+                mousePos.y >= 0 && mousePos.y <= 700)
+            {
+                // Mysz w stosunku do pilki - z lewej strony lub z prawej strony
+                this->velocity.x = (ballPos.x - mousePos.x) / 6.f;
+                // Mysz w stosunku do pilki - nad lub pod pilka
+                this->velocity.y = (ballPos.y - mousePos.y) / 6.f;
 
-            // Ograniczenie do max predkosci
-            if (fabs(this->velocity.x) > this->maxVelocity)
-                this->velocity.x = ballPos.x - mousePos.x < 0 ? -1.f * this->maxVelocity : this->maxVelocity;
-            if (fabs(this->velocity.y) > this->maxVelocity)
-                this->velocity.y = ballPos.y - mousePos.y < 0 ? -1.f * this->maxVelocity : this->maxVelocity;
+                // Ograniczenie do max predkosci
+                if (fabs(this->velocity.x) > this->maxVelocity)
+                    this->velocity.x = ballPos.x - mousePos.x < 0 ? -1.f * this->maxVelocity : this->maxVelocity;
+                if (fabs(this->velocity.y) > this->maxVelocity)
+                    this->velocity.y = ballPos.y - mousePos.y < 0 ? -1.f * this->maxVelocity : this->maxVelocity;
 
-            std::cout << "Velocity = " << this->velocity.x << " " << this->velocity.y << std::endl;
+                std::cout << "Velocity = " << this->velocity.x << " " << this->velocity.y << std::endl;
 
-            leftStrokes--;
+                leftStrokes--;
+            }
         }
     }
 
