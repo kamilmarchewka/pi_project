@@ -4,10 +4,10 @@
 Ball::Ball(sf::Texture &texture)
 {
     // Zaladowanie tekstury strzalki do celowania
-    if (!(this->aimingArrowTexture.loadFromFile("assets/aiming_arrow.png")))
+    if (!(this->aimingArrowTexture.loadFromFile("../assets/aiming_arrow.png")))
         std::cout << "ERROR::TEXTURES::Ball.cpp - aiming_arrow.png\n";
     this->aimingArrowTexture.setSmooth(true);
-    if (!(this->aimingLineTexture.loadFromFile("assets/aiming_line.png")))
+    if (!(this->aimingLineTexture.loadFromFile("../assets/aiming_line.png")))
         std::cout << "ERROR::TEXTURES::Ball.cpp - aiming_line.png\n";
     this->aimingLineTexture.setSmooth(true);
 
