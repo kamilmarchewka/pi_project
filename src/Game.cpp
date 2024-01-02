@@ -96,8 +96,8 @@ Game::Game()
     this->musicIsOn = false; // Domyslnie muzyka jest wylaczona
     // -----------------
 
-    this->window.create(sf::VideoMode(1200, 700), "MiniGolf", sf::Style::Default); // Inicjalizacja okna
-    this->window.setFramerateLimit(30);                                            // Ustawienie limitu klatek do 30 fps
+    this->window.create(sf::VideoMode(1200, 700), "MiniGolf", sf::Style::Titlebar | sf::Style::Close); // Inicjalizacja okna
+    this->window.setFramerateLimit(30);                                                                // Ustawienie limitu klatek do 30 fps
 
     // Zaladowanie tekstur
     this->initAssets();
