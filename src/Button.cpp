@@ -44,6 +44,10 @@ void Button::setPositionY(float newPos)
 {
     this->button.setPosition(sf::Vector2f(this->button.getPosition().x, newPos));
 }
+void Button::setScale(float scale)
+{
+    this->button.setScale(sf::Vector2f(scale, scale));
+}
 sf::Vector2f Button::getPosition()
 {
     return this->button.getPosition();

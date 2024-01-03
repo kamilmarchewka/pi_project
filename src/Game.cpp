@@ -241,6 +241,12 @@ Game::Game()
         Button *btn = new Button(this->ballsTexture, sf::Vector2f(300 + 90 + 70 * i, 500 + 60), i);
         btn->setTextureRect(sf::IntRect(35 * i, 0, 35, 35));
         this->ballSkinsBtnsArr[i] = btn;
+
+        if (i == this->ballSkin)
+        {
+            Button *currentBtn = this->ballSkinsBtnsArr[i];
+            currentBtn->setPositionY(500 + 60 - 13);
+        }
     }
 
     // All screens -------------
@@ -468,6 +474,18 @@ void Game::update()
             {
                 this->isMouseBtnPressed = true;
                 this->ballSkin = this->ballSkinsBtnsArr[i]->getValue();
+
+                for (int j = 0; j < 5; j++)
+                {
+                    if (j == this->ballSkin)
+                    {
+                        this->ballSkinsBtnsArr[j]->setPositionY(500 + 60 - 13);
+                    }
+                    else
+                    {
+                        this->ballSkinsBtnsArr[j]->setPositionY(500 + 60);
+                    }
+                }
             }
         }
         // std::cout << "Ekran USTAWIENIA ejej\n";

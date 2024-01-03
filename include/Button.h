@@ -23,6 +23,7 @@ public:
 
     void setTextureRect(sf::IntRect rect);
     void setPositionY(float newPos);
+    void setScale(float scale);
     sf::Vector2f getPosition();
 
     void updateHover(sf::WindowBase &window);
