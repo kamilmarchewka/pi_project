@@ -51,6 +51,8 @@ private:
         optionsBtnTexture,
         exitBtnTexture,
         musicBtnTexture,
+        musicOnBtnTexture,
+        musicOffBtnTexture,
         plusBtnTexture,
         minusBtnTexture,
         LevelsTexture,
@@ -74,7 +76,7 @@ private:
 
     // Screen 3 ----------------
     sf::Text OptionsTitle, SoundTitle, VolumeTitle, CurrentVolumeText, BallColorTitle;
-    Button *VolumeDownBtn, *VolumeUpBtn;
+    Button *VolumeDownBtn, *VolumeUpBtn, *MusicOnBtn, *MusicOffBtn;
     Button *ballSkinsBtnsArr[5];
 
     // All screens -------------

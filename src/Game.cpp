@@ -61,6 +61,16 @@ void Game::initAssets()
         std::cout << "ERROR::TEXTURES - plus_btn.png\n";
     this->plusBtnTexture.setSmooth(true); // Wyrownanie krawedzi
 
+    // Music btn
+    if (!(this->musicOnBtnTexture.loadFromFile("assets/wl_btns.png")))
+        std::cout << "ERROR::TEXTURES - wl_btns.png\n";
+    this->musicOnBtnTexture.setSmooth(true); // Wyrownanie krawedzi
+
+    // Music btn
+    if (!(this->musicOffBtnTexture.loadFromFile("assets/wyl_btns.png")))
+        std::cout << "ERROR::TEXTURES - wyl_btns.png\n";
+    this->musicOffBtnTexture.setSmooth(true); // Wyrownanie krawedzi
+
     // Levels
     if (!(this->LevelsTexture.loadFromFile("assets/lvls_texture.png")))
         std::cout << "ERROR::TEXTURES - lvls_texture.png\n";
@@ -109,6 +119,7 @@ Game::Game()
 
     // Ustawienie glosnosci muzyki w tle
     this->backgroundMusic.setVolume(this->volume);
+    musicIsOn ? this->backgroundMusic.play() : this->backgroundMusic.pause();
 
     // Screen 0 ----------------
     this->mainBg.setTexture(this->mainBgTexture);                                           // Ustawienie tekstury
@@ -121,7 +132,7 @@ Game::Game()
     this->optionsBtn = new Button(this->optionsBtnTexture, sf::Vector2f(600, 530 + menuTopOffset), 3);
 
     this->musicBtn = new Button(this->musicBtnTexture, sf::Vector2f(1180, 30), -1);
-    this->musicBtn->setTextureRect(sf::IntRect(34, 0, 34, 34));
+    this->musicBtn->setTextureRect(sf::IntRect(this->musicIsOn ? 0 : 34, 0, 34, 34));
 
     // Screen 1 ----------------
 
@@ -201,6 +212,12 @@ Game::Game()
         0,
         this->SoundTitle.getGlobalBounds().height / 2));
     this->SoundTitle.setPosition(sf::Vector2f(300, 300));
+    // Przycisk do wlaczania
+    this->MusicOnBtn = new Button(this->musicOnBtnTexture, sf::Vector2f(500, 300 + 30), 1);
+    this->MusicOnBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 0 : 50, 90, 50));
+    // Przycisk do wylaczania
+    this->MusicOffBtn = new Button(this->musicOffBtnTexture, sf::Vector2f(500 + 115, 300 + 30), 0);
+    this->MusicOffBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 50 : 0, 90, 50));
 
     // Tytul - glosnosc
     this->VolumeTitle.setString("Glosnosc");
@@ -272,6 +289,9 @@ Game::~Game()
     }
 
     // Screen 3 ----------------
+    delete this->MusicOnBtn;
+    delete this->MusicOffBtn;
+
     delete this->VolumeDownBtn;
     delete this->VolumeUpBtn;
 
@@ -366,12 +386,18 @@ void Game::update()
                 this->musicIsOn = false;
                 this->musicBtn->setTextureRect(sf::IntRect(34, 0, 34, 34));
                 this->backgroundMusic.pause(); // Zatrzymanie muzyki
+
+                this->MusicOnBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 0 : 50, 90, 50));
+                this->MusicOffBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 50 : 0, 90, 50));
             }
             else
             {
                 this->musicIsOn = true;
                 this->musicBtn->setTextureRect(sf::IntRect(0, 0, 34, 34));
                 this->backgroundMusic.play(); // Wznowienie muzyki
+
+                this->MusicOnBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 0 : 50, 90, 50));
+                this->MusicOffBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 50 : 0, 90, 50));
             }
         }
     }
@@ -448,6 +474,35 @@ void Game::update()
     }
     else if (this->gameScreen == 3)
     {
+        // Wlaczanie / wylaczanie musyzki
+        if (this->MusicOnBtn->isClicked(this->window) && !musicIsOn && !this->isMouseBtnPressed)
+        {
+            this->isMouseBtnPressed = true;
+            this->musicIsOn = true;
+
+            // Przycisk do wlaczania
+            this->MusicOnBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 0 : 50, 90, 50));
+            // Przycisk do wylaczania
+            this->MusicOffBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 50 : 0, 90, 50));
+
+            // Ikona na str glownej
+            this->musicBtn->setTextureRect(sf::IntRect(this->musicIsOn ? 0 : 34, 0, 34, 34));
+            this->backgroundMusic.play();
+        }
+        if (this->MusicOffBtn->isClicked(this->window) && musicIsOn && !this->isMouseBtnPressed)
+        {
+            this->isMouseBtnPressed = true;
+            this->musicIsOn = false;
+
+            // Przycisk do wlaczania
+            this->MusicOnBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 0 : 50, 90, 50));
+            // Przycisk do wylaczania
+            this->MusicOffBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 50 : 0, 90, 50));
+
+            // Ikona na str glownej
+            this->musicBtn->setTextureRect(sf::IntRect(this->musicIsOn ? 0 : 34, 0, 34, 34));
+            this->backgroundMusic.pause();
+        }
         // zmiana glosnosci
         if (this->VolumeDownBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
@@ -533,6 +588,9 @@ void Game::render()
         this->window.draw(this->OptionsTitle);
 
         this->window.draw(this->SoundTitle);
+        this->MusicOnBtn->render(this->window);
+        this->MusicOffBtn->render(this->window);
+
         this->window.draw(this->VolumeTitle);
         this->VolumeDownBtn->render(this->window);
         this->window.draw(this->CurrentVolumeText);
