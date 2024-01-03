@@ -103,11 +103,11 @@ Game::Game()
                                                                                             // na lewy dolny rog
 
     float menuTopOffset = 50.f; // Przy 0 - playBtn jest na srodku ekranu
-    this->playBtn = new Button(this->playBtnTexture, sf::Vector2f(600, 350 + menuTopOffset), 1, sf::IntRect(-1, -1, -1, -1));
-    this->lvlsBtn = new Button(this->lvlsBtnTexture, sf::Vector2f(600, 450 + menuTopOffset), 2, sf::IntRect(-1, -1, -1, -1));
-    this->optionsBtn = new Button(this->optionsBtnTexture, sf::Vector2f(600, 530 + menuTopOffset), 3, sf::IntRect(-1, -1, -1, -1));
+    this->playBtn = new Button(this->playBtnTexture, sf::Vector2f(600, 350 + menuTopOffset), 1);
+    this->lvlsBtn = new Button(this->lvlsBtnTexture, sf::Vector2f(600, 450 + menuTopOffset), 2);
+    this->optionsBtn = new Button(this->optionsBtnTexture, sf::Vector2f(600, 530 + menuTopOffset), 3);
 
-    this->musicBtn = new Button(this->musicBtnTexture, sf::Vector2f(1180, 30), -1, sf::IntRect(-1, -1, -1, -1));
+    this->musicBtn = new Button(this->musicBtnTexture, sf::Vector2f(1180, 30), -1);
     this->musicBtn->setTextureRect(sf::IntRect(34, 0, 34, 34));
 
     // Screen 1 ----------------
@@ -146,7 +146,7 @@ Game::Game()
             btnTop = 260 + 155 * 2;
         }
 
-        Button *btn = new Button(this->LevelsTexture, sf::Vector2f(btnLeft, btnTop), i + 1, sf::IntRect(-1, -1, -1, -1));
+        Button *btn = new Button(this->LevelsTexture, sf::Vector2f(btnLeft, btnTop), i + 1);
 
         if (i < unlockedLvls)
         {
@@ -211,12 +211,13 @@ Game::Game()
     // Przyciski z kolorami pilki
     for (int i = 0; i < 5; i++)
     {
-        Button *btn = new Button(this->ballsTexture, sf::Vector2f(300 + 20 + 70 * i, 550 + 60), i, sf::IntRect(35 * i, 0, 35, 35));
+        Button *btn = new Button(this->ballsTexture, sf::Vector2f(300 + 20 + 70 * i, 550 + 60), i);
+        btn->setTextureRect(sf::IntRect(35 * i, 0, 35, 35));
         this->ballSkinsBtnsArr[i] = btn;
     }
 
     // All screens -------------
-    this->exitBtn = new Button(this->exitBtnTexture, sf::Vector2f(1200 - 35, 30), 0, sf::IntRect(-1, -1, -1, -1));
+    this->exitBtn = new Button(this->exitBtnTexture, sf::Vector2f(1200 - 35, 30), 0);
 }
 Game::~Game()
 {

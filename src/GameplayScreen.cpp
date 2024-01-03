@@ -202,8 +202,8 @@ GameplayScreen::GameplayScreen(int &currentLvl, sf::Texture &ballsTexture, int b
     this->endGameScreen.setTexture(this->winBgTexture); // Musimy ustawic, zeby mial jakies wymiary
     this->endGameScreen.setOrigin(sf::Vector2f(this->endGameScreen.getGlobalBounds().width / 2, this->endGameScreen.getGlobalBounds().height / 2));
     this->endGameScreen.setPosition(sf::Vector2f(600, 350));
-    this->replayBtn = new Button(this->replayBtnTexture, sf::Vector2f(600 - 80, 375), -1, sf::IntRect(-1, -1, -1, -1));
-    this->nextLvlBtn = new Button(this->nextLvlBtnTexture, sf::Vector2f(600 + 80, 375), -1, sf::IntRect(-1, -1, -1, -1));
+    this->replayBtn = new Button(this->replayBtnTexture, sf::Vector2f(600 - 80, 375), -1);
+    this->nextLvlBtn = new Button(this->nextLvlBtnTexture, sf::Vector2f(600 + 80, 375), -1);
 }
 GameplayScreen::~GameplayScreen()
 {

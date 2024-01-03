@@ -11,10 +11,10 @@ private:
 
 public:
     Button(
-        sf::Texture &texture,   // Texture
-        sf::Vector2f pos,       // Position
-        int value,              // Wartosc przycisku
-        sf::IntRect textureRect // 'Wycinek' tekstury
+        sf::Texture &texture, // Texture
+        sf::Vector2f pos,     // Position
+        int value             // Wartosc przycisku
+
     );
     ~Button();
 
