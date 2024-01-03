@@ -18,7 +18,7 @@ private:
     float obliczKat(float xStrzalki, float yStrzalki, float xKursora, float yKursora);
 
 public:
-    Ball(sf::Texture &texture);
+    Ball(sf::Texture &texture, int ballSkin);
     ~Ball();
 
     bool isMoving;

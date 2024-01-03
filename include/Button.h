@@ -14,6 +14,7 @@ public:
         sf::Texture &texture, // Texture
         sf::Vector2f pos,     // Position
         int value             // Wartosc przycisku
+
     );
     ~Button();
 
@@ -22,6 +23,7 @@ public:
 
     void setTextureRect(sf::IntRect rect);
     void setPositionY(float newPos);
+    void setScale(float scale);
     sf::Vector2f getPosition();
 
     void updateHover(sf::WindowBase &window);

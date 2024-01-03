@@ -14,6 +14,10 @@ void Game::initAssets()
     {
         std::cout << "ERROR::FONTS - Inter-Black.ttf\n";
     }
+    if (!this->InterSemiBold.loadFromFile("assets/fonts/Inter-SemiBold.ttf"))
+    {
+        std::cout << "ERROR::FONTS - Inter-SemiBold.ttf\n";
+    }
 
     // Ladowanie textur
     // Tlo
@@ -47,29 +51,28 @@ void Game::initAssets()
         std::cout << "ERROR::TEXTURES - music.png\n";
     this->musicBtnTexture.setSmooth(true); // Wyrownanie krawedzi
 
-    // Level 1 - przycisk
-    if (!(this->Level1BtnTexture.loadFromFile("assets/l1_btn.png")))
-        std::cout << "ERROR::TEXTURES - l1_btn.png\n";
-    this->Level1BtnTexture.setSmooth(true);
+    // Music btn
+    if (!(this->minusBtnTexture.loadFromFile("assets/minus_btn.png")))
+        std::cout << "ERROR::TEXTURES - minus_btn.png\n";
+    this->minusBtnTexture.setSmooth(true); // Wyrownanie krawedzi
 
-    // Level 2 - przycisk
-    if (!(this->Level2BtnTexture.loadFromFile("assets/l2_btn.png")))
-        std::cout << "ERROR::TEXTURES - l2_btn.png\n";
-    this->Level2BtnTexture.setSmooth(true);
-
-    // Level 3 - przycisk
-    if (!(this->Level3BtnTexture.loadFromFile("assets/l3_btn.png")))
-        std::cout << "ERROR::TEXTURES - l3_btn.png\n";
-    this->Level3BtnTexture.setSmooth(true);
+    // Music btn
+    if (!(this->plusBtnTexture.loadFromFile("assets/plus_btn.png")))
+        std::cout << "ERROR::TEXTURES - plus_btn.png\n";
+    this->plusBtnTexture.setSmooth(true); // Wyrownanie krawedzi
 
     // Levels
     if (!(this->LevelsTexture.loadFromFile("assets/lvls_texture.png")))
         std::cout << "ERROR::TEXTURES - lvls_texture.png\n";
     this->LevelsTexture.setSmooth(true);
 
+    // Pilki
+    if (!(this->ballsTexture.loadFromFile("assets/ball_skins.png")))
+        std::cout << "ERROR::TEXTURES - ball_skins.png\n";
+    this->ballsTexture.setSmooth(true);
+
     // Ladowanie muzyki
     this->backgroundMusic.openFromFile("assets/background_music.ogg");
-    this->backgroundMusic.setVolume(30.f);
     // this->backgroundMusic.play();
     this->backgroundMusic.setLoop(true);
 }
@@ -93,6 +96,8 @@ Game::Game()
     this->allLvls = 15;
     this->unlockedLvls = 15;
 
+    this->ballSkin = 0;      // Poczatkowo pilka jest biala
+    this->volume = 50;       // Glosnosc muzyki w tle
     this->musicIsOn = false; // Domyslnie muzyka jest wylaczona
     // -----------------
 
@@ -101,6 +106,9 @@ Game::Game()
 
     // Zaladowanie tekstur
     this->initAssets();
+
+    // Ustawienie glosnosci muzyki w tle
+    this->backgroundMusic.setVolume(this->volume);
 
     // Screen 0 ----------------
     this->mainBg.setTexture(this->mainBgTexture);                                           // Ustawienie tekstury
@@ -173,6 +181,74 @@ Game::Game()
         this->lvlsBtnsVector.push_back(btn);
     }
 
+    // Screen 3 ----------------
+    // Tytul - Ustawienia
+    this->OptionsTitle.setString("Ustawienia");                  // Napis
+    this->OptionsTitle.setFont(this->InterBlack);                // Czcionka
+    this->OptionsTitle.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
+    this->OptionsTitle.setCharacterSize(70);
+    this->OptionsTitle.setOrigin(sf::Vector2f( // Origin - srodek dolnej krawedzi
+        this->OptionsTitle.getGlobalBounds().width / 2,
+        this->OptionsTitle.getGlobalBounds().height + 9));
+    this->OptionsTitle.setPosition(sf::Vector2f(1200 / 2, 170));
+
+    // Tytul - wl. wyl. dzwiek
+    this->SoundTitle.setString("Dzwiek");
+    this->SoundTitle.setFont(this->InterSemiBold);
+    this->SoundTitle.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
+    this->SoundTitle.setCharacterSize(30);
+    this->SoundTitle.setOrigin(sf::Vector2f( // Srodek lewego boku
+        0,
+        this->SoundTitle.getGlobalBounds().height / 2));
+    this->SoundTitle.setPosition(sf::Vector2f(300, 300));
+
+    // Tytul - glosnosc
+    this->VolumeTitle.setString("Glosnosc");
+    this->VolumeTitle.setFont(this->InterSemiBold);
+    this->VolumeTitle.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
+    this->VolumeTitle.setCharacterSize(30);
+    this->VolumeTitle.setOrigin(sf::Vector2f( // Srodek lewego boku
+        0,
+        this->VolumeTitle.getGlobalBounds().height / 2));
+    this->VolumeTitle.setPosition(sf::Vector2f(300, 400));
+
+    // zciszanie
+    this->VolumeDownBtn = new Button(this->minusBtnTexture, sf::Vector2f(500, 400 + 8), -5);
+    // tekst z aktualna glosnoscia
+    this->CurrentVolumeText.setString(std::to_string(static_cast<int>(this->volume)));
+    this->CurrentVolumeText.setFont(this->InterSemiBold);
+    this->CurrentVolumeText.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
+    this->CurrentVolumeText.setCharacterSize(30);
+    this->CurrentVolumeText.setOrigin(sf::Vector2f( // Srodek lewego boku
+        0,
+        this->CurrentVolumeText.getGlobalBounds().height / 2));
+    this->CurrentVolumeText.setPosition(sf::Vector2f(500 + 16 + 20, 400));
+    // podglasnianie
+    this->VolumeUpBtn = new Button(this->plusBtnTexture, sf::Vector2f(500 + 16 + 20 + 16 + this->CurrentVolumeText.getGlobalBounds().width + 23, 400 + 8), 5);
+
+    // Tytul - wybierz kolor pilki
+    this->BallColorTitle.setString("Kolor pilki");
+    this->BallColorTitle.setFont(this->InterSemiBold);
+    this->BallColorTitle.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
+    this->BallColorTitle.setCharacterSize(30);
+    this->BallColorTitle.setOrigin(sf::Vector2f( // Srodek lewego boku
+        0,
+        this->BallColorTitle.getGlobalBounds().height / 2));
+    this->BallColorTitle.setPosition(sf::Vector2f(300, 500));
+    // Przyciski z kolorami pilki
+    for (int i = 0; i < 5; i++)
+    {
+        Button *btn = new Button(this->ballsTexture, sf::Vector2f(300 + 90 + 70 * i, 500 + 60), i);
+        btn->setTextureRect(sf::IntRect(35 * i, 0, 35, 35));
+        this->ballSkinsBtnsArr[i] = btn;
+
+        if (i == this->ballSkin)
+        {
+            Button *currentBtn = this->ballSkinsBtnsArr[i];
+            currentBtn->setPositionY(500 + 60 - 13);
+        }
+    }
+
     // All screens -------------
     this->exitBtn = new Button(this->exitBtnTexture, sf::Vector2f(1200 - 35, 30), 0);
 }
@@ -193,6 +269,15 @@ Game::~Game()
     for (int i = 0; i < this->allLvls; i++)
     {
         delete this->lvlsBtnsVector[i];
+    }
+
+    // Screen 3 ----------------
+    delete this->VolumeDownBtn;
+    delete this->VolumeUpBtn;
+
+    for (int i = 0; i < 5; i++)
+    {
+        delete this->ballSkinsBtnsArr[i];
     }
 
     // All screens -------------
@@ -225,6 +310,8 @@ void Game::update()
     this->lvlsBtn->updateHover(this->window);
     this->optionsBtn->updateHover(this->window);
     this->musicBtn->updateHover(this->window);
+    this->VolumeDownBtn->updateHover(this->window);
+    this->VolumeUpBtn->updateHover(this->window);
 
     // Dzialanie przycisku exit
     if (this->gameScreen == 1 || this->gameScreen == 2 || this->gameScreen == 3)
@@ -253,7 +340,7 @@ void Game::update()
             this->isMouseBtnPressed = true;
 
             this->gameScreen = this->playBtn->getValue();
-            this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl);
+            this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl, this->ballsTexture, this->ballSkin);
         }
         else if (this->lvlsBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
@@ -266,7 +353,7 @@ void Game::update()
             this->isMouseBtnPressed = true;
 
             this->gameScreen = this->optionsBtn->getValue();
-            std::cout << "USTAWIENIA zostal wcisniety\n";
+            // std::cout << "USTAWIENIA zostal wcisniety\n";
         }
 
         // Wlaczanie / wylaczanie musycki
@@ -355,13 +442,55 @@ void Game::update()
 
                 // Wlaczamy ekran gry
                 this->gameScreen = 1;
-                this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl);
+                this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl, this->ballsTexture, this->ballSkin);
             }
         }
     }
     else if (this->gameScreen == 3)
     {
-        std::cout << "Ekran USTAWIENIA ejej\n";
+        // zmiana glosnosci
+        if (this->VolumeDownBtn->isClicked(this->window) && !this->isMouseBtnPressed)
+        {
+            this->isMouseBtnPressed = true;
+            this->volume += this->VolumeDownBtn->getValue();
+            this->backgroundMusic.setVolume(this->volume);
+            // Dodawanie 0 przed 1-9
+            std::string volumeString = volume < 10 ? "0" + std::to_string(static_cast<int>(this->volume)) : std::to_string(static_cast<int>(this->volume));
+            this->CurrentVolumeText.setString(volumeString);
+        }
+        if (this->VolumeUpBtn->isClicked(this->window) && !this->isMouseBtnPressed)
+        {
+            this->isMouseBtnPressed = true;
+            this->volume += this->VolumeUpBtn->getValue();
+            this->backgroundMusic.setVolume(this->volume);
+            // Dodawanie 0 przed 1-9
+            std::string volumeString = volume < 10 ? "0" + std::to_string(static_cast<int>(this->volume)) : std::to_string(static_cast<int>(this->volume));
+            this->CurrentVolumeText.setString(volumeString);
+        }
+        // Zmiana koloru pilki
+        for (int i = 0; i < 5; i++)
+        {
+            if (this->ballSkinsBtnsArr[i]->isClicked(this->window) && !this->isMouseBtnPressed)
+            {
+                this->isMouseBtnPressed = true;
+                this->ballSkin = this->ballSkinsBtnsArr[i]->getValue();
+
+                for (int j = 0; j < 5; j++)
+                {
+                    if (j == this->ballSkin)
+                    {
+                        this->ballSkinsBtnsArr[j]->setPositionY(500 + 60 - 13);
+                    }
+                    else
+                    {
+                        this->ballSkinsBtnsArr[j]->setPositionY(500 + 60);
+                    }
+                }
+            }
+        }
+        // std::cout << "Ekran USTAWIENIA ejej\n";
+        // this->ballSkin = 3;
+        // std::cout << "Zmieniono ball skin na 3\n";
     }
     else
         std::cout << "ERROR: Nie ma takiego okna\n";
@@ -401,7 +530,23 @@ void Game::render()
         break;
 
     case 3:
-        std::cout << "USTAWIENIA\n";
+        this->window.draw(this->OptionsTitle);
+
+        this->window.draw(this->SoundTitle);
+        this->window.draw(this->VolumeTitle);
+        this->VolumeDownBtn->render(this->window);
+        this->window.draw(this->CurrentVolumeText);
+        this->VolumeUpBtn->render(this->window);
+
+        this->window.draw(this->BallColorTitle);
+        for (int i = 0; i < 5; i++)
+        {
+            this->ballSkinsBtnsArr[i]->render(this->window);
+        }
+
+        // Screen 3
+
+        // std::cout << "USTAWIENIA\n";
         break;
 
     default:
