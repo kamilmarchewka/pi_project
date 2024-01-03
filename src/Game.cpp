@@ -211,7 +211,7 @@ Game::Game()
     // Przyciski z kolorami pilki
     for (int i = 0; i < 5; i++)
     {
-        Button *btn = new Button(this->ballsTexture, sf::Vector2f(300 + 20 + 70 * i, 550 + 60), i);
+        Button *btn = new Button(this->ballsTexture, sf::Vector2f(300 + 90 + 70 * i, 550 + 60), i);
         btn->setTextureRect(sf::IntRect(35 * i, 0, 35, 35));
         this->ballSkinsBtnsArr[i] = btn;
     }
