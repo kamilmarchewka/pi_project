@@ -93,6 +93,7 @@ Game::Game()
     this->allLvls = 15;
     this->unlockedLvls = 15;
 
+    this->ballSkin = 0;      // Poczatkowo pilka jest biala
     this->musicIsOn = false; // Domyslnie muzyka jest wylaczona
     // -----------------
 
@@ -253,7 +254,7 @@ void Game::update()
             this->isMouseBtnPressed = true;
 
             this->gameScreen = this->playBtn->getValue();
-            this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl);
+            this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl, this->ballSkin);
         }
         else if (this->lvlsBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
@@ -355,13 +356,15 @@ void Game::update()
 
                 // Wlaczamy ekran gry
                 this->gameScreen = 1;
-                this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl);
+                this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl, this->ballSkin);
             }
         }
     }
     else if (this->gameScreen == 3)
     {
         std::cout << "Ekran USTAWIENIA ejej\n";
+        this->ballSkin = 3;
+        std::cout << "Zmieniono ball skin na 3\n";
     }
     else
         std::cout << "ERROR: Nie ma takiego okna\n";

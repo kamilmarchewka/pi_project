@@ -28,6 +28,7 @@ private:
     int allLvls;
     int unlockedLvls;
 
+    int ballSkin;
     bool musicIsOn;
     // -----------------
 

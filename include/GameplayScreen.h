@@ -64,7 +64,7 @@ private:
     void holeCollision(int allLvls);
 
 public:
-    GameplayScreen(int &currentLvl);
+    GameplayScreen(int &currentLvl, int &ballSkin);
     ~GameplayScreen();
 
     void setTitleText(sf::String newTitle);

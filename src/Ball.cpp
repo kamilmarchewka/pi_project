@@ -109,7 +109,7 @@ void Ball::setScale(float scale)
 
 void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool &isMouseBtnPressedRef)
 {
-    std::cout << "Wektor predkosci: " << this->velocity.x << " " << this->velocity.y << " \n";
+    // std::cout << "Wektor predkosci: " << this->velocity.x << " " << this->velocity.y << " \n";
     // Pozycja myszy
     sf::Vector2f mousePos = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
     // Pozycja pilki
@@ -139,7 +139,7 @@ void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool
             distance = this->maxVelocity;
         }
 
-        std::cout << "Distance = " << distanceX << " " << distanceY << std::endl;
+        // std::cout << "Distance = " << distanceX << " " << distanceY << std::endl;
 
         float scaleX = distance / this->maxVelocity + 0.2f;
 

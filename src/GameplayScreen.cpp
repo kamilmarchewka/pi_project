@@ -161,7 +161,7 @@ void GameplayScreen::setUpObstacles()
     }
 }
 
-GameplayScreen::GameplayScreen(int &currentLvl)
+GameplayScreen::GameplayScreen(int &currentLvl, int &ballSkin)
 {
     // Ladowanie fontow i tekstur
     this->initAssets();
@@ -195,6 +195,7 @@ GameplayScreen::GameplayScreen(int &currentLvl)
     this->hole.setPosition(sf::Vector2f(1000 + 40, 350 + 50));
 
     // Inicjalizacja pilki
+    std::cout << "Ball skin: " << ballSkin << std::endl;
     this->ball = new Ball(this->whiteBallTexture);
 
     // Inicjalizacja ekranu wygranej / przegranej
