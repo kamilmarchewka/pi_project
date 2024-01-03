@@ -164,6 +164,17 @@ Game::Game()
         this->lvlsBtnsVector.push_back(btn);
     }
 
+    // Screen 3 ----------------
+    // Tytul - Ustawienia
+    this->OptionsTitle.setString("Ustawienia");                  // Napis
+    this->OptionsTitle.setFont(this->InterBlack);                // Czcionka
+    this->OptionsTitle.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
+    this->OptionsTitle.setCharacterSize(70);
+    this->OptionsTitle.setOrigin(sf::Vector2f( // Origin - srodek dolnej krawedzi
+        this->OptionsTitle.getGlobalBounds().width / 2,
+        this->OptionsTitle.getGlobalBounds().height + 9));
+    this->OptionsTitle.setPosition(sf::Vector2f(1200 / 2, 170));
+
     // All screens -------------
     this->exitBtn = new Button(this->exitBtnTexture, sf::Vector2f(1200 - 35, 30), 0);
 }
@@ -394,6 +405,10 @@ void Game::render()
         break;
 
     case 3:
+        this->window.draw(this->OptionsTitle);
+
+        // Screen 3
+
         std::cout << "USTAWIENIA\n";
         break;
 

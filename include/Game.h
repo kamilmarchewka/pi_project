@@ -73,6 +73,7 @@ private:
     std::vector<Button *> lvlsBtnsVector;
 
     // Screen 3 ----------------
+    sf::Text OptionsTitle;
 
     // All screens -------------
     Button *exitBtn;
