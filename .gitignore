@@ -37,4 +37,5 @@ makefile
 lib/*
 include/SFML/*
 .vscode/*
+gra_minigolf
 

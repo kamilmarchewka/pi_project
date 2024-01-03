@@ -53,7 +53,8 @@ private:
         Level1BtnTexture,
         Level2BtnTexture,
         Level3BtnTexture,
-        LevelsTexture;
+        LevelsTexture,
+        ballsTexture;
 
     // Screen 0 ----------------
     sf::Sprite mainBg;

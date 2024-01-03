@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Ball.h"
 
-Ball::Ball(sf::Texture &texture)
+Ball::Ball(sf::Texture &texture, int ballSkin)
 {
     // Zaladowanie tekstury strzalki do celowania
     if (!(this->aimingArrowTexture.loadFromFile("assets/aiming_arrow.png")))
@@ -12,6 +12,7 @@ Ball::Ball(sf::Texture &texture)
     this->aimingLineTexture.setSmooth(true);
 
     this->ball.setTexture(texture);
+    this->ball.setTextureRect(sf::IntRect(ballSkin * 35, 0, 35, 35));
     this->ball.setOrigin(sf::Vector2f(
         this->ball.getGlobalBounds().width / 2,
         this->ball.getGlobalBounds().height / 2));

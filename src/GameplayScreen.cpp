@@ -161,7 +161,7 @@ void GameplayScreen::setUpObstacles()
     }
 }
 
-GameplayScreen::GameplayScreen(int &currentLvl, int &ballSkin)
+GameplayScreen::GameplayScreen(int &currentLvl, sf::Texture &ballsTexture, int ballSkin)
 {
     // Ladowanie fontow i tekstur
     this->initAssets();
@@ -196,7 +196,7 @@ GameplayScreen::GameplayScreen(int &currentLvl, int &ballSkin)
 
     // Inicjalizacja pilki
     std::cout << "Ball skin: " << ballSkin << std::endl;
-    this->ball = new Ball(this->whiteBallTexture);
+    this->ball = new Ball(ballsTexture, ballSkin);
 
     // Inicjalizacja ekranu wygranej / przegranej
     this->endGameScreen.setTexture(this->winBgTexture); // Musimy ustawic, zeby mial jakies wymiary

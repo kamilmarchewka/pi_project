@@ -47,25 +47,15 @@ void Game::initAssets()
         std::cout << "ERROR::TEXTURES - music.png\n";
     this->musicBtnTexture.setSmooth(true); // Wyrownanie krawedzi
 
-    // Level 1 - przycisk
-    if (!(this->Level1BtnTexture.loadFromFile("assets/l1_btn.png")))
-        std::cout << "ERROR::TEXTURES - l1_btn.png\n";
-    this->Level1BtnTexture.setSmooth(true);
-
-    // Level 2 - przycisk
-    if (!(this->Level2BtnTexture.loadFromFile("assets/l2_btn.png")))
-        std::cout << "ERROR::TEXTURES - l2_btn.png\n";
-    this->Level2BtnTexture.setSmooth(true);
-
-    // Level 3 - przycisk
-    if (!(this->Level3BtnTexture.loadFromFile("assets/l3_btn.png")))
-        std::cout << "ERROR::TEXTURES - l3_btn.png\n";
-    this->Level3BtnTexture.setSmooth(true);
-
     // Levels
     if (!(this->LevelsTexture.loadFromFile("assets/lvls_texture.png")))
         std::cout << "ERROR::TEXTURES - lvls_texture.png\n";
     this->LevelsTexture.setSmooth(true);
+
+    // Pilki
+    if (!(this->ballsTexture.loadFromFile("assets/ball_skins.png")))
+        std::cout << "ERROR::TEXTURES - ball_skins.png\n";
+    this->ballsTexture.setSmooth(true);
 
     // Ladowanie muzyki
     this->backgroundMusic.openFromFile("assets/background_music.ogg");
@@ -254,7 +244,7 @@ void Game::update()
             this->isMouseBtnPressed = true;
 
             this->gameScreen = this->playBtn->getValue();
-            this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl, this->ballSkin);
+            this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl, this->ballsTexture, this->ballSkin);
         }
         else if (this->lvlsBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
@@ -356,7 +346,7 @@ void Game::update()
 
                 // Wlaczamy ekran gry
                 this->gameScreen = 1;
-                this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl, this->ballSkin);
+                this->GameplayScreenLvl1 = new GameplayScreen(this->currentLvl, this->ballsTexture, this->ballSkin);
             }
         }
     }
