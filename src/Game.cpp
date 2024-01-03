@@ -213,10 +213,18 @@ Game::Game()
     this->VolumeTitle.setPosition(sf::Vector2f(300, 400));
 
     // zciszanie
-    this->VolumeDownBtn = new Button(this->minusBtnTexture, sf::Vector2f(500, 400 + 10), -5);
+    this->VolumeDownBtn = new Button(this->minusBtnTexture, sf::Vector2f(500, 400 + 8), -5);
     // tekst z aktualna glosnoscia
+    this->CurrentVolumeText.setString(std::to_string(static_cast<int>(this->volume)));
+    this->CurrentVolumeText.setFont(this->InterSemiBold);
+    this->CurrentVolumeText.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
+    this->CurrentVolumeText.setCharacterSize(30);
+    this->CurrentVolumeText.setOrigin(sf::Vector2f( // Srodek lewego boku
+        0,
+        this->CurrentVolumeText.getGlobalBounds().height / 2));
+    this->CurrentVolumeText.setPosition(sf::Vector2f(500 + 16 + 20, 400));
     // podglasnianie
-    this->VolumeUpBtn = new Button(this->plusBtnTexture, sf::Vector2f(550, 400 + 10), 5);
+    this->VolumeUpBtn = new Button(this->plusBtnTexture, sf::Vector2f(500 + 16 + 20 + 16 + this->CurrentVolumeText.getGlobalBounds().width + 23, 400 + 8), 5);
 
     // Tytul - wybierz kolor pilki
     this->BallColorTitle.setString("Kolor pilki");
@@ -296,6 +304,8 @@ void Game::update()
     this->lvlsBtn->updateHover(this->window);
     this->optionsBtn->updateHover(this->window);
     this->musicBtn->updateHover(this->window);
+    this->VolumeDownBtn->updateHover(this->window);
+    this->VolumeUpBtn->updateHover(this->window);
 
     // Dzialanie przycisku exit
     if (this->gameScreen == 1 || this->gameScreen == 2 || this->gameScreen == 3)
@@ -438,12 +448,18 @@ void Game::update()
             this->isMouseBtnPressed = true;
             this->volume += this->VolumeDownBtn->getValue();
             this->backgroundMusic.setVolume(this->volume);
+            // Dodawanie 0 przed 1-9
+            std::string volumeString = volume < 10 ? "0" + std::to_string(static_cast<int>(this->volume)) : std::to_string(static_cast<int>(this->volume));
+            this->CurrentVolumeText.setString(volumeString);
         }
         if (this->VolumeUpBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
             this->isMouseBtnPressed = true;
             this->volume += this->VolumeUpBtn->getValue();
             this->backgroundMusic.setVolume(this->volume);
+            // Dodawanie 0 przed 1-9
+            std::string volumeString = volume < 10 ? "0" + std::to_string(static_cast<int>(this->volume)) : std::to_string(static_cast<int>(this->volume));
+            this->CurrentVolumeText.setString(volumeString);
         }
         // Zmiana koloru pilki
         for (int i = 0; i < 5; i++)
@@ -501,6 +517,7 @@ void Game::render()
         this->window.draw(this->SoundTitle);
         this->window.draw(this->VolumeTitle);
         this->VolumeDownBtn->render(this->window);
+        this->window.draw(this->CurrentVolumeText);
         this->VolumeUpBtn->render(this->window);
 
         this->window.draw(this->BallColorTitle);
