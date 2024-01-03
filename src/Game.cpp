@@ -14,6 +14,10 @@ void Game::initAssets()
     {
         std::cout << "ERROR::FONTS - Inter-Black.ttf\n";
     }
+    if (!this->InterSemiBold.loadFromFile("assets/fonts/Inter-SemiBold.ttf"))
+    {
+        std::cout << "ERROR::FONTS - Inter-SemiBold.ttf\n";
+    }
 
     // Ladowanie textur
     // Tlo
@@ -99,11 +103,11 @@ Game::Game()
                                                                                             // na lewy dolny rog
 
     float menuTopOffset = 50.f; // Przy 0 - playBtn jest na srodku ekranu
-    this->playBtn = new Button(this->playBtnTexture, sf::Vector2f(600, 350 + menuTopOffset), 1);
-    this->lvlsBtn = new Button(this->lvlsBtnTexture, sf::Vector2f(600, 450 + menuTopOffset), 2);
-    this->optionsBtn = new Button(this->optionsBtnTexture, sf::Vector2f(600, 530 + menuTopOffset), 3);
+    this->playBtn = new Button(this->playBtnTexture, sf::Vector2f(600, 350 + menuTopOffset), 1, sf::IntRect(-1, -1, -1, -1));
+    this->lvlsBtn = new Button(this->lvlsBtnTexture, sf::Vector2f(600, 450 + menuTopOffset), 2, sf::IntRect(-1, -1, -1, -1));
+    this->optionsBtn = new Button(this->optionsBtnTexture, sf::Vector2f(600, 530 + menuTopOffset), 3, sf::IntRect(-1, -1, -1, -1));
 
-    this->musicBtn = new Button(this->musicBtnTexture, sf::Vector2f(1180, 30), -1);
+    this->musicBtn = new Button(this->musicBtnTexture, sf::Vector2f(1180, 30), -1, sf::IntRect(-1, -1, -1, -1));
     this->musicBtn->setTextureRect(sf::IntRect(34, 0, 34, 34));
 
     // Screen 1 ----------------
@@ -142,7 +146,7 @@ Game::Game()
             btnTop = 260 + 155 * 2;
         }
 
-        Button *btn = new Button(this->LevelsTexture, sf::Vector2f(btnLeft, btnTop), i + 1);
+        Button *btn = new Button(this->LevelsTexture, sf::Vector2f(btnLeft, btnTop), i + 1, sf::IntRect(-1, -1, -1, -1));
 
         if (i < unlockedLvls)
         {
@@ -175,8 +179,44 @@ Game::Game()
         this->OptionsTitle.getGlobalBounds().height + 9));
     this->OptionsTitle.setPosition(sf::Vector2f(1200 / 2, 170));
 
+    // Tytul - wl. wyl. dzwiek
+    this->SoundTitle.setString("Dzwiek");
+    this->SoundTitle.setFont(this->InterSemiBold);
+    this->SoundTitle.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
+    this->SoundTitle.setCharacterSize(30);
+    this->SoundTitle.setOrigin(sf::Vector2f( // Srodek lewego boku
+        0,
+        this->SoundTitle.getGlobalBounds().height / 2));
+    this->SoundTitle.setPosition(sf::Vector2f(300, 250));
+
+    // Tytul - podglasnianie
+    this->VolumeTitle.setString("Glosnosc");
+    this->VolumeTitle.setFont(this->InterSemiBold);
+    this->VolumeTitle.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
+    this->VolumeTitle.setCharacterSize(30);
+    this->VolumeTitle.setOrigin(sf::Vector2f( // Srodek lewego boku
+        0,
+        this->VolumeTitle.getGlobalBounds().height / 2));
+    this->VolumeTitle.setPosition(sf::Vector2f(300, 400));
+
+    // Tytul - wybierz kolor pilki
+    this->BallColorTitle.setString("Kolor pilki");
+    this->BallColorTitle.setFont(this->InterSemiBold);
+    this->BallColorTitle.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
+    this->BallColorTitle.setCharacterSize(30);
+    this->BallColorTitle.setOrigin(sf::Vector2f( // Srodek lewego boku
+        0,
+        this->BallColorTitle.getGlobalBounds().height / 2));
+    this->BallColorTitle.setPosition(sf::Vector2f(300, 550));
+    // Przyciski z kolorami pilki
+    for (int i = 0; i < 5; i++)
+    {
+        Button *btn = new Button(this->ballsTexture, sf::Vector2f(300 + 20 + 70 * i, 550 + 60), i, sf::IntRect(35 * i, 0, 35, 35));
+        this->ballSkinsBtnsArr[i] = btn;
+    }
+
     // All screens -------------
-    this->exitBtn = new Button(this->exitBtnTexture, sf::Vector2f(1200 - 35, 30), 0);
+    this->exitBtn = new Button(this->exitBtnTexture, sf::Vector2f(1200 - 35, 30), 0, sf::IntRect(-1, -1, -1, -1));
 }
 Game::~Game()
 {
@@ -195,6 +235,13 @@ Game::~Game()
     for (int i = 0; i < this->allLvls; i++)
     {
         delete this->lvlsBtnsVector[i];
+    }
+
+    // Screen 3 ----------------
+
+    for (int i = 0; i < 5; i++)
+    {
+        delete this->ballSkinsBtnsArr[i];
     }
 
     // All screens -------------
@@ -363,9 +410,18 @@ void Game::update()
     }
     else if (this->gameScreen == 3)
     {
-        std::cout << "Ekran USTAWIENIA ejej\n";
-        this->ballSkin = 3;
-        std::cout << "Zmieniono ball skin na 3\n";
+        // Zmiana koloru pilki
+        for (int i = 0; i < 5; i++)
+        {
+            if (this->ballSkinsBtnsArr[i]->isClicked(this->window) && !this->isMouseBtnPressed)
+            {
+                this->isMouseBtnPressed = true;
+                this->ballSkin = this->ballSkinsBtnsArr[i]->getValue();
+            }
+        }
+        // std::cout << "Ekran USTAWIENIA ejej\n";
+        // this->ballSkin = 3;
+        // std::cout << "Zmieniono ball skin na 3\n";
     }
     else
         std::cout << "ERROR: Nie ma takiego okna\n";
@@ -406,6 +462,15 @@ void Game::render()
 
     case 3:
         this->window.draw(this->OptionsTitle);
+
+        this->window.draw(this->SoundTitle);
+        this->window.draw(this->VolumeTitle);
+
+        this->window.draw(this->BallColorTitle);
+        for (int i = 0; i < 5; i++)
+        {
+            this->ballSkinsBtnsArr[i]->render(this->window);
+        }
 
         // Screen 3
 

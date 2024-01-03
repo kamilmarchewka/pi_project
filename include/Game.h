@@ -33,7 +33,7 @@ private:
     // -----------------
 
     // Czcionka
-    sf::Font InterBlack;
+    sf::Font InterBlack, InterSemiBold;
 
     // Okno
     sf::RenderWindow window; // Okno gry
@@ -73,7 +73,8 @@ private:
     std::vector<Button *> lvlsBtnsVector;
 
     // Screen 3 ----------------
-    sf::Text OptionsTitle;
+    sf::Text OptionsTitle, SoundTitle, VolumeTitle, BallColorTitle;
+    Button *ballSkinsBtnsArr[5];
 
     // All screens -------------
     Button *exitBtn;

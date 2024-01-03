@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "Button.h"
 
-Button::Button(sf::Texture &texture, sf::Vector2f pos, int value)
+Button::Button(sf::Texture &texture, sf::Vector2f pos, int value, sf::IntRect textureRect)
 {
     this->value = value;
 
     this->button.setTexture(texture); // Danie textury na przycisk
+    if (textureRect != sf::IntRect(-1, -1, -1, -1))
+        this->button.setTextureRect(textureRect);
 
     this->button.setOrigin(sf::Vector2f(
         this->button.getGlobalBounds().width / 2,
