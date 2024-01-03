@@ -109,6 +109,7 @@ void Ball::setScale(float scale)
 
 void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool &isMouseBtnPressedRef)
 {
+    std::cout << "Wektor predkosci: " << this->velocity.x << " " << this->velocity.y << " \n";
     // Pozycja myszy
     sf::Vector2f mousePos = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
     // Pozycja pilki
@@ -128,16 +129,17 @@ void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool
         // Ustawienie pozycji linii
         this->aimingLine.setPosition(ballPos.x, ballPos.y);
 
-        float distanceX = fabs(mousePos.x - ballPos.x) / 6.f;
-        float distanceY = fabs(mousePos.y - ballPos.y) / 6.f;
-        if (distanceX > this->maxVelocity)
-            distanceX = this->maxVelocity;
-        if (distanceY > this->maxVelocity)
-            distanceY = this->maxVelocity;
-
-        std::cout << "Distance = " << distanceX << " " << distanceY << std::endl;
+        float distanceX = (mousePos.x - ballPos.x) / 6.f;
+        float distanceY = (mousePos.y - ballPos.y) / 6.f;
 
         float distance = sqrt(pow(distanceX, 2) + pow(distanceY, 2));
+
+        if (distance > this->maxVelocity)
+        {
+            distance = this->maxVelocity;
+        }
+
+        std::cout << "Distance = " << distanceX << " " << distanceY << std::endl;
 
         float scaleX = distance / this->maxVelocity + 0.2f;
 
@@ -173,14 +175,28 @@ void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool
                 this->velocity.x = (ballPos.x - mousePos.x) / 6.f;
                 // Mysz w stosunku do pilki - nad lub pod pilka
                 this->velocity.y = (ballPos.y - mousePos.y) / 6.f;
+                // Dlugosc wektora predkosci
+                float veloctiyLength = sqrt(pow(this->velocity.x, 2) + pow(this->velocity.y, 2));
+
+                float sin = this->velocity.y / veloctiyLength;
+                float cos = this->velocity.x / veloctiyLength;
+
+                std::cout << "Welocity length: " << veloctiyLength << std::endl;
+
+                if (veloctiyLength > this->maxVelocity)
+                {
+                    veloctiyLength = this->maxVelocity;
+                    this->velocity.x = veloctiyLength * cos;
+                    this->velocity.y = veloctiyLength * sin;
+                }
 
                 // Ograniczenie do max predkosci
-                if (fabs(this->velocity.x) > this->maxVelocity)
-                    this->velocity.x = ballPos.x - mousePos.x < 0 ? -1.f * this->maxVelocity : this->maxVelocity;
-                if (fabs(this->velocity.y) > this->maxVelocity)
-                    this->velocity.y = ballPos.y - mousePos.y < 0 ? -1.f * this->maxVelocity : this->maxVelocity;
+                // if (fabs(this->velocity.x) > this->maxVelocity)
+                //     this->velocity.x = ballPos.x - mousePos.x < 0 ? -1.f * this->maxVelocity : this->maxVelocity;
+                // if (fabs(this->velocity.y) > this->maxVelocity)
+                //     this->velocity.y = ballPos.y - mousePos.y < 0 ? -1.f * this->maxVelocity : this->maxVelocity;
 
-                std::cout << "Velocity = " << this->velocity.x << " " << this->velocity.y << std::endl;
+                // std::cout << "Velocity = " << this->velocity.x << " " << this->velocity.y << std::endl;
 
                 leftStrokes--;
             }
