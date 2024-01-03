@@ -200,7 +200,7 @@ Game::Game()
     this->SoundTitle.setOrigin(sf::Vector2f( // Srodek lewego boku
         0,
         this->SoundTitle.getGlobalBounds().height / 2));
-    this->SoundTitle.setPosition(sf::Vector2f(300, 250));
+    this->SoundTitle.setPosition(sf::Vector2f(300, 300));
 
     // Tytul - glosnosc
     this->VolumeTitle.setString("Glosnosc");
@@ -234,11 +234,11 @@ Game::Game()
     this->BallColorTitle.setOrigin(sf::Vector2f( // Srodek lewego boku
         0,
         this->BallColorTitle.getGlobalBounds().height / 2));
-    this->BallColorTitle.setPosition(sf::Vector2f(300, 550));
+    this->BallColorTitle.setPosition(sf::Vector2f(300, 500));
     // Przyciski z kolorami pilki
     for (int i = 0; i < 5; i++)
     {
-        Button *btn = new Button(this->ballsTexture, sf::Vector2f(300 + 90 + 70 * i, 550 + 60), i);
+        Button *btn = new Button(this->ballsTexture, sf::Vector2f(300 + 90 + 70 * i, 500 + 60), i);
         btn->setTextureRect(sf::IntRect(35 * i, 0, 35, 35));
         this->ballSkinsBtnsArr[i] = btn;
     }
