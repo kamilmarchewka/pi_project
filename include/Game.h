@@ -29,6 +29,7 @@ private:
     int unlockedLvls;
 
     int ballSkin;
+    float volume;
     bool musicIsOn;
     // -----------------
 
@@ -50,9 +51,8 @@ private:
         optionsBtnTexture,
         exitBtnTexture,
         musicBtnTexture,
-        Level1BtnTexture,
-        Level2BtnTexture,
-        Level3BtnTexture,
+        plusBtnTexture,
+        minusBtnTexture,
         LevelsTexture,
         ballsTexture;
 
@@ -73,7 +73,8 @@ private:
     std::vector<Button *> lvlsBtnsVector;
 
     // Screen 3 ----------------
-    sf::Text OptionsTitle, SoundTitle, VolumeTitle, BallColorTitle;
+    sf::Text OptionsTitle, SoundTitle, VolumeTitle, CurrentVolumeText, BallColorTitle;
+    Button *VolumeDownBtn, *VolumeUpBtn;
     Button *ballSkinsBtnsArr[5];
 
     // All screens -------------

@@ -51,6 +51,16 @@ void Game::initAssets()
         std::cout << "ERROR::TEXTURES - music.png\n";
     this->musicBtnTexture.setSmooth(true); // Wyrownanie krawedzi
 
+    // Music btn
+    if (!(this->minusBtnTexture.loadFromFile("assets/minus_btn.png")))
+        std::cout << "ERROR::TEXTURES - minus_btn.png\n";
+    this->minusBtnTexture.setSmooth(true); // Wyrownanie krawedzi
+
+    // Music btn
+    if (!(this->plusBtnTexture.loadFromFile("assets/plus_btn.png")))
+        std::cout << "ERROR::TEXTURES - plus_btn.png\n";
+    this->plusBtnTexture.setSmooth(true); // Wyrownanie krawedzi
+
     // Levels
     if (!(this->LevelsTexture.loadFromFile("assets/lvls_texture.png")))
         std::cout << "ERROR::TEXTURES - lvls_texture.png\n";
@@ -63,7 +73,6 @@ void Game::initAssets()
 
     // Ladowanie muzyki
     this->backgroundMusic.openFromFile("assets/background_music.ogg");
-    this->backgroundMusic.setVolume(30.f);
     // this->backgroundMusic.play();
     this->backgroundMusic.setLoop(true);
 }
@@ -88,6 +97,7 @@ Game::Game()
     this->unlockedLvls = 15;
 
     this->ballSkin = 0;      // Poczatkowo pilka jest biala
+    this->volume = 50;       // Glosnosc muzyki w tle
     this->musicIsOn = false; // Domyslnie muzyka jest wylaczona
     // -----------------
 
@@ -96,6 +106,9 @@ Game::Game()
 
     // Zaladowanie tekstur
     this->initAssets();
+
+    // Ustawienie glosnosci muzyki w tle
+    this->backgroundMusic.setVolume(this->volume);
 
     // Screen 0 ----------------
     this->mainBg.setTexture(this->mainBgTexture);                                           // Ustawienie tekstury
@@ -189,7 +202,7 @@ Game::Game()
         this->SoundTitle.getGlobalBounds().height / 2));
     this->SoundTitle.setPosition(sf::Vector2f(300, 250));
 
-    // Tytul - podglasnianie
+    // Tytul - glosnosc
     this->VolumeTitle.setString("Glosnosc");
     this->VolumeTitle.setFont(this->InterSemiBold);
     this->VolumeTitle.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
@@ -198,6 +211,12 @@ Game::Game()
         0,
         this->VolumeTitle.getGlobalBounds().height / 2));
     this->VolumeTitle.setPosition(sf::Vector2f(300, 400));
+
+    // zciszanie
+    this->VolumeDownBtn = new Button(this->minusBtnTexture, sf::Vector2f(500, 400 + 10), -5);
+    // tekst z aktualna glosnoscia
+    // podglasnianie
+    this->VolumeUpBtn = new Button(this->plusBtnTexture, sf::Vector2f(550, 400 + 10), 5);
 
     // Tytul - wybierz kolor pilki
     this->BallColorTitle.setString("Kolor pilki");
@@ -239,6 +258,8 @@ Game::~Game()
     }
 
     // Screen 3 ----------------
+    delete this->VolumeDownBtn;
+    delete this->VolumeUpBtn;
 
     for (int i = 0; i < 5; i++)
     {
@@ -316,7 +337,7 @@ void Game::update()
             this->isMouseBtnPressed = true;
 
             this->gameScreen = this->optionsBtn->getValue();
-            std::cout << "USTAWIENIA zostal wcisniety\n";
+            // std::cout << "USTAWIENIA zostal wcisniety\n";
         }
 
         // Wlaczanie / wylaczanie musycki
@@ -411,6 +432,19 @@ void Game::update()
     }
     else if (this->gameScreen == 3)
     {
+        // zmiana glosnosci
+        if (this->VolumeDownBtn->isClicked(this->window) && !this->isMouseBtnPressed)
+        {
+            this->isMouseBtnPressed = true;
+            this->volume += this->VolumeDownBtn->getValue();
+            this->backgroundMusic.setVolume(this->volume);
+        }
+        if (this->VolumeUpBtn->isClicked(this->window) && !this->isMouseBtnPressed)
+        {
+            this->isMouseBtnPressed = true;
+            this->volume += this->VolumeUpBtn->getValue();
+            this->backgroundMusic.setVolume(this->volume);
+        }
         // Zmiana koloru pilki
         for (int i = 0; i < 5; i++)
         {
@@ -466,6 +500,8 @@ void Game::render()
 
         this->window.draw(this->SoundTitle);
         this->window.draw(this->VolumeTitle);
+        this->VolumeDownBtn->render(this->window);
+        this->VolumeUpBtn->render(this->window);
 
         this->window.draw(this->BallColorTitle);
         for (int i = 0; i < 5; i++)
@@ -475,7 +511,7 @@ void Game::render()
 
         // Screen 3
 
-        std::cout << "USTAWIENIA\n";
+        // std::cout << "USTAWIENIA\n";
         break;
 
     default:
