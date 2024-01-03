@@ -53,6 +53,11 @@ private:
         optionsBtnTexture,
         exitBtnTexture,
         musicBtnTexture,
+        musiconBtnTexture,
+        musicoffBtnTexture,
+        OptionsTitle1Texture,
+        OptionsTitle2Texture,
+        OptionsTitle3Texture,
         Level1BtnTexture,
         Level2BtnTexture,
         Level3BtnTexture,
@@ -60,9 +65,12 @@ private:
         MinusTexture,
         PlusTexture,
         WhiteBallTexture,
-        RedBallTexture,
-        BlueBallTexture,
-        YellowBallTexture;
+        PinkBallTexture,
+        PurpleBallTexture,
+        GreenBallTexture,
+        LblueBallTexture,
+        volumeTexture;
+
 
     // Screen 0 ----------------
     sf::Sprite mainBg;
@@ -75,9 +83,14 @@ private:
     Button *Plus;
     Button *Minus;
     Button *WhiteBall;
-    Button *RedBall;
-    Button *BlueBall;
-    Button *YellowBall;
+    Button *PinkBall;
+    Button *PurpleBall;
+    Button *LblueBall;
+    Button *GreenBall;
+    Button *OptionsTitle1;
+    Button *OptionsTitle2;
+    Button *OptionsTitle3;
+    Button *Vol;
 
     Button *musicBtn;
 
@@ -85,7 +98,7 @@ private:
     GameplayScreen *GameplayScreenLvl1; // Ekran z plansza, nr poziomu itd.
 
     // Screen 2 ----------------
-    sf::Text LevelsTitle,OptionsTitle,OptionsTitle1,OptionsTitle2,OptionsTitle3;
+    sf::Text LevelsTitle,OptionsTitle;
     std::vector<Button *> lvlsBtnsVector;
 
     // Screen 3 ----------------

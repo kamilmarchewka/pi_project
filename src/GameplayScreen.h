@@ -19,7 +19,7 @@ private:
 
     sf::Font font;
     sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, iceTexture, gulfTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, gameFinishedBgTexture, replayBtnTexture, nextLvlBtnTexture,
-    blueBallTexture,redBallTexture,yellowBallTexture,water_upTexture, water_downTexture;
+    purpleBallTexture,pinkBallTexture,lblueBallTexture,greenBallTexture,water_upTexture, water_downTexture;
 
     int lvl;          // Aktualnie wyswietlany lvl
     int strokesLimit; // Limit uderzen dla danego poziomu

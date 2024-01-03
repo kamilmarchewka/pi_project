@@ -38,17 +38,21 @@ void GameplayScreen::initAssets()
         std::cout << "ERROR::GameplayScreen::TEXTURES - ball_white.png\n";
     this->whiteBallTexture.setSmooth(true);
 
-    if (!(this->redBallTexture.loadFromFile("../assets/ball_red.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_red.png\n";
-    this->redBallTexture.setSmooth(true);
+    if (!(this->pinkBallTexture.loadFromFile("../assets/ball_pink.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_pink.png\n";
+    this->pinkBallTexture.setSmooth(true);
 
-    if (!(this->blueBallTexture.loadFromFile("../assets/ball_blue.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_blue.png\n";
-    this->blueBallTexture.setSmooth(true);
+    if (!(this->purpleBallTexture.loadFromFile("../assets/ball_purple.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_purple.png\n";
+    this->purpleBallTexture.setSmooth(true);
 
-    if (!(this->yellowBallTexture.loadFromFile("../assets/ball_yellow.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_yellow.png\n";
-    this->yellowBallTexture.setSmooth(true);
+    if (!(this->lblueBallTexture.loadFromFile("../assets/ball_Lblue.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_Lblue.png\n";
+    this->lblueBallTexture.setSmooth(true);
+
+    if (!(this->greenBallTexture.loadFromFile("../assets/ball_green.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_green.png\n";
+    this->greenBallTexture.setSmooth(true);
 
     // Tekstura dolka
     if (!(this->holeTexture.loadFromFile("../assets/hole.png")))
@@ -235,13 +239,16 @@ GameplayScreen::GameplayScreen(int &currentLvl)
     this->ball = new Ball(this->whiteBallTexture);
     }
     if(this->currentBall==2){
-    this->ball = new Ball(this->blueBallTexture);
+    this->ball = new Ball(this->purpleBallTexture);
     }
     if(this->currentBall==3){
-    this->ball = new Ball(this->redBallTexture);
+    this->ball = new Ball(this->pinkBallTexture);
     }
     if(this->currentBall==4){
-    this->ball = new Ball(this->yellowBallTexture);
+    this->ball = new Ball(this->lblueBallTexture);
+    }
+    if(this->currentBall==5){
+    this->ball = new Ball(this->greenBallTexture);
     }
 
     // Inicjalizacja ekranu wygranej / przegranej

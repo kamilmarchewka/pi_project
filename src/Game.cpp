@@ -46,6 +46,14 @@ void Game::initAssets()
     if (!(this->musicBtnTexture.loadFromFile("../assets/music.png")))
         std::cout << "ERROR::TEXTURES - music.png\n";
     this->musicBtnTexture.setSmooth(true); // Wyrownanie krawedzi
+
+    if (!(this->musiconBtnTexture.loadFromFile("../assets/ON.png")))
+        std::cout << "ERROR::TEXTURES - ON.png\n";
+    this->musiconBtnTexture.setSmooth(true); // Wyrownanie krawedzi
+
+    if (!(this->musicoffBtnTexture.loadFromFile("../assets/OFF.png")))
+        std::cout << "ERROR::TEXTURES - OFF.png\n";
+    this->musicoffBtnTexture.setSmooth(true); // Wyrownanie krawedzi
     //Plus and Minus (volume) btn
     if (!(this->PlusTexture.loadFromFile("../assets/Plus.png")))
         std::cout << "ERROR::TEXTURES - music.png\n";
@@ -54,22 +62,41 @@ void Game::initAssets()
         std::cout << "ERROR::TEXTURES - music.png\n";
     this->MinusTexture.setSmooth(true); // Wyrownanie krawedzi
 
+    //Teksty w opcjach
+    if (!(this->OptionsTitle1Texture.loadFromFile("../assets/Sound.png")))
+        std::cout << "ERROR::TEXTURES - Sound.png\n";
+    this->OptionsTitle1Texture.setSmooth(true); // Wyrownanie krawedzi
+    if (!(this->OptionsTitle2Texture.loadFromFile("../assets/Volume.png")))
+        std::cout << "ERROR::TEXTURES - Volume.png\n";
+    this->OptionsTitle2Texture.setSmooth(true); // Wyrownanie krawedzi
+    if (!(this->OptionsTitle3Texture.loadFromFile("../assets/Color.png")))
+        std::cout << "ERROR::TEXTURES - Color.png\n";
+    this->OptionsTitle3Texture.setSmooth(true); // Wyrownanie krawedzi
+
+    if (!(this->volumeTexture.loadFromFile("../assets/Volumes.png")))
+        std::cout << "ERROR::TEXTURES - Volumes.png\n";
+    this->volumeTexture.setSmooth(true);
+
     //Piłki w menu
     if (!(this->WhiteBallTexture.loadFromFile("../assets/ball_white.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - ball_white.png\n";
     this->WhiteBallTexture.setSmooth(true);
 
-    if (!(this->RedBallTexture.loadFromFile("../assets/ball_red.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_red.png\n";
-    this->RedBallTexture.setSmooth(true);
+    if (!(this->PinkBallTexture.loadFromFile("../assets/ball_pink.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_pink.png\n";
+    this->PinkBallTexture.setSmooth(true);
 
-    if (!(this->BlueBallTexture.loadFromFile("../assets/ball_blue.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_blue.png\n";
-    this->BlueBallTexture.setSmooth(true);
+    if (!(this->PurpleBallTexture.loadFromFile("../assets/ball_purple.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_purple.png\n";
+    this->PurpleBallTexture.setSmooth(true);
 
-    if (!(this->YellowBallTexture.loadFromFile("../assets/ball_yellow.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_yellow.png\n";
-    this->YellowBallTexture.setSmooth(true);
+    if (!(this->LblueBallTexture.loadFromFile("../assets/ball_Lblue.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_Lblue.png\n";
+    this->LblueBallTexture.setSmooth(true);
+
+    if (!(this->GreenBallTexture.loadFromFile("../assets/ball_green.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_green.png\n";
+    this->GreenBallTexture.setSmooth(true);
 
     if (!(this->MinusTexture.loadFromFile("../assets/Minus.png")))
         std::cout << "ERROR::TEXTURES - music.png\n";
@@ -96,7 +123,7 @@ void Game::initAssets()
     this->LevelsTexture.setSmooth(true);
 
     // Ladowanie muzyki
-    volume = 1.f;
+    volume = 50.f;
     this->backgroundMusic.openFromFile("../assets/background_music.ogg");
     this->backgroundMusic.setVolume(volume);
     // this->backgroundMusic.play();
@@ -168,43 +195,22 @@ Game::Game()
     this->OptionsTitle.getGlobalBounds().height + 9));
     this->OptionsTitle.setPosition(sf::Vector2f(1200 / 2, 170));
 
-    this->OptionsTitle1.setString("Sound ON:\n\nSound OFF:");// Napis
-    this->OptionsTitle1.setFont(this->InterBlack);                // Czcionka
-    this->OptionsTitle1.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
-    this->OptionsTitle1.setCharacterSize(20);
-    this->OptionsTitle1.setOrigin(sf::Vector2f( // Origin - srodek dolnej krawedzi
-    this->OptionsTitle1.getGlobalBounds().width / 2,
-    this->OptionsTitle1.getGlobalBounds().height + 9));
-    this->OptionsTitle1.setPosition(sf::Vector2f(450, 302));
+    this->OptionsTitle1 = new Button(this->OptionsTitle1Texture, sf::Vector2f(450, 300), -1);
+    this->OptionsTitle2 = new Button(this->OptionsTitle2Texture, sf::Vector2f(450, 400), -1);
+    this->OptionsTitle3 = new Button(this->OptionsTitle3Texture, sf::Vector2f(450, 500), -1);
 
-    this->OptionsTitle2.setString("Change volume:");// Napis
-    this->OptionsTitle2.setFont(this->InterBlack);                // Czcionka
-    this->OptionsTitle2.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
-    this->OptionsTitle2.setCharacterSize(20);
-    this->OptionsTitle2.setOrigin(sf::Vector2f( // Origin - srodek dolnej krawedzi
-    this->OptionsTitle2.getGlobalBounds().width / 2,
-    this->OptionsTitle2.getGlobalBounds().height + 9));
-    this->OptionsTitle2.setPosition(sf::Vector2f(450, 410));
-
-    this->OptionsTitle3.setString("Wybierz kolor pilki:");// Napis
-    this->OptionsTitle3.setFont(this->InterBlack);                // Czcionka
-    this->OptionsTitle3.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
-    this->OptionsTitle3.setCharacterSize(20);
-    this->OptionsTitle3.setOrigin(sf::Vector2f( // Origin - srodek dolnej krawedzi
-    this->OptionsTitle3.getGlobalBounds().width / 2,
-    this->OptionsTitle3.getGlobalBounds().height + 9));
-    this->OptionsTitle3.setPosition(sf::Vector2f(450, 510));
     //Screen 3
-    this->musiconBtn = new Button(this->musicBtnTexture, sf::Vector2f(700, 240), -1);
-    this->musicoffBtn = new Button(this->musicBtnTexture, sf::Vector2f(700, 290), -1);
-    this->musiconBtn->setTextureRect(sf::IntRect(0, 0, 34, 34));
-    this->musicoffBtn->setTextureRect(sf::IntRect(34, 0, 34, 34));
-    this->Minus = new Button(this->MinusTexture, sf::Vector2f(700, 400), -1);
-    this->Plus = new Button(this->PlusTexture, sf::Vector2f(800, 400), -1);
+    this->musiconBtn = new Button(this->musiconBtnTexture, sf::Vector2f(825, 290), -1);
+    this->musicoffBtn = new Button(this->musicoffBtnTexture, sf::Vector2f(700, 290), -1);
+    this->Minus = new Button(this->MinusTexture, sf::Vector2f(690, 400), -1);
+    this->Plus = new Button(this->PlusTexture, sf::Vector2f(820, 400), -1);
     this->WhiteBall = new Button(this->WhiteBallTexture, sf::Vector2f(650, 500), -1);
-    this->RedBall = new Button(this->RedBallTexture, sf::Vector2f(700, 500), -1);
-    this->BlueBall = new Button(this->BlueBallTexture, sf::Vector2f(750, 500), -1);
-    this->YellowBall = new Button(this->YellowBallTexture, sf::Vector2f(800, 500), -1);
+    this->PurpleBall = new Button(this->PurpleBallTexture, sf::Vector2f(700, 500), -1);
+    this->PinkBall = new Button(this->PinkBallTexture, sf::Vector2f(750, 500), -1);
+    this->LblueBall = new Button(this->LblueBallTexture, sf::Vector2f(800, 500), -1);
+    this->GreenBall = new Button(this->GreenBallTexture, sf::Vector2f(850, 500), -1);
+    this->Vol=new Button(this->volumeTexture,sf::Vector2f(825,400),-1);
+    this->Vol->setTextureRect(sf::IntRect(56, 0, 36, 38));
 
     // Inicjalizacja przyciskow
     int leftOffset = 1100;
@@ -276,10 +282,15 @@ Game::~Game()
     delete this->musicoffBtn;
     delete this->Plus;
     delete this->Minus;
+    delete this->OptionsTitle1;
+    delete this->OptionsTitle2;
+    delete this->OptionsTitle3;
     delete  this->WhiteBall;
-    delete  this->RedBall;
-    delete  this->BlueBall;
-    delete  this->YellowBall;
+    delete  this->PinkBall;
+    delete  this->PurpleBall;
+    delete  this->LblueBall;
+    delete  this->GreenBall;
+    delete this->Vol;
     // All screens -------------
     delete this->exitBtn;
 }
@@ -315,9 +326,10 @@ void Game::update()
     this->Plus->updateHover(this->window);
     this->Minus->updateHover(this->window);
     this->WhiteBall->updateHover(this->window);
-    this->RedBall->updateHover(this->window);
-    this->BlueBall->updateHover(this->window);
-    this->YellowBall->updateHover(this->window);
+    this->PinkBall->updateHover(this->window);
+    this->PurpleBall->updateHover(this->window);
+    this->LblueBall->updateHover(this->window);
+    this->GreenBall->updateHover(this->window);
 
     // Dzialanie przycisku exit
     if (this->gameScreen == 1 || this->gameScreen == 2 || this->gameScreen == 3)
@@ -469,7 +481,7 @@ void Game::update()
         }
         if (this->Plus->isClicked(this->window))
         {       
-            if(volume < 500){
+            if(volume < 100){
                 volume+=25.f;
                 std::this_thread::sleep_for(std::chrono::milliseconds(250));
                 this->backgroundMusic.setVolume(volume);
@@ -477,19 +489,30 @@ void Game::update()
         }
         if (this->Minus->isClicked(this->window))
         {       
-            if(volume >1){
+            if(volume >0){
                 volume-=25.f;
                 std::this_thread::sleep_for(std::chrono::milliseconds(250));
                 this->backgroundMusic.setVolume(volume);
             }
         }
-        if (this->Minus->isClicked(this->window))
-        {       
-            if(volume >1){
-                volume-=25.f;
-                std::this_thread::sleep_for(std::chrono::milliseconds(250));
-                this->backgroundMusic.setVolume(volume);
-            }
+        switch(volume){
+            case 0:
+                this->Vol->setTextureRect(sf::IntRect(0, 0, 18, 23));
+                break;
+            case 25:
+                this->Vol->setTextureRect(sf::IntRect(18, 0, 36, 38));
+                break;
+            case 50:
+                this->Vol->setTextureRect(sf::IntRect(56, 0, 36, 38));
+                break;
+            case 75:
+                this->Vol->setTextureRect(sf::IntRect(93, 0, 36, 38));
+                break;
+            case 100:
+                this->Vol->setTextureRect(sf::IntRect(128, 0, 52, 52));
+                break;
+            default:
+            break;
         }
         if (this->WhiteBall->isClicked(this->window))
         {       
@@ -497,22 +520,28 @@ void Game::update()
             this->currentBall=1;
             std::cout<<currentBall;
         }
-        if (this->BlueBall->isClicked(this->window))
+        if (this->PurpleBall->isClicked(this->window))
         {       
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
             this->currentBall=2;
             std::cout<<currentBall;
         }
-        if (this->RedBall->isClicked(this->window))
+        if (this->PinkBall->isClicked(this->window))
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
             this->currentBall=3;   
             std::cout<<currentBall;    
         }
-        if (this->YellowBall->isClicked(this->window))
+        if (this->LblueBall->isClicked(this->window))
         {       
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
             this->currentBall=4;
+            std::cout<<currentBall;
+        }
+        if (this->GreenBall->isClicked(this->window))
+        {       
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            this->currentBall=5;
             std::cout<<currentBall;
         }
         zap.open("../data/Ball.txt", std::ios::out);//zapisanie wybranego wariantu piłki do pliku
@@ -559,17 +588,20 @@ void Game::render()
 
     case 3:
         this->window.draw(this->OptionsTitle);
-        this->window.draw(this->OptionsTitle1);
-        this->window.draw(this->OptionsTitle2);
-        this->window.draw(this->OptionsTitle3);
+        this->OptionsTitle1->render(this->window);
+        this->OptionsTitle2->render(this->window);
+        this->OptionsTitle3->render(this->window);
+        this->Vol->render(this->window);
         this->musiconBtn->render(this->window);
         this->musicoffBtn->render(this->window);
         this->Plus->render(this->window);
         this->Minus->render(this->window);
         this->WhiteBall->render(this->window);
-        this->RedBall->render(this->window);
-        this->BlueBall->render(this->window);
-        this->YellowBall->render(this->window);
+        this->PinkBall->render(this->window);
+        this->PurpleBall->render(this->window);
+        this->LblueBall->render(this->window);
+        this->GreenBall->render(this->window);
+
         //std::cout << "USTAWIENIA\n";
         break;
 
