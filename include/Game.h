@@ -88,6 +88,8 @@ public:
     Game();
     ~Game();
 
+    void poolEvents();
+
     sf::RenderWindow &getWindow(); // Zwraca okno gry
 
     void update(); // Aktualizuje gre

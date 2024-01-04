@@ -104,7 +104,7 @@ Game::Game()
     this->prevLvl = 0;
     this->selectedLvl = 1;
     this->allLvls = 15;
-    this->unlockedLvls = 15;
+    this->unlockedLvls = 13;
 
     this->ballSkin = 0;      // Poczatkowo pilka jest biala
     this->volume = 50;       // Glosnosc muzyki w tle
@@ -304,7 +304,7 @@ Game::~Game()
     delete this->exitBtn;
 }
 
-void Game::update()
+void Game::poolEvents()
 {
     // Sprawdzanie wszystkich eventow, ktore zostaly dodane
     while (this->window.pollEvent(this->event)) // Poolowanie eventow z okna do zmiennej event
@@ -324,14 +324,10 @@ void Game::update()
             this->isMouseBtnPressed = false;
         }
     }
-
-    // Animacja przyciskow gdy najedzie sie myszka
-    this->playBtn->updateHover(this->window);
-    this->lvlsBtn->updateHover(this->window);
-    this->optionsBtn->updateHover(this->window);
-    this->musicBtn->updateHover(this->window);
-    this->VolumeDownBtn->updateHover(this->window);
-    this->VolumeUpBtn->updateHover(this->window);
+}
+void Game::update()
+{
+    this->poolEvents();
 
     // Dzialanie przycisku exit
     if (this->gameScreen == 1 || this->gameScreen == 2 || this->gameScreen == 3)
@@ -351,9 +347,62 @@ void Game::update()
         }
     }
 
+    // Aktualizacja tekstur muzyki (czy jest wl. czy wyl.)
+    // Jezeli muzyka jest wylaczona
+    if (!this->musicIsOn)
+    {
+        // Ikona menu glowne
+        if (this->musicBtn->getTextureRect() == sf::IntRect(0, 0, 34, 34))
+            this->musicBtn->setTextureRect(sf::IntRect(34, 0, 34, 34));
+
+        // Ikony ustawienia
+        if (this->MusicOnBtn->getTextureRect() == sf::IntRect(0, 0, 90, 50))
+            this->MusicOnBtn->setTextureRect(sf::IntRect(0, 50, 90, 50));
+
+        if (this->MusicOffBtn->getTextureRect() == sf::IntRect(0, 50, 90, 50))
+            this->MusicOffBtn->setTextureRect(sf::IntRect(0, 0, 90, 50));
+    }
+    else
+    {
+        // Ikona menu glowne
+        if (this->musicBtn->getTextureRect() == sf::IntRect(34, 0, 34, 34))
+            this->musicBtn->setTextureRect(sf::IntRect(0, 0, 34, 34));
+
+        // Ikony ustawienia
+        if (this->MusicOnBtn->getTextureRect() == sf::IntRect(0, 50, 90, 50))
+            this->MusicOnBtn->setTextureRect(sf::IntRect(0, 0, 90, 50));
+
+        if (this->MusicOffBtn->getTextureRect() == sf::IntRect(0, 0, 90, 50))
+            this->MusicOffBtn->setTextureRect(sf::IntRect(0, 50, 90, 50));
+    }
+
     // Aktualizacja w zaleznosci od okna, na ktorym sie znajdujemy
     if (this->gameScreen == 0)
     {
+        // Graj
+        if (this->playBtn->hovering(this->window))
+            this->playBtn->setScale(1.05f);
+        else
+            this->playBtn->setScale(1.f);
+
+        // Poziomy
+        if (this->lvlsBtn->hovering(this->window))
+            this->lvlsBtn->setScale(1.05f);
+        else
+            this->lvlsBtn->setScale(1.f);
+
+        // Ustawienia
+        if (this->optionsBtn->hovering(this->window))
+            this->optionsBtn->setScale(1.05f);
+        else
+            this->optionsBtn->setScale(1.f);
+
+        // Wl. wyl. muzyki
+        if (this->musicBtn->hovering(this->window))
+            this->musicBtn->setScale(1.05f);
+        else
+            this->musicBtn->setScale(1.f);
+
         // Logika menu
         if (this->playBtn->isClicked(this->window) && !this->isMouseBtnPressed)
         {
@@ -373,7 +422,6 @@ void Game::update()
             this->isMouseBtnPressed = true;
 
             this->gameScreen = this->optionsBtn->getValue();
-            // std::cout << "USTAWIENIA zostal wcisniety\n";
         }
 
         // Wlaczanie / wylaczanie musycki
@@ -384,20 +432,12 @@ void Game::update()
             if (musicIsOn)
             {
                 this->musicIsOn = false;
-                this->musicBtn->setTextureRect(sf::IntRect(34, 0, 34, 34));
                 this->backgroundMusic.pause(); // Zatrzymanie muzyki
-
-                this->MusicOnBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 0 : 50, 90, 50));
-                this->MusicOffBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 50 : 0, 90, 50));
             }
             else
             {
                 this->musicIsOn = true;
-                this->musicBtn->setTextureRect(sf::IntRect(0, 0, 34, 34));
                 this->backgroundMusic.play(); // Wznowienie muzyki
-
-                this->MusicOnBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 0 : 50, 90, 50));
-                this->MusicOffBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 50 : 0, 90, 50));
             }
         }
     }
@@ -431,7 +471,6 @@ void Game::update()
         // Zmiana stylu aktualnie wybranego poziomu
         if (this->currentLvl != this->selectedLvl)
         {
-
             for (int i = 0; i < this->allLvls; i++)
             {
                 if ((i + 1) == this->prevLvl)
@@ -448,10 +487,6 @@ void Game::update()
                 }
             }
         }
-
-        // std::cout << "Prev: " << this->prevLvl << std::endl;
-        // std::cout << "Current: " << this->currentLvl << std::endl;
-        // std::cout << "Selected: " << this->selectedLvl << std::endl;
 
         for (int i = 0; i < this->allLvls; i++)
         {
@@ -474,49 +509,54 @@ void Game::update()
     }
     else if (this->gameScreen == 3)
     {
+        // wl. wyl
+        if (this->MusicOnBtn->hovering(this->window))
+            this->MusicOnBtn->setScale(1.05f);
+        else
+            this->MusicOnBtn->setScale(1.f);
+        if (this->MusicOffBtn->hovering(this->window))
+            this->MusicOffBtn->setScale(1.05f);
+        else
+            this->MusicOffBtn->setScale(1.f);
+        // Sciszanie / podglasnianie
+        if (this->VolumeDownBtn->hovering(this->window))
+            this->VolumeDownBtn->setScale(1.05f);
+        else
+            this->VolumeDownBtn->setScale(1.f);
+        if (this->VolumeUpBtn->hovering(this->window))
+            this->VolumeUpBtn->setScale(1.05f);
+        else
+            this->VolumeUpBtn->setScale(1.f);
+
         // Wlaczanie / wylaczanie musyzki
         if (this->MusicOnBtn->isClicked(this->window) && !musicIsOn && !this->isMouseBtnPressed)
         {
             this->isMouseBtnPressed = true;
             this->musicIsOn = true;
-
-            // Przycisk do wlaczania
-            this->MusicOnBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 0 : 50, 90, 50));
-            // Przycisk do wylaczania
-            this->MusicOffBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 50 : 0, 90, 50));
-
-            // Ikona na str glownej
-            this->musicBtn->setTextureRect(sf::IntRect(this->musicIsOn ? 0 : 34, 0, 34, 34));
             this->backgroundMusic.play();
         }
         if (this->MusicOffBtn->isClicked(this->window) && musicIsOn && !this->isMouseBtnPressed)
         {
             this->isMouseBtnPressed = true;
             this->musicIsOn = false;
-
-            // Przycisk do wlaczania
-            this->MusicOnBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 0 : 50, 90, 50));
-            // Przycisk do wylaczania
-            this->MusicOffBtn->setTextureRect(sf::IntRect(0, musicIsOn ? 50 : 0, 90, 50));
-
-            // Ikona na str glownej
-            this->musicBtn->setTextureRect(sf::IntRect(this->musicIsOn ? 0 : 34, 0, 34, 34));
             this->backgroundMusic.pause();
         }
         // zmiana glosnosci
-        if (this->VolumeDownBtn->isClicked(this->window) && !this->isMouseBtnPressed)
+        if (this->VolumeDownBtn->isClicked(this->window) && !this->isMouseBtnPressed && (this->volume + this->VolumeDownBtn->getValue() >= 0))
         {
             this->isMouseBtnPressed = true;
             this->volume += this->VolumeDownBtn->getValue();
+
             this->backgroundMusic.setVolume(this->volume);
             // Dodawanie 0 przed 1-9
             std::string volumeString = volume < 10 ? "0" + std::to_string(static_cast<int>(this->volume)) : std::to_string(static_cast<int>(this->volume));
             this->CurrentVolumeText.setString(volumeString);
         }
-        if (this->VolumeUpBtn->isClicked(this->window) && !this->isMouseBtnPressed)
+        if (this->VolumeUpBtn->isClicked(this->window) && !this->isMouseBtnPressed && (this->volume + this->VolumeUpBtn->getValue() <= 100))
         {
             this->isMouseBtnPressed = true;
             this->volume += this->VolumeUpBtn->getValue();
+
             this->backgroundMusic.setVolume(this->volume);
             // Dodawanie 0 przed 1-9
             std::string volumeString = volume < 10 ? "0" + std::to_string(static_cast<int>(this->volume)) : std::to_string(static_cast<int>(this->volume));
@@ -543,9 +583,6 @@ void Game::update()
                 }
             }
         }
-        // std::cout << "Ekran USTAWIENIA ejej\n";
-        // this->ballSkin = 3;
-        // std::cout << "Zmieniono ball skin na 3\n";
     }
     else
         std::cout << "ERROR: Nie ma takiego okna\n";

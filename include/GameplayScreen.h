@@ -20,11 +20,13 @@ private:
     sf::Font font;
     sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, iceTexture, gulfTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, gameFinishedBgTexture, replayBtnTexture, nextLvlBtnTexture;
 
+    // Zmienne
     int lvl;          // Aktualnie wyswietlany lvl
     int strokesLimit; // Limit uderzen dla danego poziomu
     int strokesLeft;
     int logicalMap[8][16]; // Logiczna mapa przedstawiajaca gdzie znajduja sie jakie przeskzody
 
+    // Pole / plansza
     float borderThickness;
     sf::RectangleShape course; // Pole golfowe
     sf::Text titleText;        // Naglowek z nr lvlu
@@ -61,14 +63,16 @@ private:
     void sandCollision();
     void iceCollision();
     void gulfCollision();
+    void ObstaclesCollisions();
     void holeCollision(int allLvls);
 
 public:
     GameplayScreen(int &currentLvl, sf::Texture &ballsTexture, int ballSkin);
     ~GameplayScreen();
 
-    void setTitleText(sf::String newTitle);
-    void setStrokesLimitText(sf::String newText);
+    void setNewString(sf::String newString, sf::Text &text);
+    // void setTitleText(sf::String newTitle);
+    // void setStrokesLimitText(sf::String newText);
     void readLvlFromFile(int currentLvl);
 
     void update(sf::WindowBase &window, int &prevLvl, int &currentLvl, int allLvls, int &unlockedLevels, bool &isMouseBtnPressed);

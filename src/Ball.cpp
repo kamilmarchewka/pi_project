@@ -19,6 +19,7 @@ Ball::Ball(sf::Texture &texture, int ballSkin)
 
     this->ball.setPosition(sf::Vector2f(162, 350 + 50));
 
+    // Inicjalizacja zmiennych
     this->isMoving = false;
     this->isAiming = false;
     this->stopTreshold = 0.35;
@@ -27,10 +28,11 @@ Ball::Ball(sf::Texture &texture, int ballSkin)
     this->maxVelocity = 35.f; // Dla takiej wartosci nie przelatuje przez sciany
 
     // Ustawienie strzalki do celowania
+    // Linia
     this->aimingLine.setTexture(this->aimingLineTexture);
     this->aimingLine.setOrigin(0, this->aimingLine.getGlobalBounds().height / 2);
     this->aimingLine.setPosition(this->ball.getPosition().x, this->ball.getPosition().y);
-
+    // Grot
     this->aimingArrow.setTexture(this->aimingArrowTexture);
     this->aimingArrow.setOrigin(this->aimingArrow.getGlobalBounds().width / 2, this->aimingArrow.getGlobalBounds().height / 2);
 }
@@ -110,12 +112,12 @@ void Ball::setScale(float scale)
 
 void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool &isMouseBtnPressedRef)
 {
-    // std::cout << "Wektor predkosci: " << this->velocity.x << " " << this->velocity.y << " \n";
     // Pozycja myszy
     sf::Vector2f mousePos = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
     // Pozycja pilki
     sf::Vector2f ballPos = this->ball.getPosition();
 
+    // Aktualizacja isAiming
     if (!this->isMoving && gameState == -1 && !this->isAiming && !isMouseBtnPressedRef)
     {
         this->isAiming = true;
@@ -133,78 +135,64 @@ void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool
         float distanceX = (mousePos.x - ballPos.x) / 6.f;
         float distanceY = (mousePos.y - ballPos.y) / 6.f;
 
+        // Obliczenie odleglosci myszki od pilki
         float distance = sqrt(pow(distanceX, 2) + pow(distanceY, 2));
 
         if (distance > this->maxVelocity)
-        {
             distance = this->maxVelocity;
-        }
 
-        // std::cout << "Distance = " << distanceX << " " << distanceY << std::endl;
-
+        // Ustawienie dlugosci strzalki
         float scaleX = distance / this->maxVelocity + 0.2f;
-
         this->aimingLine.setScale(sf::Vector2f(scaleX, 1));
 
         // Obracanie sie linii
         float kat = this->obliczKat(this->aimingLine.getPosition().x, this->aimingLine.getPosition().y,
                                     mousePos.x, mousePos.y);
 
+        // Obrocenie linii i grotu o ten sam kat
         this->aimingLine.setRotation(kat);
         this->aimingArrow.setRotation(kat);
 
+        // Ustawienie grotu na koncu linii
         sf::Transform transform = this->aimingLine.getTransform();
         sf::Vector2f endPosition = transform.transformPoint(sf::Vector2f(this->aimingLine.getLocalBounds().width, this->aimingLine.getLocalBounds().height / 2));
-
         this->aimingArrow.setPosition(endPosition);
     }
 
     // Strzelaj tylko, jezeli gra sie nie skonczyla => liczba strokeow > 0
     // i jeżeli przycisk nie jest aktualnie klikniety
-    // + obsluga logiki strzalki do celowania
-    if (gameState == -1 && !isMouseBtnPressedRef)
+    if (
+        gameState == -1 &&                             // Musimy grac
+        !isMouseBtnPressedRef &&                       // Nie moze byc kliknieta mysz
+        sf::Mouse::isButtonPressed(sf::Mouse::Left) && // Kliknieto LPP
+        mousePos.x >= 0 && mousePos.x <= 1200 &&       // Kliknieto gdzies w oknie gry
+        mousePos.y >= 0 && mousePos.y <= 700 &&
+        !this->isMoving) // Pilka sie nie porusza
     {
-        // Strzelanie
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !this->isMoving)
+        // Mysz w stosunku do pilki - z lewej strony lub z prawej strony
+        this->velocity.x = (ballPos.x - mousePos.x) / 6.f;
+        // Mysz w stosunku do pilki - nad lub pod pilka
+        this->velocity.y = (ballPos.y - mousePos.y) / 6.f;
+        // Dlugosc wektora predkosci
+        float veloctiyLength = sqrt(pow(this->velocity.x, 2) + pow(this->velocity.y, 2));
+
+        float sin = this->velocity.y / veloctiyLength;
+        float cos = this->velocity.x / veloctiyLength;
+
+        // Sprawdzenie czy wektor predkosci jest wiekszy niz max predkosc
+        // jezeli tak - normalizacja wektora predkosci i jego skladowych x, i y
+        if (veloctiyLength > this->maxVelocity)
         {
-            // Sprawdzenie czy nie kliknelismy poza oknem
-            if (
-                mousePos.x >= 0 && mousePos.x <= 1200 &&
-                mousePos.y >= 0 && mousePos.y <= 700)
-            {
-                // Mysz w stosunku do pilki - z lewej strony lub z prawej strony
-                this->velocity.x = (ballPos.x - mousePos.x) / 6.f;
-                // Mysz w stosunku do pilki - nad lub pod pilka
-                this->velocity.y = (ballPos.y - mousePos.y) / 6.f;
-                // Dlugosc wektora predkosci
-                float veloctiyLength = sqrt(pow(this->velocity.x, 2) + pow(this->velocity.y, 2));
-
-                float sin = this->velocity.y / veloctiyLength;
-                float cos = this->velocity.x / veloctiyLength;
-
-                std::cout << "Welocity length: " << veloctiyLength << std::endl;
-
-                if (veloctiyLength > this->maxVelocity)
-                {
-                    veloctiyLength = this->maxVelocity;
-                    this->velocity.x = veloctiyLength * cos;
-                    this->velocity.y = veloctiyLength * sin;
-                }
-
-                // Ograniczenie do max predkosci
-                // if (fabs(this->velocity.x) > this->maxVelocity)
-                //     this->velocity.x = ballPos.x - mousePos.x < 0 ? -1.f * this->maxVelocity : this->maxVelocity;
-                // if (fabs(this->velocity.y) > this->maxVelocity)
-                //     this->velocity.y = ballPos.y - mousePos.y < 0 ? -1.f * this->maxVelocity : this->maxVelocity;
-
-                // std::cout << "Velocity = " << this->velocity.x << " " << this->velocity.y << std::endl;
-
-                leftStrokes--;
-            }
+            veloctiyLength = this->maxVelocity;
+            this->velocity.x = veloctiyLength * cos;
+            this->velocity.y = veloctiyLength * sin;
         }
+
+        // Zmniejszenie liczby pozostalych strzalow
+        leftStrokes--;
     }
 
-    // Move
+    // Poruszanie sie pilki, do momentu gdy jest jakas predkosc
     this->ball.move(this->velocity);
 
     // Zachamowanie pilki przy zbyt malym velocity
@@ -213,13 +201,11 @@ void Ball::update(sf::WindowBase &window, int &leftStrokes, int &gameState, bool
     else if (fabs(this->velocity.x) < fabs(this->velocity.y) && fabs(this->velocity.y) < this->stopTreshold)
         this->velocity = sf::Vector2f(0, 0);
 
+    // Zmniejszenie wektora predkosci o tarcie
     this->velocity *= this->friction;
 
     // Sprawdzanie czy pilka sie porusza i aktualizowanie zmiennej
-    if (this->velocity.x == 0 && this->velocity.y == 0)
-        this->isMoving = false;
-    else
-        this->isMoving = true;
+    this->isMoving = (this->velocity.x == 0 && this->velocity.y == 0) ? false : true;
 }
 void Ball::render(sf::RenderTarget &target, int &gameState)
 {
