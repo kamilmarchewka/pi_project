@@ -26,7 +26,7 @@ public:
     void setScale(float scale);
     sf::Vector2f getPosition();
 
-    void updateHover(sf::WindowBase &window);
+    bool hovering(sf::WindowBase &window);
     void render(sf::RenderTarget &target); // Renderuje przycisk w targecie
 };
 #endif
