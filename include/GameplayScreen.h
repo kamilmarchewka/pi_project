@@ -63,6 +63,7 @@ private:
     void sandCollision();
     void iceCollision();
     void gulfCollision();
+    void ObstaclesCollisions();
     void holeCollision(int allLvls);
 
 public:

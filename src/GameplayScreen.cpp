@@ -461,61 +461,89 @@ void GameplayScreen::holeCollision(int allLvls)
     }
 }
 
-void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLvl, int allLvls, int &unlockedLvls, bool &isMouseBtnPressed)
+void GameplayScreen::ObstaclesCollisions()
 {
-    // std::cout << "All levels: " << allLvls << " currentLvl: " << currentLvl << std::endl;
-    // Kolizja ze scianami
-    this->wallsCollision();
-
-    this->ball->update(window, this->strokesLeft, this->gameState, isMouseBtnPressed);
-
-    // Zmniejszenie liczby uderzen
-    this->setNewString(sf::String("Strzaly: " + std::to_string(this->strokesLeft)), this->leftStrokesText);
-
     // Kolizja z trawa
     this->grassCollision();
-
     // Kolizja z piaskiem
     this->sandCollision();
-
     // Kolizja z lodem
     this->iceCollision();
-
     // Kolizja z polem
     this->courseBordersCollision();
-
     // Kolizja z przepascia
     this->gulfCollision();
-
     // Kolizja z dolkiem
-    this->holeCollision(allLvls);
-
-    // Poczekanie az pilka sie zatrzyma i sprawdzenie czy przypadkiem juz nie przegralismy
-    if (!this->ball->isMoving && this->gameState == -1)
+}
+void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLvl, int allLvls, int &unlockedLvls, bool &isMouseBtnPressed)
+{
+    // Gramy
+    if (this->gameState == -1)
     {
-        if (this->strokesLeft <= 0)
+        // Kolizja ze scianami
+        this->wallsCollision();
+
+        this->ball->update(window, this->strokesLeft, this->gameState, isMouseBtnPressed);
+
+        // Zmniejszenie liczby uderzen
+        this->setNewString(sf::String("Strzaly: " + std::to_string(this->strokesLeft)), this->leftStrokesText);
+
+        this->ObstaclesCollisions();
+
+        this->holeCollision(allLvls);
+
+        // Poczekanie az pilka sie zatrzyma i sprawdzenie czy przypadkiem juz nie przegralismy
+        if (!this->ball->isMoving && this->strokesLeft <= 0)
         {
-            this->gameState = 0;
+            this->gameState = 0; // Zmienienie stanu gry na ekran z przegrana
             this->endGameScreen.setTexture(this->loseBgTexture);
         }
     }
-
-    // Obsluga przyciskow na ekranie konca gry
-    if (this->gameState != -1 && this->lvl < allLvls)
+    // Przegralismy
+    else if (this->gameState == 0)
     {
-        if (this->replayBtn->isClicked(window) && !isMouseBtnPressed)
+        // Obsluga przycisku replay
+        if (
+            this->replayBtn->isClicked(window) && // Kliknelismy przycisk replay
+            !isMouseBtnPressed                    // Nie jest klikniety jakis inny przycisk
+        )
         {
             isMouseBtnPressed = true;
-            this->gameState = -1;
+            this->gameState = -1; // Zmiana stanu gry na granie
+            // Zresetowanie ustawien
             this->strokesLeft = this->strokesLimit;
             this->ball->setPositionX(162);
             this->ball->setPositionY(350 + 50);
             this->ball->setScale(1);
         }
-        else if (this->nextLvlBtn->isClicked(window) && !isMouseBtnPressed && this->gameState == 1)
+    }
+    // Wygralismy
+    else if (this->gameState == 1)
+    {
+        // Obsluga przycisku replay
+        if (
+            currentLvl != allLvls &&              // Nie wygralismy ostatniego poziomu
+            this->replayBtn->isClicked(window) && // Kliknelismy przycisk replay
+            !isMouseBtnPressed                    // Nie jest klikniety jakis inny przycisk
+        )
         {
             isMouseBtnPressed = true;
-            // Sprawdzenie, czy istnieje kolejny lvl
+            this->gameState = -1; // Zmiana stanu gry na granie
+            // Zresetowanie ustawien
+            this->strokesLeft = this->strokesLimit;
+            this->ball->setPositionX(162);
+            this->ball->setPositionY(350 + 50);
+            this->ball->setScale(1);
+        }
+        // Obsluga przycisku next lvl
+        if (
+            currentLvl < allLvls &&                // Nie przeszlismy ostatniego poziomu
+            this->nextLvlBtn->isClicked(window) && // Kliknelismy przycisk next lvl
+            !isMouseBtnPressed                     // Nie jest klikniety jakis inny przycisk
+        )
+        {
+            isMouseBtnPressed = true;
+
             // Kolejny lvl jest odblokowany
             if (currentLvl < unlockedLvls)
             {
@@ -541,8 +569,9 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
                 this->ball->setPositionX(162);
                 this->ball->setPositionY(350 + 50);
             }
-            // Jestesmy na ostatnim lvlu, ktory jest odblokowany
-            else if ((currentLvl == unlockedLvls && currentLvl < allLvls))
+            else if (currentLvl == unlockedLvls && // Przeszlismy ostatni lvl, ktory mamy odblokowany
+                     currentLvl < allLvls          // Jest jeszcze nastepny lvl
+            )
             {
                 unlockedLvls++;
                 prevLvl = currentLvl;
@@ -594,14 +623,19 @@ void GameplayScreen::render(sf::RenderTarget &target, int allLvls)
     this->ball->render(target, this->gameState);
 
     // Ewentualny ekran wygranej / przegranej / konca gry
-    if (gameState != -1)
+    if (this->gameState != -1)
     {
+        // ekran wygranej / przegranej /konca gry
         target.draw(this->endGameScreen);
-        if (this->lvl < allLvls)
-        {
+
+        // replayBtn
+        // Jezeli wygralismy ostatni poziom to nie pokazuj
+        if (!(this->lvl == allLvls && this->gameState == 1))
             this->replayBtn->render(target);
-            if (gameState == 1) // Musimy wygrac i to nie moze byc ostatni lvl
-                this->nextLvlBtn->render(target);
-        }
+
+        // next lvl btn
+        // Jezeli nie jestesmy na ostatnim poziomie i wygralismy
+        if (this->lvl < allLvls && this->gameState == 1)
+            this->nextLvlBtn->render(target);
     }
 }
