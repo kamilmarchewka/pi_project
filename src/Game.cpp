@@ -304,7 +304,7 @@ Game::~Game()
     delete this->exitBtn;
 }
 
-void Game::update()
+void Game::poolEvents()
 {
     // Sprawdzanie wszystkich eventow, ktore zostaly dodane
     while (this->window.pollEvent(this->event)) // Poolowanie eventow z okna do zmiennej event
@@ -324,14 +324,45 @@ void Game::update()
             this->isMouseBtnPressed = false;
         }
     }
+}
+void Game::update()
+{
+    this->poolEvents();
 
     // Animacja przyciskow gdy najedzie sie myszka
-    this->playBtn->updateHover(this->window);
-    this->lvlsBtn->updateHover(this->window);
-    this->optionsBtn->updateHover(this->window);
-    this->musicBtn->updateHover(this->window);
-    this->VolumeDownBtn->updateHover(this->window);
-    this->VolumeUpBtn->updateHover(this->window);
+    // Graj
+    if (this->playBtn->hovering(this->window))
+        this->playBtn->setScale(1.05f);
+    else
+        this->playBtn->setScale(1.f);
+
+    // Poziomy
+    if (this->lvlsBtn->hovering(this->window))
+        this->lvlsBtn->setScale(1.05f);
+    else
+        this->lvlsBtn->setScale(1.f);
+
+    // Ustawienia
+    if (this->optionsBtn->hovering(this->window))
+        this->optionsBtn->setScale(1.05f);
+    else
+        this->optionsBtn->setScale(1.f);
+
+    // Wl. wyl. muzyki
+    if (this->musicBtn->hovering(this->window))
+        this->musicBtn->setScale(1.05f);
+    else
+        this->musicBtn->setScale(1.f);
+
+    // Sciszanie / podglasnianie
+    if (this->VolumeDownBtn->hovering(this->window))
+        this->VolumeDownBtn->setScale(1.05f);
+    else
+        this->VolumeDownBtn->setScale(1.f);
+    if (this->VolumeUpBtn->hovering(this->window))
+        this->VolumeUpBtn->setScale(1.05f);
+    else
+        this->VolumeUpBtn->setScale(1.f);
 
     // Dzialanie przycisku exit
     if (this->gameScreen == 1 || this->gameScreen == 2 || this->gameScreen == 3)

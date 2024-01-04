@@ -69,7 +69,8 @@ void GameplayScreen::initCourse()
 void GameplayScreen::initLvlTitle()
 {
     // Inicjalizacja tytulu
-    this->setTitleText(sf::String("Lvl: " + std::to_string(this->lvl))); // Ustawienie napisu
+    // Ustawienie napisu
+    this->setNewString(sf::String("Lvl: " + std::to_string(this->lvl)), this->titleText);
 
     this->titleText.setFont(this->font);                      // Czcionka
     this->titleText.setFillColor(sf::Color(30, 48, 80, 255)); // Kolor
@@ -83,11 +84,11 @@ void GameplayScreen::initLvlTitle()
 void GameplayScreen::initMaxStrokesTitle()
 {
     // Inicjalizacja maks. liczby uderzen
-    this->setStrokesLimitText(sf::String("Strzaly: " + std::to_string(this->strokesLeft))); // Napis
-    this->leftStrokesText.setFont(this->font);                                              // Czcionka
-    this->leftStrokesText.setCharacterSize(20);                                             // Rozmiar
-    this->leftStrokesText.setFillColor(sf::Color(30, 48, 80, 255));                         // Kolor
-    this->leftStrokesText.setOrigin(sf::Vector2f(                                           // Origin - lewy dol
+    this->setNewString(sf::String("Strzaly: " + std::to_string(this->strokesLeft)), this->leftStrokesText); // Napis
+    this->leftStrokesText.setFont(this->font);                                                              // Czcionka
+    this->leftStrokesText.setCharacterSize(20);                                                             // Rozmiar
+    this->leftStrokesText.setFillColor(sf::Color(30, 48, 80, 255));                                         // Kolor
+    this->leftStrokesText.setOrigin(sf::Vector2f(                                                           // Origin - lewy dol
         this->leftStrokesText.getGlobalBounds().left,
         this->leftStrokesText.getGlobalBounds().height));
     this->leftStrokesText.setPosition(sf::Vector2f( // Pozycja - nad polem z lewej strony
@@ -96,7 +97,6 @@ void GameplayScreen::initMaxStrokesTitle()
 }
 void GameplayScreen::setUpObstacles()
 {
-
     // 0 - light grass
     // 1 - dark grass
     // 2 - rock
@@ -112,13 +112,16 @@ void GameplayScreen::setUpObstacles()
     this->gulfsVector.clear();
 
     // Dodawania spriteow do odpowiednich vektorow
+    // Iteracja przez wiersze tabeli
     for (int i = 0; i < this->gridRows; i++)
     {
+        // Iteracja przez kolumny w kazdym wierszu
         for (int j = 0; j < this->gridCols; j++)
         {
+            // Sprite reprezentujacy przeszkode
             sf::Sprite s;
 
-            // Ustawienie pozycji
+            // Ustawienie pozycji przeszkodu
             s.setPosition(sf::Vector2f(
                 this->course.getGlobalBounds().left + this->borderThickness + (j * 62.5),
                 this->course.getGlobalBounds().top + this->borderThickness + (i * 62.5)));
@@ -195,7 +198,6 @@ GameplayScreen::GameplayScreen(int &currentLvl, sf::Texture &ballsTexture, int b
     this->hole.setPosition(sf::Vector2f(1000 + 40, 350 + 50));
 
     // Inicjalizacja pilki
-    std::cout << "Ball skin: " << ballSkin << std::endl;
     this->ball = new Ball(ballsTexture, ballSkin);
 
     // Inicjalizacja ekranu wygranej / przegranej
@@ -210,23 +212,19 @@ GameplayScreen::~GameplayScreen()
     delete this->ball;
     delete this->replayBtn;
     delete this->nextLvlBtn;
-    // std::cout << "GameplayScreen has been destroyed\n";
 }
 
-void GameplayScreen::setTitleText(sf::String newTitle)
+void GameplayScreen::setNewString(sf::String newString, sf::Text &text)
 {
-    this->titleText.setString(newTitle);
+    text.setString(newString);
 }
-void GameplayScreen::setStrokesLimitText(sf::String newText)
-{
-    this->leftStrokesText.setString(newText);
-}
+
 void GameplayScreen::readLvlFromFile(int currentLvl)
 {
     std::string pathToFile = "data/lvl_" + std::to_string(currentLvl) + ".txt";
 
     std::fstream odczyt;
-    int logicalValue;
+    int logicalValue; // Logiczna wartosc pola
 
     odczyt.open(pathToFile, std::ios::in);
     if (!odczyt.good())
@@ -472,7 +470,7 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
     this->ball->update(window, this->strokesLeft, this->gameState, isMouseBtnPressed);
 
     // Zmniejszenie liczby uderzen
-    this->setStrokesLimitText(sf::String("Strzaly: " + std::to_string(this->strokesLeft)));
+    this->setNewString(sf::String("Strzaly: " + std::to_string(this->strokesLeft)), this->leftStrokesText);
 
     // Kolizja z trawa
     this->grassCollision();
@@ -531,7 +529,7 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
                 this->readLvlFromFile(this->lvl);
 
                 // Aktualizacja tytulu
-                this->setTitleText(sf::String("Lvl: " + std::to_string(this->lvl)));
+                this->setNewString(sf::String("Lvl: " + std::to_string(this->lvl)), this->titleText);
 
                 // Liczba uderzen sama sie aktualizuje, wiec nie trzeba tego robic tutaj
 
@@ -557,7 +555,7 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
                 this->readLvlFromFile(this->lvl);
 
                 // Aktualizacja tytulu
-                this->setTitleText(sf::String("Lvl: " + std::to_string(this->lvl)));
+                this->setNewString(sf::String("Lvl: " + std::to_string(this->lvl)), this->titleText);
 
                 // Liczba uderzen sama sie aktualizuje, wiec nie trzeba tego robic tutaj
 
