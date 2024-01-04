@@ -27,6 +27,12 @@ void GameplayScreen::initAssets()
     if (!(this->gulfTexture.loadFromFile("assets/gulf.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - gulf.png\n";
     this->gulfTexture.setSmooth(true);
+    if (!(this->water_upTexture.loadFromFile("assets/water_up.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - water_up.png\n";
+    this->water_upTexture.setSmooth(true);
+    if (!(this->water_downTexture.loadFromFile("assets/water_down.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - water_down.png\n";
+    this->water_downTexture.setSmooth(true);
 
     // Ladowanie tekstur pilek
     if (!(this->whiteBallTexture.loadFromFile("assets/ball_white.png")))
@@ -103,6 +109,8 @@ void GameplayScreen::setUpObstacles()
     // 3 - sand
     // 4 - ice
     // 5 - gulf
+    // 6 - water up
+    // 7 - water down
 
     // Czyszczenie vektorow, na wypadek gdyby byly zajete
     this->grassVector.clear();
@@ -110,6 +118,8 @@ void GameplayScreen::setUpObstacles()
     this->sandVector.clear();
     this->iceVector.clear();
     this->gulfsVector.clear();
+    this->water_upVector.clear();
+    this->water_downVector.clear();
 
     // Dodawania spriteow do odpowiednich vektorow
     // Iteracja przez wiersze tabeli
@@ -155,6 +165,15 @@ void GameplayScreen::setUpObstacles()
             case 5:
                 s.setTexture(this->gulfTexture);
                 this->gulfsVector.push_back(s);
+                break;
+
+            case 6:
+                s.setTexture(this->water_upTexture);
+                this->water_upVector.push_back(s);
+                break;
+            case 7:
+                s.setTexture(this->water_downTexture);
+                this->water_downVector.push_back(s);
                 break;
 
             default:
@@ -430,6 +449,49 @@ void GameplayScreen::gulfCollision()
         }
     }
 }
+void GameplayScreen::waterupCollision()
+{
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+
+    for (int i = 0; i < this->water_upVector.size(); i++)
+    {
+        sf::FloatRect waterBounds = water_upVector[i].getGlobalBounds();
+        float k = 0.8;
+        float l = 1.1;
+        // Sprawdzenie czy w nastepnej klatce nastapi kolizja
+        if (ballBounds.intersects(waterBounds))
+        {
+            // Zmniana predkosci pilki
+            this->ball->setVelocityY((-fabs(this->ball->getVelocity().y)) * l);
+            // if (this->ball->getVelocity().y != 0)
+            // {
+            //     this->tikker++;
+            // }
+            // std::cout<<tikker<<"\n";
+            // if (tikker >= 250)
+            // {
+            //     this->ball->setVelocityY(0);
+            //     this->tikker = 0;
+            // }
+            if (fabs(this->ball->getVelocity().y) > 7)
+            {
+                this->ball->setVelocityY(this->ball->getVelocity().y / 2);
+            }
+            else if (fabs(this->ball->getVelocity().y) >= 4)
+            {
+                this->ball->setVelocityX(this->ball->getVelocity().x * 5);
+            }
+            else
+            {
+                this->ball->setVelocityX(this->ball->getVelocity().x / l);
+            }
+            if (fabs(this->ball->getVelocity().x) >= 2)
+            {
+                this->ball->setVelocityX(this->ball->getVelocity().x / 10);
+            }
+        }
+    }
+}
 void GameplayScreen::holeCollision(int allLvls)
 {
     sf::FloatRect ballBounds = this->ball->getGlobalBounds();
@@ -460,7 +522,49 @@ void GameplayScreen::holeCollision(int allLvls)
         }
     }
 }
-
+void GameplayScreen::waterdownCollision()
+{
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+    for (int i = 0; i < this->water_downVector.size(); i++)
+    {
+        sf::FloatRect waterBounds = water_downVector[i].getGlobalBounds();
+        float k = 0.8;
+        float l = 1.1;
+        // Sprawdzenie czy w nastepnej klatce nastapi kolizja
+        if (ballBounds.intersects(waterBounds))
+        {
+            // Zmniana predkosci pilki
+            this->ball->setVelocityY((fabs(this->ball->getVelocity().y)) * l);
+            // if (this->ball->getVelocity().y != 0)
+            // {
+            //     this->tikker++;
+            // }
+            // // std::cout<<tikker<<"\n";
+            // if (tikker >= 250)
+            // {
+            //     this->ball->setVelocityY(0);
+            //     this->tikker = 0;
+            // }
+            // std::cout<<this->ball->getVelocity().y<<"\n";
+            if (fabs(this->ball->getVelocity().y) > 7)
+            {
+                this->ball->setVelocityY(this->ball->getVelocity().y / 2);
+            }
+            else if (fabs(this->ball->getVelocity().y) >= 4)
+            {
+                this->ball->setVelocityX(this->ball->getVelocity().x * 5);
+            }
+            else
+            {
+                this->ball->setVelocityX(this->ball->getVelocity().x / l);
+            }
+            if (fabs(this->ball->getVelocity().x) >= 2)
+            {
+                this->ball->setVelocityX(this->ball->getVelocity().x / 10);
+            }
+        }
+    }
+}
 void GameplayScreen::ObstaclesCollisions()
 {
     // Kolizja z trawa
@@ -473,7 +577,9 @@ void GameplayScreen::ObstaclesCollisions()
     this->courseBordersCollision();
     // Kolizja z przepascia
     this->gulfCollision();
-    // Kolizja z dolkiem
+    // Kolizja z woda
+    this->waterupCollision();
+    this->waterdownCollision();
 }
 void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLvl, int allLvls, int &unlockedLvls, bool &isMouseBtnPressed)
 {
@@ -599,8 +705,12 @@ void GameplayScreen::render(sf::RenderTarget &target, int allLvls)
         target.draw(sandVector[i]);
     for (int i = 0; i < this->iceVector.size(); i++) // Lod
         target.draw(iceVector[i]);
-    for (int i = 0; i < this->gulfsVector.size(); i++) // Lod
+    for (int i = 0; i < this->gulfsVector.size(); i++) // Przepasc
         target.draw(gulfsVector[i]);
+    for (int i = 0; i < this->water_upVector.size(); i++) // Woda gora
+        target.draw(water_upVector[i]);
+    for (int i = 0; i < this->water_downVector.size(); i++) // Woda dol
+        target.draw(water_downVector[i]);
 
     target.draw(this->hole); // Dolek
 
