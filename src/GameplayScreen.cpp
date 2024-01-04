@@ -535,6 +535,7 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
             this->ball->setPositionY(350 + 50);
             this->ball->setScale(1);
         }
+
         // Obsluga przycisku next lvl
         if (
             currentLvl < allLvls &&                // Nie przeszlismy ostatniego poziomu
@@ -551,23 +552,6 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
                 currentLvl++;
                 this->lvl = currentLvl;
                 this->gameState = -1;
-
-                // Ladowanie od nowa kolejnego poziomu
-                // Wczytanie danych z pliku
-                this->readLvlFromFile(this->lvl);
-
-                // Aktualizacja tytulu
-                this->setNewString(sf::String("Lvl: " + std::to_string(this->lvl)), this->titleText);
-
-                // Liczba uderzen sama sie aktualizuje, wiec nie trzeba tego robic tutaj
-
-                // Zaaktualizowanie wektorow ze spriteami
-                this->setUpObstacles();
-
-                // Ustawienie pilki na pozycje startowa
-
-                this->ball->setPositionX(162);
-                this->ball->setPositionY(350 + 50);
             }
             else if (currentLvl == unlockedLvls && // Przeszlismy ostatni lvl, ktory mamy odblokowany
                      currentLvl < allLvls          // Jest jeszcze nastepny lvl
@@ -578,24 +562,24 @@ void GameplayScreen::update(sf::WindowBase &window, int &prevLvl, int &currentLv
                 currentLvl++;
                 this->lvl = currentLvl;
                 this->gameState = -1;
-
-                // Ladowanie od nowa kolejnego poziomu
-                // Wczytanie danych z pliku
-                this->readLvlFromFile(this->lvl);
-
-                // Aktualizacja tytulu
-                this->setNewString(sf::String("Lvl: " + std::to_string(this->lvl)), this->titleText);
-
-                // Liczba uderzen sama sie aktualizuje, wiec nie trzeba tego robic tutaj
-
-                // Zaaktualizowanie wektorow ze spriteami
-                this->setUpObstacles();
-
-                this->ball->setScale(1);
-                // Ustawienie pilki na pozycje startowa
-                this->ball->setPositionX(162);
-                this->ball->setPositionY(350 + 50);
             }
+
+            // Ladowanie od nowa kolejnego poziomu
+            // Wczytanie danych z pliku
+            this->readLvlFromFile(this->lvl);
+
+            // Aktualizacja tytulu
+            this->setNewString(sf::String("Lvl: " + std::to_string(this->lvl)), this->titleText);
+
+            // Liczba uderzen sama sie aktualizuje, wiec nie trzeba tego robic tutaj
+
+            // Zaaktualizowanie wektorow ze spriteami
+            this->setUpObstacles();
+
+            // Ustawienie pilki na pozycje startowa
+
+            this->ball->setPositionX(162);
+            this->ball->setPositionY(350 + 50);
         }
     }
 }
