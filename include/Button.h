@@ -22,6 +22,7 @@ public:
     bool isClicked(sf::WindowBase &window); // Zwraca true - jezeli przycisk jest klikniety i false jezeli nie
 
     void setTextureRect(sf::IntRect rect);
+    sf::IntRect getTextureRect();
     void setPositionY(float newPos);
     void setScale(float scale);
     sf::Vector2f getPosition();

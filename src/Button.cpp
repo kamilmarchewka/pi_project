@@ -42,6 +42,10 @@ void Button::setTextureRect(sf::IntRect rect)
 {
     this->button.setTextureRect(rect);
 }
+sf::IntRect Button::getTextureRect()
+{
+    return this->button.getTextureRect();
+}
 void Button::setPositionY(float newPos)
 {
     this->button.setPosition(sf::Vector2f(this->button.getPosition().x, newPos));
