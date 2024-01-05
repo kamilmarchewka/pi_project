@@ -4,8 +4,6 @@
 #include <vector>
 #include <fstream>
 #include <math.h>
-#include <chrono>
-#include <thread>
 
 // SFML includes
 #include <SFML/Graphics.hpp>

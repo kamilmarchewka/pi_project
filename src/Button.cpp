@@ -5,12 +5,14 @@ Button::Button(sf::Texture &texture, sf::Vector2f pos, int value)
 {
     this->value = value;
 
-    this->button.setTexture(texture); // Danie textury na przycisk
+    // Danie textury na przycisk
+    this->button.setTexture(texture);
 
+    // Ustawienie pozycji przycisku
     this->button.setOrigin(sf::Vector2f(
         this->button.getGlobalBounds().width / 2,
         this->button.getGlobalBounds().height / 2));
-    this->button.setPosition(sf::Vector2f(pos)); // Ustawienie pozycji przycisku
+    this->button.setPosition(sf::Vector2f(pos));
 }
 Button::~Button() {}
 
@@ -40,30 +42,41 @@ void Button::setTextureRect(sf::IntRect rect)
 {
     this->button.setTextureRect(rect);
 }
+sf::IntRect Button::getTextureRect()
+{
+    return this->button.getTextureRect();
+}
 void Button::setPositionY(float newPos)
 {
     this->button.setPosition(sf::Vector2f(this->button.getPosition().x, newPos));
+}
+void Button::setScale(float scale)
+{
+    this->button.setScale(sf::Vector2f(scale, scale));
 }
 sf::Vector2f Button::getPosition()
 {
     return this->button.getPosition();
 }
 
-void Button::updateHover(sf::WindowBase &window)
+bool Button::hovering(sf::WindowBase &window)
 {
     // Pozycja myszki wewnatrz okna gry
     sf::Vector2f mousePos = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
     sf::FloatRect buttonBounds = this->button.getGlobalBounds();
 
+    // Sprawdzenie czy myszka jest nad przyciskiem
     if (
-        mousePos.x >= buttonBounds.left && mousePos.x <= buttonBounds.left + buttonBounds.width &&
-        mousePos.y >= buttonBounds.top && mousePos.y <= buttonBounds.top + buttonBounds.height)
+        mousePos.x >= buttonBounds.left &&
+        mousePos.x <= buttonBounds.left + buttonBounds.width &&
+        mousePos.y >= buttonBounds.top &&
+        mousePos.y <= buttonBounds.top + buttonBounds.height)
     {
-        this->button.setScale(sf::Vector2f(1, 1));
+        return true;
     }
     else
     {
-        this->button.setScale(sf::Vector2f(0.95, 0.95));
+        return false;
     }
 }
 void Button::render(sf::RenderTarget &target)

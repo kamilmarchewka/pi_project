@@ -28,11 +28,13 @@ private:
     int allLvls;
     int unlockedLvls;
 
+    int ballSkin;
+    float volume;
     bool musicIsOn;
     // -----------------
 
     // Czcionka
-    sf::Font InterBlack;
+    sf::Font InterBlack, InterSemiBold;
 
     // Okno
     sf::RenderWindow window; // Okno gry
@@ -49,10 +51,12 @@ private:
         optionsBtnTexture,
         exitBtnTexture,
         musicBtnTexture,
-        Level1BtnTexture,
-        Level2BtnTexture,
-        Level3BtnTexture,
-        LevelsTexture;
+        musicOnBtnTexture,
+        musicOffBtnTexture,
+        plusBtnTexture,
+        minusBtnTexture,
+        LevelsTexture,
+        ballsTexture;
 
     // Screen 0 ----------------
     sf::Sprite mainBg;
@@ -71,6 +75,9 @@ private:
     std::vector<Button *> lvlsBtnsVector;
 
     // Screen 3 ----------------
+    sf::Text OptionsTitle, SoundTitle, VolumeTitle, CurrentVolumeText, BallColorTitle;
+    Button *VolumeDownBtn, *VolumeUpBtn, *MusicOnBtn, *MusicOffBtn;
+    Button *ballSkinsBtnsArr[5];
 
     // All screens -------------
     Button *exitBtn;
@@ -80,6 +87,8 @@ private:
 public:
     Game();
     ~Game();
+
+    void poolEvents();
 
     sf::RenderWindow &getWindow(); // Zwraca okno gry
 

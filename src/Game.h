@@ -27,16 +27,14 @@ private:
     int selectedLvl; // Zaznaczony lvl w menu z poziomami
     int allLvls;
     int unlockedLvls;
-    int volume;
-    int currentBall;
 
-    std::fstream zap;
-
+    int ballSkin;
+    float volume;
     bool musicIsOn;
     // -----------------
 
     // Czcionka
-    sf::Font InterBlack;
+    sf::Font InterBlack, InterSemiBold;
 
     // Okno
     sf::RenderWindow window; // Okno gry
@@ -53,24 +51,12 @@ private:
         optionsBtnTexture,
         exitBtnTexture,
         musicBtnTexture,
-        musiconBtnTexture,
-        musicoffBtnTexture,
-        OptionsTitle1Texture,
-        OptionsTitle2Texture,
-        OptionsTitle3Texture,
-        Level1BtnTexture,
-        Level2BtnTexture,
-        Level3BtnTexture,
+        musicOnBtnTexture,
+        musicOffBtnTexture,
+        plusBtnTexture,
+        minusBtnTexture,
         LevelsTexture,
-        MinusTexture,
-        PlusTexture,
-        WhiteBallTexture,
-        PinkBallTexture,
-        PurpleBallTexture,
-        GreenBallTexture,
-        LblueBallTexture,
-        volumeTexture;
-
+        ballsTexture;
 
     // Screen 0 ----------------
     sf::Sprite mainBg;
@@ -78,19 +64,6 @@ private:
     Button *playBtn;
     Button *lvlsBtn;
     Button *optionsBtn;
-    Button *musiconBtn;
-    Button *musicoffBtn;
-    Button *Plus;
-    Button *Minus;
-    Button *WhiteBall;
-    Button *PinkBall;
-    Button *PurpleBall;
-    Button *LblueBall;
-    Button *GreenBall;
-    Button *OptionsTitle1;
-    Button *OptionsTitle2;
-    Button *OptionsTitle3;
-    Button *Vol;
 
     Button *musicBtn;
 
@@ -98,10 +71,13 @@ private:
     GameplayScreen *GameplayScreenLvl1; // Ekran z plansza, nr poziomu itd.
 
     // Screen 2 ----------------
-    sf::Text LevelsTitle,OptionsTitle;
+    sf::Text LevelsTitle;
     std::vector<Button *> lvlsBtnsVector;
 
     // Screen 3 ----------------
+    sf::Text OptionsTitle, SoundTitle, VolumeTitle, CurrentVolumeText, BallColorTitle;
+    Button *VolumeDownBtn, *VolumeUpBtn, *MusicOnBtn, *MusicOffBtn;
+    Button *ballSkinsBtnsArr[5];
 
     // All screens -------------
     Button *exitBtn;
@@ -111,6 +87,8 @@ private:
 public:
     Game();
     ~Game();
+
+    void poolEvents();
 
     sf::RenderWindow &getWindow(); // Zwraca okno gry
 

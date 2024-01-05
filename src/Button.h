@@ -14,6 +14,7 @@ public:
         sf::Texture &texture, // Texture
         sf::Vector2f pos,     // Position
         int value             // Wartosc przycisku
+
     );
     ~Button();
 
@@ -21,10 +22,12 @@ public:
     bool isClicked(sf::WindowBase &window); // Zwraca true - jezeli przycisk jest klikniety i false jezeli nie
 
     void setTextureRect(sf::IntRect rect);
+    sf::IntRect getTextureRect();
     void setPositionY(float newPos);
+    void setScale(float scale);
     sf::Vector2f getPosition();
 
-    void updateHover(sf::WindowBase &window);
+    bool hovering(sf::WindowBase &window);
     void render(sf::RenderTarget &target); // Renderuje przycisk w targecie
 };
 #endif

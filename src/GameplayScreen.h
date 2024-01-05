@@ -18,18 +18,15 @@ private:
     int gameState;
 
     sf::Font font;
-    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, iceTexture, gulfTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, gameFinishedBgTexture, replayBtnTexture, nextLvlBtnTexture,
-    purpleBallTexture,pinkBallTexture,lblueBallTexture,greenBallTexture,water_upTexture, water_downTexture;
+    sf::Texture obstaclesTexture, grassLightTexture, grassDarkTexture, rockTexture, sandTexture, iceTexture, gulfTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, gameFinishedBgTexture, replayBtnTexture, nextLvlBtnTexture, water_upTexture, water_downTexture;
 
+    // Zmienne
     int lvl;          // Aktualnie wyswietlany lvl
     int strokesLimit; // Limit uderzen dla danego poziomu
     int strokesLeft;
     int logicalMap[8][16]; // Logiczna mapa przedstawiajaca gdzie znajduja sie jakie przeskzody
-    int currentBall;
-    int tikker=0;;
 
-    std::fstream od;
-
+    // Pole / plansza
     float borderThickness;
     sf::RectangleShape course; // Pole golfowe
     sf::Text titleText;        // Naglowek z nr lvlu
@@ -37,13 +34,14 @@ private:
     int gridRows;              // Liczba rzedow na planszy
     int gridCols;              // Liczba kolumn na planszy
 
-    std::vector<sf::Sprite> grassVector; // Wektor przechowujacy trawe jasna i ciemna
-    std::vector<sf::Sprite> wallsVector; // Wektor przechowujacy wszystkie sciany
-    std::vector<sf::Sprite> sandVector;  // Wektor przechowujacy wszystkie piaski
-    std::vector<sf::Sprite> iceVector;   // Wektor przechowujacy wszystkie lody
-    std::vector<sf::Sprite> gulfsVector; // Wektor przechowujacy wszystkie przepascie
-    std::vector<sf::Sprite> water_upVector;     // Wektor przechowujacy wszystkie wody (kierujące w górę ekranu)
-    std::vector<sf::Sprite> water_downVector;   // Wektor przechowujacy wszystkie wody (kierujące w dół ekranu)
+    std::vector<sf::Sprite> obstaclesVectorsArr[7]; // Tablica przechowujaca wektory ze wszystkimi spriteami
+    // std::vector<sf::Sprite> grassVector;      // Wektor przechowujacy trawe jasna i ciemna
+    // std::vector<sf::Sprite> wallsVector;      // Wektor przechowujacy wszystkie sciany
+    // std::vector<sf::Sprite> sandVector;       // Wektor przechowujacy wszystkie piaski
+    // std::vector<sf::Sprite> iceVector;        // Wektor przechowujacy wszystkie lody
+    // std::vector<sf::Sprite> gulfsVector;      // Wektor przechowujacy wszystkie przepascie
+    // std::vector<sf::Sprite> water_upVector;   // Wektor przechowujacy wszystkie wody (kierujące w górę ekranu)
+    // std::vector<sf::Sprite> water_downVector; // Wektor przechowujacy wszystkie wody (kierujące w dół ekranu)
 
     Ball *ball; // Pointer do pilki
 
@@ -64,20 +62,22 @@ private:
     // Kolizje
     void courseBordersCollision();
     void grassCollision();
-    void waterupCollision();
-    void waterdownCollision();
     void wallsCollision();
     void sandCollision();
     void iceCollision();
     void gulfCollision();
+    void waterupCollision();
+    void waterdownCollision();
+    void ObstaclesCollisions();
     void holeCollision(int allLvls);
 
 public:
-    GameplayScreen(int &currentLvl);
+    GameplayScreen(int &currentLvl, sf::Texture &ballsTexture, int ballSkin);
     ~GameplayScreen();
 
-    void setTitleText(sf::String newTitle);
-    void setStrokesLimitText(sf::String newText);
+    void setNewString(sf::String newString, sf::Text &text);
+    // void setTitleText(sf::String newTitle);
+    // void setStrokesLimitText(sf::String newText);
     void readLvlFromFile(int currentLvl);
 
     void update(sf::WindowBase &window, int &prevLvl, int &currentLvl, int allLvls, int &unlockedLevels, bool &isMouseBtnPressed);
