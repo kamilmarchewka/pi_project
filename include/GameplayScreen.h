@@ -18,7 +18,7 @@ private:
     int gameState;
 
     sf::Font font;
-    sf::Texture grassLightTexture, grassDarkTexture, rockTexture, sandTexture, iceTexture, gulfTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, gameFinishedBgTexture, replayBtnTexture, nextLvlBtnTexture;
+    sf::Texture obstaclesTexture, grassLightTexture, grassDarkTexture, rockTexture, sandTexture, iceTexture, gulfTexture, whiteBallTexture, holeTexture, winBgTexture, loseBgTexture, gameFinishedBgTexture, replayBtnTexture, nextLvlBtnTexture, water_upTexture, water_downTexture;
 
     // Zmienne
     int lvl;          // Aktualnie wyswietlany lvl
@@ -34,11 +34,14 @@ private:
     int gridRows;              // Liczba rzedow na planszy
     int gridCols;              // Liczba kolumn na planszy
 
-    std::vector<sf::Sprite> grassVector; // Wektor przechowujacy trawe jasna i ciemna
-    std::vector<sf::Sprite> wallsVector; // Wektor przechowujacy wszystkie sciany
-    std::vector<sf::Sprite> sandVector;  // Wektor przechowujacy wszystkie piaski
-    std::vector<sf::Sprite> iceVector;   // Wektor przechowujacy wszystkie lody
-    std::vector<sf::Sprite> gulfsVector; // Wektor przechowujacy wszystkie przepascie
+    std::vector<sf::Sprite> obstaclesVectorsArr[7]; // Tablica przechowujaca wektory ze wszystkimi spriteami
+    // std::vector<sf::Sprite> grassVector;      // Wektor przechowujacy trawe jasna i ciemna
+    // std::vector<sf::Sprite> wallsVector;      // Wektor przechowujacy wszystkie sciany
+    // std::vector<sf::Sprite> sandVector;       // Wektor przechowujacy wszystkie piaski
+    // std::vector<sf::Sprite> iceVector;        // Wektor przechowujacy wszystkie lody
+    // std::vector<sf::Sprite> gulfsVector;      // Wektor przechowujacy wszystkie przepascie
+    // std::vector<sf::Sprite> water_upVector;   // Wektor przechowujacy wszystkie wody (kierujące w górę ekranu)
+    // std::vector<sf::Sprite> water_downVector; // Wektor przechowujacy wszystkie wody (kierujące w dół ekranu)
 
     Ball *ball; // Pointer do pilki
 
@@ -63,6 +66,8 @@ private:
     void sandCollision();
     void iceCollision();
     void gulfCollision();
+    void waterupCollision();
+    void waterdownCollision();
     void ObstaclesCollisions();
     void holeCollision(int allLvls);
 
