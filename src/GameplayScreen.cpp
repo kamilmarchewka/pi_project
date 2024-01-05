@@ -13,36 +13,6 @@ void GameplayScreen::initAssets()
         std::cout << "ERROR::GameplayScreen::TEXTURES - obstacles.png\n";
     this->obstaclesTexture.setSmooth(true);
 
-    if (!(this->grassDarkTexture.loadFromFile("assets/grass_dark.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - grass_dark.png\n";
-    this->grassDarkTexture.setSmooth(true);
-    if (!(this->grassLightTexture.loadFromFile("assets/grass_light.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - grass_light.png\n";
-    this->grassLightTexture.setSmooth(true);
-    if (!(this->rockTexture.loadFromFile("assets/rock.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - rock.png\n";
-    this->rockTexture.setSmooth(true);
-    if (!(this->sandTexture.loadFromFile("assets/sand.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - sand.png\n";
-    this->sandTexture.setSmooth(true);
-    if (!(this->iceTexture.loadFromFile("assets/ice.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - ice.png\n";
-    this->iceTexture.setSmooth(true);
-    if (!(this->gulfTexture.loadFromFile("assets/gulf.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - gulf.png\n";
-    this->gulfTexture.setSmooth(true);
-    if (!(this->water_upTexture.loadFromFile("assets/water_up.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - water_up.png\n";
-    this->water_upTexture.setSmooth(true);
-    if (!(this->water_downTexture.loadFromFile("assets/water_down.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - water_down.png\n";
-    this->water_downTexture.setSmooth(true);
-
-    // Ladowanie tekstur pilek
-    if (!(this->whiteBallTexture.loadFromFile("assets/ball_white.png")))
-        std::cout << "ERROR::GameplayScreen::TEXTURES - ball_white.png\n";
-    this->whiteBallTexture.setSmooth(true);
-
     // Tekstura dolka
     if (!(this->holeTexture.loadFromFile("assets/hole.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - hole.png\n";
