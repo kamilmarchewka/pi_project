@@ -9,6 +9,10 @@ void GameplayScreen::initAssets()
         std::cout << "ERROR::GameplayScreen::FONTS - Inter-SemiBold.ttf";
 
     // Ladowanie tekstur blokow
+    if (!(this->obstaclesTexture.loadFromFile("assets/obstacles.png")))
+        std::cout << "ERROR::GameplayScreen::TEXTURES - obstacles.png\n";
+    this->obstaclesTexture.setSmooth(true);
+
     if (!(this->grassDarkTexture.loadFromFile("assets/grass_dark.png")))
         std::cout << "ERROR::GameplayScreen::TEXTURES - grass_dark.png\n";
     this->grassDarkTexture.setSmooth(true);
@@ -65,8 +69,8 @@ void GameplayScreen::initCourse()
 {
     // Inicjalizaja pola
     this->course.setFillColor(sf::Color(146, 186, 59, 255)); // Kolor
-    this->course.setSize(sf::Vector2f(1000, 500));           // Rozmiar
-    this->course.setOrigin(sf::Vector2f(1000 / 2, 500 / 2)); // Origin - srodek pola
+    this->course.setSize(sf::Vector2f(1024, 512));           // Rozmiar
+    this->course.setOrigin(sf::Vector2f(1024 / 2, 512 / 2)); // Origin - srodek pola
     this->course.setPosition(sf::Vector2f(600, 350 + 50));   // Pozycja - srodek ekranu (lekko przesuniete w dol)
 
     this->course.setOutlineColor(sf::Color(108, 88, 76, 255));
@@ -130,49 +134,43 @@ void GameplayScreen::setUpObstacles()
         {
             // Sprite reprezentujacy przeszkode
             sf::Sprite s;
-
+            // Ustawienie tekstury
+            s.setTexture(this->obstaclesTexture);
+            s.setTextureRect(sf::IntRect(64 * this->logicalMap[i][j], 0, 64, 64));
             // Ustawienie pozycji przeszkodu
             s.setPosition(sf::Vector2f(
-                this->course.getGlobalBounds().left + this->borderThickness + (j * 62.5),
-                this->course.getGlobalBounds().top + this->borderThickness + (i * 62.5)));
+                this->course.getGlobalBounds().left + this->borderThickness + (j * 64),
+                this->course.getGlobalBounds().top + this->borderThickness + (i * 64)));
 
-            // Ustawienie tekstury
+            // Dodanie tekstury do odpowiedniego vektora
             switch (this->logicalMap[i][j])
             {
             case 0:
-                s.setTexture(this->grassLightTexture);
                 this->grassVector.push_back(s);
                 break;
 
             case 1:
-                s.setTexture(this->grassDarkTexture);
                 this->grassVector.push_back(s);
                 break;
 
             case 2:
-                s.setTexture(this->rockTexture);
                 this->wallsVector.push_back(s);
                 break;
 
             case 3:
-                s.setTexture(this->sandTexture);
                 this->sandVector.push_back(s);
                 break;
             case 4:
-                s.setTexture(this->iceTexture);
                 this->iceVector.push_back(s);
                 break;
             case 5:
-                s.setTexture(this->gulfTexture);
                 this->gulfsVector.push_back(s);
                 break;
 
             case 6:
-                s.setTexture(this->water_upTexture);
                 this->water_upVector.push_back(s);
                 break;
             case 7:
-                s.setTexture(this->water_downTexture);
                 this->water_downVector.push_back(s);
                 break;
 
