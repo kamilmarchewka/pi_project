@@ -117,13 +117,17 @@ void GameplayScreen::setUpObstacles()
     // 7 - water down
 
     // Czyszczenie vektorow, na wypadek gdyby byly zajete
-    this->grassVector.clear();
-    this->wallsVector.clear();
-    this->sandVector.clear();
-    this->iceVector.clear();
-    this->gulfsVector.clear();
-    this->water_upVector.clear();
-    this->water_downVector.clear();
+    for (int i = 0; i < 7; i++)
+    {
+        this->obstaclesVectorsArr[i].clear();
+    }
+    // this->grassVector.clear();
+    // this->wallsVector.clear();
+    // this->sandVector.clear();
+    // this->iceVector.clear();
+    // this->gulfsVector.clear();
+    // this->water_upVector.clear();
+    // this->water_downVector.clear();
 
     // Dodawania spriteow do odpowiednich vektorow
     // Iteracja przez wiersze tabeli
@@ -142,41 +146,50 @@ void GameplayScreen::setUpObstacles()
                 this->course.getGlobalBounds().left + this->borderThickness + (j * 64),
                 this->course.getGlobalBounds().top + this->borderThickness + (i * 64)));
 
+            int logicValue = this->logicalMap[i][j];
             // Dodanie tekstury do odpowiedniego vektora
-            switch (this->logicalMap[i][j])
+            if (logicValue == 0 || logicValue == 1)
             {
-            case 0:
-                this->grassVector.push_back(s);
-                break;
-
-            case 1:
-                this->grassVector.push_back(s);
-                break;
-
-            case 2:
-                this->wallsVector.push_back(s);
-                break;
-
-            case 3:
-                this->sandVector.push_back(s);
-                break;
-            case 4:
-                this->iceVector.push_back(s);
-                break;
-            case 5:
-                this->gulfsVector.push_back(s);
-                break;
-
-            case 6:
-                this->water_upVector.push_back(s);
-                break;
-            case 7:
-                this->water_downVector.push_back(s);
-                break;
-
-            default:
-                break;
+                this->obstaclesVectorsArr[0].push_back(s);
             }
+            else
+            {
+                this->obstaclesVectorsArr[logicValue - 1].push_back(s);
+            }
+            // switch (this->logicalMap[i][j])
+            // {
+            // case 0:
+            //     this->grassVector.push_back(s);
+            //     break;
+
+            // case 1:
+            //     this->grassVector.push_back(s);
+            //     break;
+
+            // case 2:
+            //     this->wallsVector.push_back(s);
+            //     break;
+
+            // case 3:
+            //     this->sandVector.push_back(s);
+            //     break;
+            // case 4:
+            //     this->iceVector.push_back(s);
+            //     break;
+            // case 5:
+            //     this->gulfsVector.push_back(s);
+            //     break;
+
+            // case 6:
+            //     this->water_upVector.push_back(s);
+            //     break;
+            // case 7:
+            //     this->water_downVector.push_back(s);
+            //     break;
+
+            // default:
+            //     break;
+            // }
         }
     }
 }
@@ -304,12 +317,14 @@ void GameplayScreen::courseBordersCollision()
 void GameplayScreen::grassCollision()
 {
     sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+    std::vector<sf::Sprite> vector = this->obstaclesVectorsArr[0];
+
     float friction = 0.96f;
     float stopTreshold = 0.35;
 
-    for (int i = 0; i < this->grassVector.size(); i++)
+    for (int i = 0; i < vector.size(); i++)
     {
-        sf::FloatRect grassBounds = grassVector[i].getGlobalBounds();
+        sf::FloatRect grassBounds = vector[i].getGlobalBounds();
 
         // Sprawdzenie czy w nastepnej klatce nastapi kolizja
         if (ballBounds.intersects(grassBounds))
@@ -328,9 +343,11 @@ void GameplayScreen::wallsCollision()
     nextPosBounds.left += this->ball->getVelocity().x;
     nextPosBounds.top += this->ball->getVelocity().y;
 
-    for (int i = 0; i < this->wallsVector.size(); i++)
+    std::vector<sf::Sprite> vector = this->obstaclesVectorsArr[1];
+
+    for (int i = 0; i < vector.size(); i++)
     {
-        sf::FloatRect wallBounds = wallsVector[i].getGlobalBounds();
+        sf::FloatRect wallBounds = vector[i].getGlobalBounds();
 
         // Sprawdzenie czy w nastepnej klatce nastapi kolizja
         if (nextPosBounds.intersects(wallBounds))
@@ -384,9 +401,11 @@ void GameplayScreen::sandCollision()
     sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
     float friction = 0.5f;
 
-    for (int i = 0; i < this->sandVector.size(); i++)
+    std::vector<sf::Sprite> vector = this->obstaclesVectorsArr[2];
+
+    for (int i = 0; i < vector.size(); i++)
     {
-        sf::FloatRect sandBounds = sandVector[i].getGlobalBounds();
+        sf::FloatRect sandBounds = vector[i].getGlobalBounds();
 
         // Sprawdzenie czy w nastepnej klatce nastapi kolizja
         if (ballBounds.intersects(sandBounds) && this->ball->getFriction() != friction)
@@ -401,9 +420,11 @@ void GameplayScreen::iceCollision()
     float friction = 0.97f;
     float stopTreshold = 0.1f;
 
-    for (int i = 0; i < this->iceVector.size(); i++)
+    std::vector<sf::Sprite> vector = this->obstaclesVectorsArr[3];
+
+    for (int i = 0; i < vector.size(); i++)
     {
-        sf::FloatRect iceBounds = iceVector[i].getGlobalBounds();
+        sf::FloatRect iceBounds = vector[i].getGlobalBounds();
 
         // Sprawdzenie czy pilka styka sie z lodem
         if (ballBounds.intersects(iceBounds))
@@ -421,9 +442,10 @@ void GameplayScreen::gulfCollision()
 {
     sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
 
-    for (int i = 0; i < this->gulfsVector.size(); i++)
+    std::vector<sf::Sprite> vector = this->obstaclesVectorsArr[4];
+    for (int i = 0; i < vector.size(); i++)
     {
-        sf::FloatRect gulfBounds = gulfsVector[i].getGlobalBounds();
+        sf::FloatRect gulfBounds = vector[i].getGlobalBounds();
 
         // Sprawdzenie czy pilka styka sie z przepascia
         if (ballBounds.intersects(gulfBounds))
@@ -451,9 +473,11 @@ void GameplayScreen::waterupCollision()
 {
     sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
 
-    for (int i = 0; i < this->water_upVector.size(); i++)
+    std::vector<sf::Sprite> vector = this->obstaclesVectorsArr[5];
+
+    for (int i = 0; i < vector.size(); i++)
     {
-        sf::FloatRect waterBounds = water_upVector[i].getGlobalBounds();
+        sf::FloatRect waterBounds = vector[i].getGlobalBounds();
         float k = 0.8;
         float l = 1.1;
         // Sprawdzenie czy w nastepnej klatce nastapi kolizja
@@ -471,6 +495,52 @@ void GameplayScreen::waterupCollision()
             //     this->ball->setVelocityY(0);
             //     this->tikker = 0;
             // }
+            if (fabs(this->ball->getVelocity().y) > 7)
+            {
+                this->ball->setVelocityY(this->ball->getVelocity().y / 2);
+            }
+            else if (fabs(this->ball->getVelocity().y) >= 4)
+            {
+                this->ball->setVelocityX(this->ball->getVelocity().x * 5);
+            }
+            else
+            {
+                this->ball->setVelocityX(this->ball->getVelocity().x / l);
+            }
+            if (fabs(this->ball->getVelocity().x) >= 2)
+            {
+                this->ball->setVelocityX(this->ball->getVelocity().x / 10);
+            }
+        }
+    }
+}
+void GameplayScreen::waterdownCollision()
+{
+    sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
+
+    std::vector<sf::Sprite> vector = this->obstaclesVectorsArr[6];
+
+    for (int i = 0; i < vector.size(); i++)
+    {
+        sf::FloatRect waterBounds = vector[i].getGlobalBounds();
+        float k = 0.8;
+        float l = 1.1;
+        // Sprawdzenie czy w nastepnej klatce nastapi kolizja
+        if (ballBounds.intersects(waterBounds))
+        {
+            // Zmniana predkosci pilki
+            this->ball->setVelocityY((fabs(this->ball->getVelocity().y)) * l);
+            // if (this->ball->getVelocity().y != 0)
+            // {
+            //     this->tikker++;
+            // }
+            // // std::cout<<tikker<<"\n";
+            // if (tikker >= 250)
+            // {
+            //     this->ball->setVelocityY(0);
+            //     this->tikker = 0;
+            // }
+            // std::cout<<this->ball->getVelocity().y<<"\n";
             if (fabs(this->ball->getVelocity().y) > 7)
             {
                 this->ball->setVelocityY(this->ball->getVelocity().y / 2);
@@ -517,49 +587,6 @@ void GameplayScreen::holeCollision(int allLvls)
 
             if (this->lvl >= allLvls)
                 this->endGameScreen.setTexture(this->gameFinishedBgTexture);
-        }
-    }
-}
-void GameplayScreen::waterdownCollision()
-{
-    sf::FloatRect ballBounds = this->ball->getGlobalBounds(); // Pozycja pilki w AKTUALNIEJ klatce
-    for (int i = 0; i < this->water_downVector.size(); i++)
-    {
-        sf::FloatRect waterBounds = water_downVector[i].getGlobalBounds();
-        float k = 0.8;
-        float l = 1.1;
-        // Sprawdzenie czy w nastepnej klatce nastapi kolizja
-        if (ballBounds.intersects(waterBounds))
-        {
-            // Zmniana predkosci pilki
-            this->ball->setVelocityY((fabs(this->ball->getVelocity().y)) * l);
-            // if (this->ball->getVelocity().y != 0)
-            // {
-            //     this->tikker++;
-            // }
-            // // std::cout<<tikker<<"\n";
-            // if (tikker >= 250)
-            // {
-            //     this->ball->setVelocityY(0);
-            //     this->tikker = 0;
-            // }
-            // std::cout<<this->ball->getVelocity().y<<"\n";
-            if (fabs(this->ball->getVelocity().y) > 7)
-            {
-                this->ball->setVelocityY(this->ball->getVelocity().y / 2);
-            }
-            else if (fabs(this->ball->getVelocity().y) >= 4)
-            {
-                this->ball->setVelocityX(this->ball->getVelocity().x * 5);
-            }
-            else
-            {
-                this->ball->setVelocityX(this->ball->getVelocity().x / l);
-            }
-            if (fabs(this->ball->getVelocity().x) >= 2)
-            {
-                this->ball->setVelocityX(this->ball->getVelocity().x / 10);
-            }
         }
     }
 }
@@ -695,20 +722,28 @@ void GameplayScreen::render(sf::RenderTarget &target, int allLvls)
     target.draw(this->leftStrokesText);
 
     // Rysowanie wszystkich spriteow
-    for (int i = 0; i < this->grassVector.size(); i++) // Trawa
-        target.draw(grassVector[i]);
-    for (int i = 0; i < this->wallsVector.size(); i++) // Sciany
-        target.draw(wallsVector[i]);
-    for (int i = 0; i < this->sandVector.size(); i++) // Piasek
-        target.draw(sandVector[i]);
-    for (int i = 0; i < this->iceVector.size(); i++) // Lod
-        target.draw(iceVector[i]);
-    for (int i = 0; i < this->gulfsVector.size(); i++) // Przepasc
-        target.draw(gulfsVector[i]);
-    for (int i = 0; i < this->water_upVector.size(); i++) // Woda gora
-        target.draw(water_upVector[i]);
-    for (int i = 0; i < this->water_downVector.size(); i++) // Woda dol
-        target.draw(water_downVector[i]);
+    for (int i = 0; i < 7; i++)
+    {
+        std::vector<sf::Sprite> currentVector = this->obstaclesVectorsArr[i];
+        for (int j = 0; j < currentVector.size(); j++)
+        {
+            target.draw(currentVector[j]);
+        }
+    }
+    // for (int i = 0; i < this->grassVector.size(); i++) // Trawa
+    //     target.draw(grassVector[i]);
+    // for (int i = 0; i < this->wallsVector.size(); i++) // Sciany
+    //     target.draw(wallsVector[i]);
+    // for (int i = 0; i < this->sandVector.size(); i++) // Piasek
+    //     target.draw(sandVector[i]);
+    // for (int i = 0; i < this->iceVector.size(); i++) // Lod
+    //     target.draw(iceVector[i]);
+    // for (int i = 0; i < this->gulfsVector.size(); i++) // Przepasc
+    //     target.draw(gulfsVector[i]);
+    // for (int i = 0; i < this->water_upVector.size(); i++) // Woda gora
+    //     target.draw(water_upVector[i]);
+    // for (int i = 0; i < this->water_downVector.size(); i++) // Woda dol
+    //     target.draw(water_downVector[i]);
 
     target.draw(this->hole); // Dolek
 

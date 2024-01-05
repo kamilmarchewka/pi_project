@@ -34,13 +34,14 @@ private:
     int gridRows;              // Liczba rzedow na planszy
     int gridCols;              // Liczba kolumn na planszy
 
-    std::vector<sf::Sprite> grassVector;      // Wektor przechowujacy trawe jasna i ciemna
-    std::vector<sf::Sprite> wallsVector;      // Wektor przechowujacy wszystkie sciany
-    std::vector<sf::Sprite> sandVector;       // Wektor przechowujacy wszystkie piaski
-    std::vector<sf::Sprite> iceVector;        // Wektor przechowujacy wszystkie lody
-    std::vector<sf::Sprite> gulfsVector;      // Wektor przechowujacy wszystkie przepascie
-    std::vector<sf::Sprite> water_upVector;   // Wektor przechowujacy wszystkie wody (kierujące w górę ekranu)
-    std::vector<sf::Sprite> water_downVector; // Wektor przechowujacy wszystkie wody (kierujące w dół ekranu)
+    std::vector<sf::Sprite> obstaclesVectorsArr[7]; // Tablica przechowujaca wektory ze wszystkimi spriteami
+    // std::vector<sf::Sprite> grassVector;      // Wektor przechowujacy trawe jasna i ciemna
+    // std::vector<sf::Sprite> wallsVector;      // Wektor przechowujacy wszystkie sciany
+    // std::vector<sf::Sprite> sandVector;       // Wektor przechowujacy wszystkie piaski
+    // std::vector<sf::Sprite> iceVector;        // Wektor przechowujacy wszystkie lody
+    // std::vector<sf::Sprite> gulfsVector;      // Wektor przechowujacy wszystkie przepascie
+    // std::vector<sf::Sprite> water_upVector;   // Wektor przechowujacy wszystkie wody (kierujące w górę ekranu)
+    // std::vector<sf::Sprite> water_downVector; // Wektor przechowujacy wszystkie wody (kierujące w dół ekranu)
 
     Ball *ball; // Pointer do pilki
 
