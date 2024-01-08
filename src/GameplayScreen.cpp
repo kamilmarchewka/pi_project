@@ -428,7 +428,7 @@ void GameplayScreen::gulfCollision()
                 this->ball->getPosition().y <= gulfBounds.top + gulfBounds.height)
             {
 
-                std::cout << "Przpeascccccc\n";
+                // std::cout << "Przpeascccccc\n";
                 this->ball->setVelocityX(0);
                 this->ball->setVelocityY(0);
                 this->ball->setScale(0.1);

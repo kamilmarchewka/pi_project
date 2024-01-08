@@ -25,7 +25,7 @@ Ball::Ball(sf::Texture &texture, int ballSkin)
     this->stopTreshold = 0.35;
     this->friction = 0.96;
     this->velocity = sf::Vector2f(0, 0);
-    this->maxVelocity = 35.f; // Dla takiej wartosci nie przelatuje przez sciany
+    this->maxVelocity = 30.f; // Dla takiej wartosci nie przelatuje przez sciany
 
     // Ustawienie strzalki do celowania
     // Linia

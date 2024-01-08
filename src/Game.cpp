@@ -104,7 +104,7 @@ Game::Game()
     this->prevLvl = 0;
     this->selectedLvl = 1;
     this->allLvls = 15;
-    this->unlockedLvls = 15;
+    this->unlockedLvls = 1;
 
     this->ballSkin = 0;      // Poczatkowo pilka jest biala
     this->volume = 50;       // Glosnosc muzyki w tle
